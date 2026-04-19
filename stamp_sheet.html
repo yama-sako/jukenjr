@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>冒険の記録｜中学受験ポータル</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=DotGothic16&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b26; --panel2:#1c2333; --border:#2a3a55;
+  --gold:#ffd700; --gold2:#ffb700; --silver:#a8c0d0;
+  --social:#3b82f6; --social-l:#93c5fd; --social-d:#1e3a6e;
+  --science:#10b981; --science-l:#6ee7b7; --science-d:#064e35;
+  --boss:#f97316; --boss-d:#7c2d12;
+  --text:#e8f0fe; --muted:#7a90b0; --red:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(1px 1px at 15% 25%,rgba(255,255,255,.5),transparent),
+             radial-gradient(1px 1px at 75% 15%,rgba(255,255,255,.4),transparent),
+             radial-gradient(1px 1px at 45% 65%,rgba(255,255,255,.3),transparent),
+             radial-gradient(2px 2px at 55% 35%,rgba(255,215,0,.2),transparent),
+             radial-gradient(1px 1px at 85% 70%,rgba(255,255,255,.3),transparent);
+  pointer-events:none;z-index:0;}
+
+.wrap{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+/* ── PLAYER SELECT ── */
+#player-select{min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+.select-title{font-family:'DotGothic16',sans-serif;font-size:clamp(20px,5vw,34px);
+  color:var(--gold);text-shadow:0 0 24px rgba(255,215,0,.5);margin-bottom:8px;
+  animation:glow 2.5s ease-in-out infinite alternate;}
+@keyframes glow{from{text-shadow:0 0 10px rgba(255,215,0,.3);}to{text-shadow:0 0 36px rgba(255,215,0,.8);}}
+.select-sub{color:var(--muted);font-size:13px;margin-bottom:48px;}
+.player-cards{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;}
+.player-card{background:var(--panel2);border:2px solid var(--border);border-radius:24px;
+  padding:30px 40px;cursor:pointer;transition:all .2s;min-width:180px;}
+.player-card:hover{border-color:var(--gold);transform:translateY(-6px);
+  box-shadow:0 12px 40px rgba(255,215,0,.2);}
+.player-avatar-wrap{width:80px;height:80px;margin:0 auto 12px;border-radius:50%;overflow:hidden;
+  border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;
+  background:rgba(255,215,0,.1);}
+.player-avatar-wrap svg{width:80px;height:80px;}
+.player-name{font-family:'M PLUS Rounded 1c',sans-serif;font-size:22px;font-weight:900;
+  color:var(--gold);margin-bottom:6px;}
+.player-rank-preview{font-size:11px;color:var(--muted);}
+
+/* ── MAIN APP ── */
+#main-app{display:none;}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;background:var(--panel);border-radius:14px;margin-bottom:20px;
+  flex-wrap:wrap;gap:10px;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.player-badge{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1000;
+  font-family:'DotGothic16',sans-serif;font-size:13px;padding:5px 14px;border-radius:20px;}
+.header-total{font-size:12px;color:var(--muted);}
+.header-total span{color:var(--gold);font-weight:700;}
+.btn-switch{background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-size:12px;padding:6px 14px;border-radius:20px;cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;transition:all .15s;}
+.btn-switch:hover{border-color:var(--gold);color:var(--gold);}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:20px;}
+.tab{flex:1;padding:12px;border:2px solid var(--border);border-radius:12px;
+  background:var(--panel2);cursor:pointer;text-align:center;font-size:13px;
+  font-weight:700;transition:all .2s;color:var(--muted);}
+.tab.active.social{border-color:var(--social);color:var(--social-l);
+  background:var(--social-d);}
+.tab.active.science{border-color:var(--science);color:var(--science-l);
+  background:var(--science-d);}
+.tab:not(.active):hover{border-color:var(--muted);}
+
+/* TAB CONTENT */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* CHARACTER CARD */
+.char-panel{background:var(--panel2);border:1px solid var(--border);border-radius:16px;
+  padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.char-avatar-big{width:90px;height:90px;border-radius:50%;overflow:hidden;flex-shrink:0;
+  border:3px solid;display:flex;align-items:center;justify-content:center;}
+.char-avatar-big.social{border-color:var(--social);}
+.char-avatar-big.science{border-color:var(--science);}
+.char-avatar-big svg{width:90px;height:90px;}
+.char-info{flex:1;}
+.char-subject-label{font-size:10px;letter-spacing:2px;margin-bottom:4px;}
+.char-subject-label.social{color:var(--social-l);}
+.char-subject-label.science{color:var(--science-l);}
+.char-rank-name{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px;}
+.char-rank-name.social{color:var(--social-l);}
+.char-rank-name.science{color:var(--science-l);}
+.char-next{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.exp-bg{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;border:1px solid var(--border);}
+.exp-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+.exp-fill.social{background:linear-gradient(90deg,var(--social),var(--social-l));}
+.exp-fill.science{background:linear-gradient(90deg,var(--science),var(--science-l));}
+.char-clears{font-family:'DotGothic16',sans-serif;font-size:22px;text-align:center;flex-shrink:0;}
+.char-clears.social{color:var(--social-l);}
+.char-clears.science{color:var(--science-l);}
+.char-clears span{display:block;font-size:10px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;}
+
+/* PORTAL GRID */
+.portal-section{margin-bottom:24px;}
+.portal-section-title{font-size:12px;font-weight:700;letter-spacing:2px;
+  color:var(--muted);margin-bottom:12px;padding-left:4px;}
+.portal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+
+.portal-cell{background:var(--panel2);border:2px solid var(--border);border-radius:14px;
+  padding:10px 6px;cursor:pointer;transition:all .15s;position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:4px;min-height:90px;}
+.portal-cell:hover{transform:scale(1.04);}
+.portal-cell.boss{border-color:var(--boss);background:linear-gradient(135deg,var(--boss-d),var(--panel2));}
+.portal-cell.done-gold{background:linear-gradient(135deg,#3a2800,var(--panel2));border-color:var(--gold);}
+.portal-cell.done-silver{background:linear-gradient(135deg,#1a2530,var(--panel2));border-color:var(--silver);}
+.portal-cell.boss.done-gold{background:linear-gradient(135deg,#4a1800,#2a0800);border-color:var(--gold);
+  box-shadow:0 0 16px rgba(255,215,0,.25);}
+.portal-cell:not(.done-gold):not(.done-silver) .cell-icon{filter:grayscale(1) opacity(.3);}
+.cell-icon{font-size:26px;line-height:1;}
+.cell-num{font-family:'DotGothic16',sans-serif;font-size:9px;color:var(--muted);}
+.portal-cell.done-gold .cell-num{color:var(--gold);}
+.portal-cell.done-silver .cell-num{color:var(--silver);}
+.portal-cell.boss .cell-num{color:var(--boss);}
+.portal-cell.boss.done-gold .cell-num{color:var(--gold);}
+.cell-title{font-size:9px;color:var(--muted);text-align:center;line-height:1.3;}
+.portal-cell.done-gold::after{content:'★';position:absolute;top:3px;right:5px;
+  font-size:9px;color:var(--gold);}
+
+/* LINK BUTTONS — small indicators only, tap opens slide panel */
+.cell-links{display:flex;gap:3px;width:100%;}
+.cell-link-btn{flex:1;padding:3px 2px;border-radius:5px;border:1px solid;
+  font-size:8px;text-align:center;cursor:pointer;font-family:'DotGothic16',sans-serif;
+  background:transparent;transition:all .15s;white-space:nowrap;}
+.cell-link-btn.story{border-color:rgba(91,200,245,.5);color:#5bc8f5;}
+.cell-link-btn.story:active{background:rgba(91,200,245,.2);}
+.cell-link-btn.quiz{border-color:rgba(249,115,22,.5);color:#f97316;}
+.cell-link-btn.quiz:active{background:rgba(249,115,22,.2);}
+.cell-link-btn.disabled{border-color:var(--border);color:var(--border);cursor:default;}
+
+/* SLIDE-UP LINK PANEL */
+#link-panel{
+  position:fixed;bottom:0;left:0;right:0;z-index:300;
+  background:var(--panel);border-top:2px solid var(--border);
+  border-radius:20px 20px 0 0;
+  padding:20px 20px 36px;
+  transform:translateY(100%);transition:transform .3s ease;
+  box-shadow:0 -8px 40px rgba(0,0,0,.5);
+}
+#link-panel.open{transform:translateY(0);}
+#link-panel-title{
+  font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px;font-weight:900;
+  color:var(--gold);margin-bottom:4px;
+}
+#link-panel-sub{font-size:11px;color:var(--muted);margin-bottom:18px;}
+.link-panel-btns{display:flex;flex-direction:column;gap:10px;}
+.link-panel-a{
+  display:block;padding:16px;border-radius:14px;
+  text-align:center;text-decoration:none;font-weight:700;font-size:15px;
+  transition:opacity .15s;
+}
+.link-panel-a:active{opacity:.75;}
+.link-panel-a.story{background:linear-gradient(135deg,#1a4a8a,#2a6acd);color:#e0f4ff;border:1.5px solid #5bc8f5;}
+.link-panel-a.quiz{background:linear-gradient(135deg,#7c2d12,#c2410c);color:#fff3e0;border:1.5px solid #f97316;}
+.link-panel-close{
+  display:block;margin-top:12px;padding:11px;
+  background:transparent;border:1px solid var(--border);border-radius:10px;
+  color:var(--muted);font-size:13px;cursor:pointer;font-family:'DotGothic16',sans-serif;
+  width:100%;
+}
+#link-panel-overlay{
+  display:none;position:fixed;inset:0;z-index:299;background:rgba(0,0,0,.4);
+}
+#link-panel-overlay.open{display:block;}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 14px;background:var(--panel2);
+  border-radius:10px;margin-bottom:20px;font-size:10px;color:var(--muted);align-items:center;}
+.legend-item{display:flex;align-items:center;gap:4px;}
+.ld{width:12px;height:12px;border-radius:3px;border:2px solid;}
+.ld-gold{background:rgba(255,215,0,.2);border-color:var(--gold);}
+.ld-silver{background:rgba(168,192,208,.1);border-color:var(--silver);}
+.ld-boss{background:var(--boss-d);border-color:var(--boss);}
+.ld-empty{background:var(--panel2);border-color:var(--border);}
+
+/* TOTAL BAR */
+.total-wrap{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.total-label{font-size:11px;color:var(--muted);white-space:nowrap;}
+.total-bar-bg{flex:1;min-width:100px;height:12px;background:rgba(255,255,255,.06);
+  border-radius:6px;overflow:hidden;border:1px solid var(--border);}
+.total-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold2),var(--gold));
+  transition:width .8s ease;}
+.total-count{font-family:'DotGothic16',sans-serif;font-size:13px;color:var(--gold);white-space:nowrap;}
+
+/* COMPLETION */
+.completion-banner{display:none;background:linear-gradient(135deg,#3a2800,#1a1000);
+  border:2px solid var(--gold);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;
+  box-shadow:0 0 30px rgba(255,215,0,.25);}
+.completion-banner.show{display:block;}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:100;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--panel);border:2px solid var(--border);border-radius:20px;
+  padding:24px;max-width:400px;width:100%;text-align:center;position:relative;}
+.modal-box.levelup{border-color:var(--gold);box-shadow:0 0 40px rgba(255,215,0,.3);}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;
+  color:var(--muted);font-size:18px;cursor:pointer;}
+.modal-icon-big{font-size:60px;display:block;margin-bottom:10px;}
+.modal-avatar-big{width:100px;height:100px;border-radius:50%;overflow:hidden;
+  margin:0 auto 12px;border:3px solid var(--gold);background:rgba(255,215,0,.1);}
+.modal-avatar-big svg{width:100px;height:100px;}
+.modal-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7;}
+.levelup-tag{display:inline-block;background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);
+  color:var(--gold);font-family:'DotGothic16',sans-serif;font-size:10px;
+  letter-spacing:2px;padding:3px 14px;border-radius:20px;margin-bottom:12px;}
+.modal-btns{display:flex;flex-direction:column;gap:8px;}
+.btn-gold{padding:11px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'DotGothic16',sans-serif;font-size:13px;
+  background:linear-gradient(135deg,#b8860b,var(--gold));color:#1a1000;
+  box-shadow:0 3px 0 #7a5800;transition:all .15s;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 5px 0 #7a5800;}
+.btn-silver{padding:11px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'DotGothic16',sans-serif;font-size:13px;
+  background:linear-gradient(135deg,#334155,#475569);color:#e2e8f0;
+  box-shadow:0 3px 0 #1e293b;transition:all .15s;}
+.btn-silver:hover{transform:translateY(-2px);}
+.btn-reset{padding:9px;border-radius:10px;border:1px solid var(--red);cursor:pointer;
+  font-family:'DotGothic16',sans-serif;font-size:11px;
+  background:transparent;color:var(--red);transition:all .15s;}
+.btn-reset:hover{background:rgba(239,68,68,.1);}
+
+/* FILE GUIDE */
+.file-guide{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);
+  border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.8;
+  color:#a0c8e8;}
+.file-guide strong{color:#5bc8f5;display:block;margin-bottom:4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--panel);border:1px solid var(--gold);border-radius:30px;
+  padding:9px 22px;font-size:12px;color:var(--gold);font-family:'DotGothic16',sans-serif;
+  z-index:200;transition:all .3s;opacity:0;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@media(max-width:600px){
+  .portal-grid{grid-template-columns:repeat(4,1fr);}
+  .char-panel{flex-direction:column;text-align:center;}
+}
+
+/* ── PASSWORD GATE OVERLAY ── */
+#pw-gate{
+  position:fixed;inset:0;z-index:9999;
+  background:#0a1020;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+}
+#pw-gate.hidden{display:none;}
+.pg-card{
+  width:min(360px,100%);background:rgba(8,14,32,.97);
+  border:2px solid #2a4a80;border-radius:20px;
+  padding:28px 22px;text-align:center;
+  box-shadow:0 0 60px rgba(59,130,246,.2);
+}
+.pg-logo{font-size:44px;display:block;margin-bottom:6px;
+  animation:pgfloat 4s ease-in-out infinite;}
+@keyframes pgfloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:22px;font-weight:900;
+  color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#5070a0;margin-bottom:22px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:10px;}
+.pg-input{
+  flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:12px;
+  color:#e0ecff;font-size:18px;font-family:'DotGothic16',sans-serif;
+  padding:12px 10px;outline:none;letter-spacing:4px;text-align:center;
+  transition:border-color .2s;-webkit-appearance:none;
+}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{
+  background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;
+  border-radius:12px;font-family:'DotGothic16',sans-serif;font-size:14px;
+  padding:12px 16px;cursor:pointer;flex-shrink:0;
+  box-shadow:0 4px 0 #0e3880;
+}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:12px;color:#ef4444;min-height:16px;font-family:'DotGothic16',sans-serif;
+  opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshake{
+  0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}
+}
+.pgshake{animation:pgshake .4s ease;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     SHARED SVG DEFS
+══════════════════════════════════ -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+
+<!-- ── OUSUKE base face (black hair, flat fringe) ── -->
+<symbol id="face-ousuke" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a6bbf"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+
+<!-- ── SAKUTO base face (black hair, spiked) ── -->
+<symbol id="face-sakuto" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a5a9f"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+
+<!-- ════════════════════════════════════
+     RANK AVATARS — SOCIAL (5 stages)
+════════════════════════════════════ -->
+
+<!-- 社会Rank0: 見習い探検家 (plain + map) -->
+<symbol id="rank-social-0" viewBox="0 0 90 90">
+  <!-- body navy -->
+  <rect x="15" y="62" width="60" height="28" rx="12" fill="#1a3a6e"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <!-- head -->
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="55" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <path d="M30,33 Q36,30 41,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <path d="M49,33 Q54,30 60,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="29" cy="46" rx="5.5" ry="3.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="61" cy="46" rx="5.5" ry="3.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- small map in hand -->
+  <rect x="60" y="68" width="18" height="14" rx="3" fill="#f5e6c0" stroke="#b8a060" stroke-width="1.5"/>
+  <line x1="63" y1="72" x2="75" y2="72" stroke="#8a6030" stroke-width="1"/>
+  <line x1="63" y1="75" x2="72" y2="75" stroke="#8a6030" stroke-width="1"/>
+  <line x1="63" y1="78" x2="74" y2="78" stroke="#8a6030" stroke-width="1"/>
+</symbol>
+
+<!-- 社会Rank1: 地図職人 (map + tools) -->
+<symbol id="rank-social-1" viewBox="0 0 90 90">
+  <!-- body with vest -->
+  <rect x="12" y="62" width="66" height="28" rx="12" fill="#2d4a8e"/>
+  <rect x="30" y="62" width="30" height="28" rx="0" fill="#1e3a6e"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="55" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <path d="M30,33 Q36,30 41,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <path d="M49,33 Q54,30 60,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- compass + map -->
+  <circle cx="22" cy="72" r="9" fill="#e8d080" stroke="#c0a040" stroke-width="1.5"/>
+  <line x1="22" y1="64" x2="22" y2="80" stroke="#c03020" stroke-width="1.5"/>
+  <line x1="14" y1="72" x2="30" y2="72" stroke="#3060c0" stroke-width="1.5"/>
+  <circle cx="22" cy="72" r="2" fill="#333"/>
+  <rect x="62" y="65" width="20" height="16" rx="3" fill="#f5e6c0" stroke="#b8a060" stroke-width="1.5"/>
+  <path d="M65,69 L69,73 L74,68 L78,74" fill="none" stroke="#4080d0" stroke-width="1.2"/>
+</symbol>
+
+<!-- 社会Rank2: 産業の使者 (cape + gear) -->
+<symbol id="rank-social-2" viewBox="0 0 90 90">
+  <!-- cape -->
+  <path d="M15,60 Q10,75 18,88 L45,82 L72,88 Q80,75 75,60 L45,68Z" fill="#1a3a8a" opacity=".9"/>
+  <!-- body -->
+  <rect x="20" y="62" width="50" height="22" rx="10" fill="#2a5aaa"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="55" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <path d="M30,33 Q36,30 41,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <path d="M49,33 Q54,30 60,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- gear badge -->
+  <circle cx="45" cy="72" r="8" fill="#ffd700" opacity=".9"/>
+  <circle cx="45" cy="72" r="4" fill="#1a3a8a"/>
+  <text x="45" y="76" text-anchor="middle" font-size="7" fill="#ffd700">⚙</text>
+</symbol>
+
+<!-- 社会Rank3: 地理の賢者 (robe + staff + aura) -->
+<symbol id="rank-social-3" viewBox="0 0 90 90">
+  <!-- aura glow -->
+  <ellipse cx="45" cy="55" rx="38" ry="35" fill="rgba(91,200,245,.08)"/>
+  <!-- robe -->
+  <path d="M10,62 Q15,85 25,90 L45,84 L65,90 Q75,85 80,62 L45,70Z" fill="#0a2a6e"/>
+  <path d="M25,90 L45,84 L65,90 L60,75 L45,80 L30,75Z" fill="#1a4aae" opacity=".7"/>
+  <rect x="32" y="54" width="26" height="14" rx="7" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="25" ry="27" fill="#f0c898"/>
+  <ellipse cx="45" cy="18" rx="25" ry="14" fill="#1a1008"/>
+  <ellipse cx="19" cy="29" rx="7" ry="11" fill="#1a1008"/>
+  <ellipse cx="71" cy="29" rx="7" ry="11" fill="#1a1008"/>
+  <path d="M20,25 Q30,13 45,13 Q60,13 70,25 Q60,19 45,21 Q30,19 20,25Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="37" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="37" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="35" r="1.5" fill="#fff" opacity=".85"/>
+  <circle cx="55" cy="35" r="1.5" fill="#fff" opacity=".85"/>
+  <ellipse cx="45" cy="43" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M35,50 Q45,58 55,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="37" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="37" rx="6" ry="7" fill="#f0c898"/>
+  <!-- staff -->
+  <line x1="76" y1="30" x2="72" y2="88" stroke="#8060c0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="76" cy="28" r="7" fill="#5bc8f5" opacity=".9"/>
+  <circle cx="76" cy="28" r="4" fill="white" opacity=".6"/>
+  <!-- star badge -->
+  <text x="22" y="80" font-size="14" text-anchor="middle">🌏</text>
+</symbol>
+
+<!-- 社会Rank4: 日本列島の守護者 (armor + crown + glow) -->
+<symbol id="rank-social-4" viewBox="0 0 90 90">
+  <!-- radiant aura -->
+  <circle cx="45" cy="45" r="44" fill="rgba(255,215,0,.06)"/>
+  <circle cx="45" cy="45" r="36" fill="rgba(255,215,0,.04)"/>
+  <!-- armor body -->
+  <path d="M8,58 Q12,82 22,90 L45,84 L68,90 Q78,82 82,58 L45,66Z" fill="#1a3060"/>
+  <rect x="22" y="58" width="46" height="22" rx="9" fill="#2a4aaa"/>
+  <!-- shoulder pads -->
+  <ellipse cx="18" cy="64" rx="10" ry="8" fill="#3a6aff" opacity=".8"/>
+  <ellipse cx="72" cy="64" rx="10" ry="8" fill="#3a6aff" opacity=".8"/>
+  <!-- neck -->
+  <rect x="33" y="53" width="24" height="14" rx="7" fill="#f0c898"/>
+  <!-- head -->
+  <ellipse cx="45" cy="34" rx="26" ry="28" fill="#f0c898"/>
+  <ellipse cx="45" cy="16" rx="26" ry="14" fill="#1a1008"/>
+  <ellipse cx="18" cy="27" rx="7" ry="11" fill="#1a1008"/>
+  <ellipse cx="72" cy="27" rx="7" ry="11" fill="#1a1008"/>
+  <path d="M19,23 Q29,11 45,11 Q61,11 71,23 Q61,17 45,19 Q29,17 19,23Z" fill="#1a1008"/>
+  <!-- CROWN -->
+  <path d="M22,16 L26,4 L34,12 L45,2 L56,12 L64,4 L68,16 Z" fill="#ffd700" stroke="#b8860b" stroke-width="1"/>
+  <circle cx="45" cy="4" r="4" fill="#ef4444"/>
+  <circle cx="26" cy="7" r="2.5" fill="#5bc8f5"/>
+  <circle cx="64" cy="7" r="2.5" fill="#5bc8f5"/>
+  <!-- eyes glowing -->
+  <ellipse cx="36" cy="36" rx="5" ry="5.5" fill="#1a1008"/>
+  <ellipse cx="54" cy="36" rx="5" ry="5.5" fill="#1a1008"/>
+  <circle cx="37" cy="34" r="1.8" fill="#5bc8f5" opacity=".9"/>
+  <circle cx="55" cy="34" r="1.8" fill="#5bc8f5" opacity=".9"/>
+  <ellipse cx="45" cy="44" rx="3.5" ry="2.5" fill="#d4a070" opacity=".6"/>
+  <path d="M34,50 Q45,59 56,50" fill="none" stroke="#c07040" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="17" cy="36" rx="6" ry="8" fill="#f0c898"/>
+  <ellipse cx="73" cy="36" rx="6" ry="8" fill="#f0c898"/>
+  <!-- chest emblem -->
+  <text x="45" y="77" text-anchor="middle" font-size="14">🗾</text>
+  <!-- sparkles -->
+  <text x="8"  y="20" font-size="10">✨</text>
+  <text x="74" y="18" font-size="10">✨</text>
+  <text x="6"  y="50" font-size="8">⭐</text>
+  <text x="76" y="52" font-size="8">⭐</text>
+</symbol>
+
+<!-- ════════════════════════════════════
+     RANK AVATARS — SCIENCE (5 stages)
+════════════════════════════════════ -->
+
+<!-- 理科Rank0: 見習い研究者 (plain + beaker) -->
+<symbol id="rank-science-0" viewBox="0 0 90 90">
+  <rect x="15" y="62" width="60" height="28" rx="12" fill="#0e6a50"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="55" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <path d="M30,33 Q36,30 41,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <path d="M49,33 Q54,30 60,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="19" cy="46" rx="5.5" ry="3.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="61" cy="46" rx="5.5" ry="3.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- beaker -->
+  <path d="M60,65 L56,80 Q55,85 65,85 Q75,85 74,80 L70,65Z" fill="rgba(91,200,245,.3)" stroke="#5bc8f5" stroke-width="1.5"/>
+  <line x1="60" y1="65" x2="70" y2="65" stroke="#5bc8f5" stroke-width="1.5"/>
+  <ellipse cx="65" cy="80" rx="6" ry="3" fill="rgba(91,200,245,.4)"/>
+</symbol>
+
+<!-- 理科Rank1: 実験助手 (lab coat + flask) -->
+<symbol id="rank-science-1" viewBox="0 0 90 90">
+  <!-- white lab coat -->
+  <rect x="14" y="62" width="62" height="28" rx="12" fill="#e8f0ff"/>
+  <rect x="14" y="62" width="16" height="28" rx="0" fill="#d0daf0"/>
+  <rect x="60" y="62" width="16" height="28" rx="0" fill="#d0daf0"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="38" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <circle cx="55" cy="36" r="1.4" fill="#fff" opacity=".8"/>
+  <path d="M30,33 Q36,30 41,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <path d="M49,33 Q54,30 60,33" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- round flask -->
+  <circle cx="22" cy="76" r="10" fill="rgba(16,185,129,.25)" stroke="#10b981" stroke-width="1.5"/>
+  <rect x="19" y="64" width="6" height="8" rx="2" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <ellipse cx="22" cy="76" rx="6" ry="4" fill="rgba(16,185,129,.4)"/>
+  <!-- bubbles -->
+  <circle cx="20" cy="74" r="1.5" fill="#10b981" opacity=".7"/>
+  <circle cx="25" cy="72" r="1" fill="#10b981" opacity=".5"/>
+</symbol>
+
+<!-- 理科Rank2: 発明家 (goggles + gadget) -->
+<symbol id="rank-science-2" viewBox="0 0 90 90">
+  <!-- jacket -->
+  <path d="M12,58 Q16,82 26,90 L45,84 L64,90 Q74,82 78,58 L45,66Z" fill="#1a4a38"/>
+  <rect x="18" y="62" width="54" height="22" rx="10" fill="#2a7a5a"/>
+  <rect x="35" y="54" width="20" height="14" rx="6" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="24" ry="26" fill="#f0c898"/>
+  <ellipse cx="45" cy="19" rx="24" ry="13" fill="#1a1008"/>
+  <ellipse cx="20" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <ellipse cx="70" cy="30" rx="7" ry="10" fill="#1a1008"/>
+  <path d="M21,26 Q30,15 45,15 Q60,15 69,26 Q60,20 45,22 Q30,20 21,26Z" fill="#1a1008"/>
+  <!-- GOGGLES -->
+  <rect x="28" y="30" width="14" height="12" rx="5" fill="#1a1008" stroke="#f97316" stroke-width="1.5"/>
+  <rect x="48" y="30" width="14" height="12" rx="5" fill="#1a1008" stroke="#f97316" stroke-width="1.5"/>
+  <line x1="42" y1="36" x2="48" y2="36" stroke="#f97316" stroke-width="1.5"/>
+  <ellipse cx="35" cy="36" rx="5" ry="5" fill="#f97316" opacity=".3"/>
+  <ellipse cx="55" cy="36" rx="5" ry="5" fill="#f97316" opacity=".3"/>
+  <circle cx="36" cy="35" r="1.8" fill="#fff" opacity=".7"/>
+  <circle cx="56" cy="35" r="1.8" fill="#fff" opacity=".7"/>
+  <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M36,50 Q45,57 54,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="38" rx="6" ry="7" fill="#f0c898"/>
+  <!-- gadget / device -->
+  <rect x="60" y="66" width="20" height="16" rx="4" fill="#1a1008" stroke="#10b981" stroke-width="1.5"/>
+  <rect x="62" y="68" width="16" height="9" rx="2" fill="#0a3a28"/>
+  <text x="70" y="76" text-anchor="middle" font-size="7" fill="#10b981">💡</text>
+  <circle cx="45" cy="72" r="6" fill="rgba(255,215,0,.15)" stroke="#ffd700" stroke-width="1"/>
+  <text x="45" y="76" text-anchor="middle" font-size="7" fill="#ffd700">⚙</text>
+</symbol>
+
+<!-- 理科Rank3: 自然の探求者 (vine robe + plant staff) -->
+<symbol id="rank-science-3" viewBox="0 0 90 90">
+  <!-- vine aura -->
+  <ellipse cx="45" cy="55" rx="40" ry="36" fill="rgba(16,185,129,.07)"/>
+  <!-- robe green -->
+  <path d="M8,60 Q12,84 22,90 L45,84 L68,90 Q78,84 82,60 L45,68Z" fill="#0a4a2a"/>
+  <path d="M22,90 L45,84 L68,90 L62,74 L45,80 L28,74Z" fill="#1a7a4a" opacity=".7"/>
+  <rect x="32" y="54" width="26" height="14" rx="7" fill="#f0c898"/>
+  <ellipse cx="45" cy="36" rx="25" ry="27" fill="#f0c898"/>
+  <ellipse cx="45" cy="18" rx="25" ry="14" fill="#1a1008"/>
+  <ellipse cx="19" cy="29" rx="7" ry="11" fill="#1a1008"/>
+  <ellipse cx="71" cy="29" rx="7" ry="11" fill="#1a1008"/>
+  <path d="M20,25 Q30,13 45,13 Q60,13 70,25 Q60,19 45,21 Q30,19 20,25Z" fill="#1a1008"/>
+  <ellipse cx="36" cy="37" rx="4.5" ry="5" fill="#1a1008"/>
+  <ellipse cx="54" cy="37" rx="4.5" ry="5" fill="#1a1008"/>
+  <circle cx="37" cy="35" r="1.5" fill="#fff" opacity=".85"/>
+  <circle cx="55" cy="35" r="1.5" fill="#fff" opacity=".85"/>
+  <ellipse cx="45" cy="43" rx="3" ry="2" fill="#d4a070" opacity=".6"/>
+  <path d="M35,50 Q45,58 55,50" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+  <ellipse cx="18" cy="37" rx="6" ry="7" fill="#f0c898"/>
+  <ellipse cx="72" cy="37" rx="6" ry="7" fill="#f0c898"/>
+  <!-- plant staff -->
+  <line x1="76" y1="32" x2="72" y2="88" stroke="#2a8a4a" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="76" cy="28" r="8" fill="#10b981" opacity=".9"/>
+  <text x="76" y="32" text-anchor="middle" font-size="10">🌿</text>
+  <!-- leaf badge -->
+  <text x="20" y="82" font-size="14" text-anchor="middle">🌿</text>
+</symbol>
+
+<!-- 理科Rank4: 理科の神童 (star armor + crown + science glow) -->
+<symbol id="rank-science-4" viewBox="0 0 90 90">
+  <!-- radiant aura green -->
+  <circle cx="45" cy="45" r="44" fill="rgba(16,185,129,.07)"/>
+  <!-- armor -->
+  <path d="M8,58 Q12,82 22,90 L45,84 L68,90 Q78,82 82,58 L45,66Z" fill="#0a3020"/>
+  <rect x="20" y="58" width="50" height="24" rx="10" fill="#1a6040"/>
+  <ellipse cx="18" cy="64" rx="11" ry="8" fill="#2a9060" opacity=".8"/>
+  <ellipse cx="72" cy="64" rx="11" ry="8" fill="#2a9060" opacity=".8"/>
+  <rect x="33" y="53" width="24" height="14" rx="7" fill="#f0c898"/>
+  <ellipse cx="45" cy="34" rx="26" ry="28" fill="#f0c898"/>
+  <ellipse cx="45" cy="16" rx="26" ry="14" fill="#1a1008"/>
+  <ellipse cx="18" cy="27" rx="7" ry="11" fill="#1a1008"/>
+  <ellipse cx="72" cy="27" rx="7" ry="11" fill="#1a1008"/>
+  <path d="M19,23 Q29,11 45,11 Q61,11 71,23 Q61,17 45,19 Q29,17 19,23Z" fill="#1a1008"/>
+  <!-- SCIENCE CROWN -->
+  <path d="M22,16 L26,4 L34,12 L45,2 L56,12 L64,4 L68,16 Z" fill="#10b981" stroke="#0a6040" stroke-width="1"/>
+  <circle cx="45" cy="4" r="4" fill="#ffd700"/>
+  <circle cx="26" cy="7" r="2.5" fill="#5bc8f5"/>
+  <circle cx="64" cy="7" r="2.5" fill="#ef4444"/>
+  <!-- eyes glowing green -->
+  <ellipse cx="36" cy="36" rx="5" ry="5.5" fill="#1a1008"/>
+  <ellipse cx="54" cy="36" rx="5" ry="5.5" fill="#1a1008"/>
+  <circle cx="37" cy="34" r="1.8" fill="#10b981" opacity=".9"/>
+  <circle cx="55" cy="34" r="1.8" fill="#10b981" opacity=".9"/>
+  <ellipse cx="45" cy="44" rx="3.5" ry="2.5" fill="#d4a070" opacity=".6"/>
+  <path d="M34,50 Q45,59 56,50" fill="none" stroke="#c07040" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="17" cy="36" rx="6" ry="8" fill="#f0c898"/>
+  <ellipse cx="73" cy="36" rx="6" ry="8" fill="#f0c898"/>
+  <!-- chest atom -->
+  <circle cx="45" cy="74" r="7" fill="rgba(16,185,129,.2)" stroke="#10b981" stroke-width="1.5"/>
+  <text x="45" y="78" text-anchor="middle" font-size="9">⚗</text>
+  <!-- sparkles -->
+  <text x="6"  y="20" font-size="10">✨</text>
+  <text x="74" y="18" font-size="10">✨</text>
+  <text x="4"  y="52" font-size="8">⭐</text>
+  <text x="78" y="50" font-size="8">⭐</text>
+</symbol>
+
+</defs>
+</svg>
+
+<!-- ══════════════════════════════════
+     PLAYER SELECT
+══════════════════════════════════ -->
+<!-- PASSWORD GATE -->
+<div id="pw-gate">
+  <div class="pg-card" id="pg-card">
+    <span class="pg-logo">🏔️</span>
+    <div class="pg-title">冒険の記録</div>
+    <div class="pg-sub">JUKENJR ADVENTURE PORTAL</div>
+    <div class="pg-label">🔑 パスワードを入力してね</div>
+    <div class="pg-row">
+      <input type="password" class="pg-input" id="pg-pw"
+             placeholder="パスワード" maxlength="20" autocomplete="off"/>
+      <button class="pg-btn" id="pg-btn">▶</button>
+    </div>
+    <div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+  </div>
+</div>
+
+<div id="player-select">
+  <div class="select-title">🌟 冒険の記録</div>
+  <div class="select-sub">中学受験　小５　社会・理科　ポータル＆スタンプシート</div>
+  <div class="player-cards">
+    <div class="player-card" onclick="selectPlayer('ousuke')">
+      <div class="player-avatar-wrap">
+        <svg viewBox="0 0 60 60"><use href="#face-ousuke"/></svg>
+      </div>
+      <div class="player-name">オウスケ</div>
+      <div class="player-rank-preview" id="prev-ousuke">読み込み中…</div>
+    </div>
+    <div class="player-card" onclick="selectPlayer('sakuto')">
+      <div class="player-avatar-wrap">
+        <svg viewBox="0 0 60 60"><use href="#face-sakuto"/></svg>
+      </div>
+      <div class="player-name">サクト</div>
+      <div class="player-rank-preview" id="prev-sakuto">読み込み中…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     MAIN APP
+══════════════════════════════════ -->
+<div id="main-app">
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="header-left">
+      <div class="player-badge" id="hdr-name">オウスケ</div>
+      <div class="header-total">総スタンプ <span id="hdr-total">0</span> / 40</div>
+    </div>
+    <button class="btn-switch" onclick="backToSelect()">⇄ 切り替え</button>
+  </div>
+
+  <!-- FILE GUIDE -->
+  <div class="file-guide">
+    <strong>📂 教材ファイルの開き方</strong>
+    各回の「ストーリー」「クイズ」ボタンをタップ→ファイルアプリで該当のHTMLファイルを選んで開こう。
+    クリアしたらここに戻ってスタンプを押してね！
+  </div>
+
+  <!-- TOTAL BAR -->
+  <div class="total-wrap">
+    <div class="total-label">⚡ 総合進捗</div>
+    <div class="total-bar-bg"><div class="total-fill" id="total-fill" style="width:0%"></div></div>
+    <div class="total-count" id="total-count">0 / 40</div>
+  </div>
+
+  <!-- COMPLETION -->
+  <div class="completion-banner" id="comp-banner">
+    <div style="font-family:'DotGothic16',sans-serif;font-size:18px;color:var(--gold);">🏆 全巻制覇！！</div>
+    <div style="font-size:13px;color:#f0d060;margin-top:6px;" id="comp-msg"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active social" id="tab-social" onclick="switchTab('social')">📘 社会　小５上</div>
+    <div class="tab science" id="tab-science" onclick="switchTab('science')">🔬 理科　小５上</div>
+  </div>
+
+  <!-- SOCIAL TAB -->
+  <div class="tab-content active" id="content-social">
+    <!-- Character -->
+    <div class="char-panel">
+      <div class="char-avatar-big social" id="char-social-av">
+        <svg viewBox="0 0 90 90"><use href="#rank-social-0"/></svg>
+      </div>
+      <div class="char-info">
+        <div class="char-subject-label social">📘 社会キャラクター</div>
+        <div class="char-rank-name social" id="char-social-name">見習い探検家</div>
+        <div class="char-next" id="char-social-next">次の昇格まで あと5回</div>
+        <div class="exp-bg"><div class="exp-fill social" id="exp-social" style="width:0%"></div></div>
+      </div>
+      <div class="char-clears social" id="char-social-clears">0<span>/ 20クリア</span></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="ld ld-gold"></div>Sランク（金）</div>
+      <div class="legend-item"><div class="ld ld-silver"></div>クリア（銀）</div>
+      <div class="legend-item"><div class="ld ld-boss"></div>まとめ回・小ボス</div>
+      <div class="legend-item"><div class="ld ld-empty"></div>未クリア</div>
+    </div>
+
+    <!-- Portal Grid -->
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第1〜5回</div>
+      <div class="portal-grid" id="social-grid-1"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第6〜10回</div>
+      <div class="portal-grid" id="social-grid-2"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第11〜15回</div>
+      <div class="portal-grid" id="social-grid-3"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第16〜20回</div>
+      <div class="portal-grid" id="social-grid-4"></div>
+    </div>
+  </div>
+
+  <!-- SCIENCE TAB -->
+  <div class="tab-content" id="content-science">
+    <div class="char-panel">
+      <div class="char-avatar-big science" id="char-science-av">
+        <svg viewBox="0 0 90 90"><use href="#rank-science-0"/></svg>
+      </div>
+      <div class="char-info">
+        <div class="char-subject-label science">🔬 理科キャラクター</div>
+        <div class="char-rank-name science" id="char-science-name">見習い研究者</div>
+        <div class="char-next" id="char-science-next">次の昇格まで あと5回</div>
+        <div class="exp-bg"><div class="exp-fill science" id="exp-science" style="width:0%"></div></div>
+      </div>
+      <div class="char-clears science" id="char-science-clears">0<span>/ 20クリア</span></div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="ld ld-gold"></div>Sランク（金）</div>
+      <div class="legend-item"><div class="ld ld-silver"></div>クリア（銀）</div>
+      <div class="legend-item"><div class="ld ld-boss"></div>まとめ回・小ボス</div>
+      <div class="legend-item"><div class="ld ld-empty"></div>未クリア</div>
+    </div>
+
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第1〜5回</div>
+      <div class="portal-grid" id="science-grid-1"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第6〜10回</div>
+      <div class="portal-grid" id="science-grid-2"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第11〜15回</div>
+      <div class="portal-grid" id="science-grid-3"></div>
+    </div>
+    <div class="portal-section">
+      <div class="portal-section-title">▼ 第16〜20回</div>
+      <div class="portal-grid" id="science-grid-4"></div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+</div><!-- /main-app -->
+
+<!-- STAMP MODAL -->
+<div class="modal-overlay" id="stamp-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="modal-icon-big" id="m-icon">📖</span>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-sub" id="m-sub"></div>
+    <div class="modal-btns">
+      <button class="btn-gold"   onclick="doStamp(2)">🌟 Sランク！（金スタンプ）</button>
+      <button class="btn-silver" onclick="doStamp(1)">✅ クリア（銀スタンプ）</button>
+      <button class="btn-reset"  onclick="doStamp(0)">✕ スタンプを消す</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVELUP MODAL -->
+<div class="modal-overlay" id="lu-modal">
+  <div class="modal-box levelup">
+    <div class="levelup-tag">RANK UP !</div>
+    <div class="modal-avatar-big" id="lu-avatar">
+      <svg viewBox="0 0 90 90"><use id="lu-av-use" href="#rank-social-1"/></svg>
+    </div>
+    <div class="modal-title" id="lu-title">昇格！</div>
+    <div class="modal-sub"   id="lu-sub"></div>
+    <button class="btn-gold" onclick="closeLU()" style="margin-top:6px;">やったー！続ける ▶</button>
+  </div>
+</div>
+
+<!-- LINK PANEL OVERLAY -->
+<div id="link-panel-overlay" onclick="closeLinkPanel()"></div>
+
+<!-- SLIDE-UP LINK PANEL -->
+<div id="link-panel">
+  <div id="link-panel-title"></div>
+  <div id="link-panel-sub"></div>
+  <div class="link-panel-btns" id="link-panel-btns"></div>
+  <button class="link-panel-close" onclick="closeLinkPanel()">✕ 閉じる</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────
+// DATA
+// ─────────────────────────────
+const SOCIAL = [
+  {n:1,  t:"日本のすがた"},
+  {n:2,  t:"日本の水産業"},
+  {n:3,  t:"資源と林業"},
+  {n:4,  t:"交通と情報"},
+  {n:5,  t:"第1〜4回まとめ", boss:true},
+  {n:6,  t:"工業の種類"},
+  {n:7,  t:"工業地帯の発達"},
+  {n:8,  t:"工業のさかんな地域"},
+  {n:9,  t:"工業の課題"},
+  {n:10, t:"第6〜9回まとめ", boss:true},
+  {n:11, t:"日本の貿易"},
+  {n:12, t:"地形図"},
+  {n:13, t:"九州地方"},
+  {n:14, t:"中国・四国地方"},
+  {n:15, t:"第11〜14回まとめ", boss:true},
+  {n:16, t:"近畿地方"},
+  {n:17, t:"中部地方"},
+  {n:18, t:"関東地方"},
+  {n:19, t:"東北・北海道"},
+  {n:20, t:"第16〜19回まとめ", boss:true},
+];
+
+const SCIENCE = [
+  {n:1,  t:"空気と水の変化"},
+  {n:2,  t:"物のあたたまり方"},
+  {n:3,  t:"気体の性質"},
+  {n:4,  t:"季節と植物・動物"},
+  {n:5,  t:"第1〜4回まとめ", boss:true},
+  {n:6,  t:"植物の発芽・成長"},
+  {n:7,  t:"花のつくり"},
+  {n:8,  t:"根・くき・葉"},
+  {n:9,  t:"光合成・呼吸・蒸散"},
+  {n:10, t:"第6〜9回まとめ", boss:true},
+  {n:11, t:"生物の誕生"},
+  {n:12, t:"動物の分類"},
+  {n:13, t:"月の満ち欠け"},
+  {n:14, t:"季節の星座"},
+  {n:15, t:"第11〜14回まとめ", boss:true},
+  {n:16, t:"動物の体①"},
+  {n:17, t:"動物の体②"},
+  {n:18, t:"動物の体③"},
+  {n:19, t:"豆電球の回路"},
+  {n:20, t:"第16〜19回まとめ", boss:true},
+];
+
+// File URLs — real public artifact links
+const FILES = {
+  social: {
+    1: {
+      story:'https://claude.ai/public/artifacts/78e7bae7-71c1-4551-b102-db2b0338f487',
+      quiz: 'https://claude.ai/public/artifacts/edf3d004-096c-4797-9fbd-e57b3c7750fb'
+    },
+    2: {
+      story:'https://claude.ai/public/artifacts/be418150-6a07-4a59-8f80-0225aaaf9593',
+      quiz: 'https://claude.ai/public/artifacts/a438b85b-92fd-4a09-9faa-3940ae5f9da8'
+    },
+  },
+  science: {}
+};
+
+// Rank tables [minClears, displayName, svgId]
+const RANKS_SOCIAL = [
+  [0,  "見習い探検家",     "rank-social-0"],
+  [5,  "地図職人",         "rank-social-1"],
+  [10, "産業の使者",       "rank-social-2"],
+  [15, "地理の賢者",       "rank-social-3"],
+  [20, "日本列島の守護者", "rank-social-4"],
+];
+const RANKS_SCIENCE = [
+  [0,  "見習い研究者",   "rank-science-0"],
+  [5,  "実験助手",       "rank-science-1"],
+  [10, "発明家",         "rank-science-2"],
+  [15, "自然の探求者",   "rank-science-3"],
+  [20, "理科の神童",     "rank-science-4"],
+];
+
+// ─────────────────────────────
+// STATE
+// ─────────────────────────────
+let player = null;
+let state  = {};
+let pending = null; // {subject, idx}
+
+function key(p){ return `jukenjr_v2_${p}`; }
+function load(p){
+  try{ const r = localStorage.getItem(key(p)); if(r) return JSON.parse(r); }catch(e){}
+  return {social:Array(20).fill(0), science:Array(20).fill(0)};
+}
+function save(){ localStorage.setItem(key(player), JSON.stringify(state)); }
+
+// ─────────────────────────────
+// PLAYER SELECT
+// ─────────────────────────────
+function updatePreviews(){
+  ['ousuke','sakuto'].forEach(p=>{
+    const s = load(p);
+    const tot = clears(s.social)+clears(s.science);
+    const el = document.getElementById(`prev-${p}`);
+    if(el) el.textContent = `スタンプ ${tot} / 40`;
+  });
+}
+function selectPlayer(p){
+  player = p;
+  state  = load(p);
+  document.getElementById('player-select').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('hdr-name').textContent = p==='ousuke'?'オウスケ':'サクト';
+  renderAll();
+}
+function backToSelect(){
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('player-select').style.display = 'flex';
+  player = null;
+  updatePreviews();
+}
+
+// ─────────────────────────────
+// TABS
+// ─────────────────────────────
+function switchTab(tab){
+  ['social','science'].forEach(t=>{
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`content-${t}`).classList.toggle('active', t===tab);
+  });
+}
+
+// ─────────────────────────────
+// RENDER
+// ─────────────────────────────
+function clears(arr){ return arr.filter(v=>v>0).length; }
+
+function getRank(n, tbl){
+  let r=tbl[0];
+  for(let i=tbl.length-1;i>=0;i--){ if(n>=tbl[i][0]){r=tbl[i];break;} }
+  return r;
+}
+function getNext(n, tbl){
+  for(let i=0;i<tbl.length;i++){ if(tbl[i][0]>n) return tbl[i]; }
+  return null;
+}
+
+function renderAll(){
+  renderSubject('social', SOCIAL, RANKS_SOCIAL);
+  renderSubject('science', SCIENCE, RANKS_SCIENCE);
+  renderTotals();
+  renderCompletion();
+}
+
+function renderSubject(sub, rounds, ranks){
+  const stamps = state[sub];
+  const n = clears(stamps);
+  const rank = getRank(n, ranks);
+  const next = getNext(n, ranks);
+  const pct  = next ? Math.round((n-rank[0])/(next[0]-rank[0])*100) : 100;
+
+  // char panel
+  document.getElementById(`char-${sub}-av`).innerHTML =
+    `<svg viewBox="0 0 90 90"><use href="#${rank[2]}"/></svg>`;
+  document.getElementById(`char-${sub}-name`).textContent = rank[1];
+  document.getElementById(`char-${sub}-next`).textContent =
+    next ? `次の昇格まで あと${next[0]-n}回` : '🏆 最高位達成！';
+  document.getElementById(`exp-${sub}`).style.width = pct+'%';
+  document.getElementById(`char-${sub}-clears`).innerHTML =
+    `${n}<span>/ 20クリア</span>`;
+
+  // grids
+  [[1,5],[6,10],[11,15],[16,20]].forEach(([s,e],gi)=>{
+    const grid = document.getElementById(`${sub}-grid-${gi+1}`);
+    grid.innerHTML='';
+    rounds.slice(s-1,e).forEach((r,li)=>{
+      const idx = s-1+li;
+      const v   = stamps[idx];
+      const cell = document.createElement('div');
+      cell.className = 'portal-cell'+(r.boss?' boss':'')
+        +(v===2?' done-gold':v===1?' done-silver':'');
+
+      const icon = r.boss
+        ? (v===2?'🏆':v===1?'🔥':'👾')
+        : (v===2?'⭐':v===1?'✅':'📖');
+
+      const files = FILES[sub]?.[r.n];
+      const storyBtn = files?.story
+        ? `<button class="cell-link-btn story" onclick="openLinkPanel(event,'${r.t}',${r.n},'${sub}')">📖 話</button>`
+        : `<button class="cell-link-btn disabled">📖 話</button>`;
+      const quizBtn = files?.quiz
+        ? `<button class="cell-link-btn quiz" onclick="openLinkPanel(event,'${r.t}',${r.n},'${sub}')">🎮 問</button>`
+        : `<button class="cell-link-btn disabled">🎮 問</button>`;
+
+      cell.innerHTML=`
+        <span class="cell-icon">${icon}</span>
+        <span class="cell-num">第${r.n}回</span>
+        <span class="cell-title">${shortT(r.t)}</span>
+        <div class="cell-links">${storyBtn}${quizBtn}</div>`;
+      cell.addEventListener('click', ()=>openStampModal(sub, idx, r));
+      grid.appendChild(cell);
+    });
+  });
+}
+
+function shortT(t){ return t.length>6 ? t.slice(0,5)+'…' : t; }
+
+function renderTotals(){
+  const tot = clears(state.social)+clears(state.science);
+  const pct = Math.round(tot/40*100);
+  document.getElementById('total-fill').style.width=pct+'%';
+  document.getElementById('total-count').textContent=`${tot} / 40`;
+  document.getElementById('hdr-total').textContent=tot;
+}
+
+function renderCompletion(){
+  const ss=clears(state.social), sc=clears(state.science);
+  const b=document.getElementById('comp-banner');
+  if(ss===20&&sc===20){
+    b.classList.add('show');
+    const nm=player==='ousuke'?'オウスケ':'サクト';
+    document.getElementById('comp-msg').textContent=
+      `${nm}、社会・理科 小５上を完全制覇！全40スタンプ達成おめでとう！`;
+  } else b.classList.remove('show');
+}
+
+// ─────────────────────────────
+// LINK PANEL
+// ─────────────────────────────
+function openLinkPanel(e, title, n, sub){
+  e.stopPropagation();
+  const files = FILES[sub]?.[n];
+  if(!files) return;
+  document.getElementById('link-panel-title').textContent = `第${n}回　${title}`;
+  document.getElementById('link-panel-sub').textContent = '下のボタンをタップして開こう！';
+  const btns = document.getElementById('link-panel-btns');
+  btns.innerHTML = '';
+  if(files.story){
+    const a = document.createElement('a');
+    a.className = 'link-panel-a story';
+    a.href = files.story;
+    a.target = '_blank';
+    a.textContent = '📖 ストーリーを読む';
+    btns.appendChild(a);
+  }
+  if(files.quiz){
+    const a = document.createElement('a');
+    a.className = 'link-panel-a quiz';
+    a.href = files.quiz;
+    a.target = '_blank';
+    a.textContent = '🎮 クイズに挑戦！';
+    btns.appendChild(a);
+  }
+  document.getElementById('link-panel').classList.add('open');
+  document.getElementById('link-panel-overlay').classList.add('open');
+}
+function closeLinkPanel(){
+  document.getElementById('link-panel').classList.remove('open');
+  document.getElementById('link-panel-overlay').classList.remove('open');
+}
+
+// ─────────────────────────────
+// STAMP MODAL
+// ─────────────────────────────
+function openStampModal(sub, idx, round){
+  pending = {sub, idx, round};
+  const v = state[sub][idx];
+  document.getElementById('m-icon').textContent = round.boss?'👾':'📖';
+  document.getElementById('m-title').textContent = `第${round.n}回　${round.t}`;
+  document.getElementById('m-sub').textContent =
+    (round.boss?'⚔️ まとめ回・小ボスステージ\n':'')
+    +'現在：'+['未クリア','銀スタンプ','金スタンプ'][v];
+  document.getElementById('stamp-modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('stamp-modal').classList.remove('open'); pending=null; }
+
+function doStamp(val){
+  if(!pending) return;
+  const {sub, idx, round} = pending;
+  const prev = clears(state[sub]);
+  const prevRank = getRank(prev, sub==='social'?RANKS_SOCIAL:RANKS_SCIENCE);
+  state[sub][idx] = val;
+  save();
+  closeModal();
+  renderAll();
+  const newN = clears(state[sub]);
+  const newRank = getRank(newN, sub==='social'?RANKS_SOCIAL:RANKS_SCIENCE);
+  if(val>0 && newRank[0]!==prevRank[0]){
+    showLevelUp(newRank, sub);
+  } else if(val>0){
+    toast(val===2?'🌟 Sランク！金スタンプ獲得！':'✅ クリア！銀スタンプ獲得！');
+  } else {
+    toast('スタンプを消しました');
+  }
+}
+
+// ─────────────────────────────
+// LEVELUP
+// ─────────────────────────────
+function showLevelUp(rank, sub){
+  document.getElementById('lu-av-use').setAttribute('href','#'+rank[2]);
+  document.getElementById('lu-title').textContent = `${rank[1]} に昇格！`;
+  const nm = player==='ousuke'?'オウスケ':'サクト';
+  const subNm = sub==='social'?'社会':'理科';
+  document.getElementById('lu-sub').textContent =
+    `${nm}の${subNm}キャラが\n「${rank[1]}」に成長した！\nこの調子でどんどん進もう！`;
+  document.getElementById('lu-modal').classList.add('open');
+}
+function closeLU(){ document.getElementById('lu-modal').classList.remove('open'); }
+
+// ─────────────────────────────
+// TOAST
+// ─────────────────────────────
+let toastT=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  if(toastT) clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// ─────────────────────────────
+// PASSWORD GATE
+// ─────────────────────────────
+const H='a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5';
+const SK='jukenjr_v3';
+function hex(buf){return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function pgTry(){
+  const v=document.getElementById('pg-pw').value.trim().toLowerCase();
+  if(!v)return;
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(buf=>{
+    if(hex(buf)===H){
+      sessionStorage.setItem(SK,'1');
+      document.getElementById('pw-gate').classList.add('hidden');
+    } else {
+      document.getElementById('pg-err').classList.add('show');
+      document.getElementById('pg-card').classList.add('pgshk');
+      setTimeout(()=>document.getElementById('pg-card').classList.remove('pgshk'),400);
+      setTimeout(()=>document.getElementById('pg-err').classList.remove('show'),2500);
+      document.getElementById('pg-pw').value='';
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const btn=document.getElementById('pg-btn');
+  if(btn)btn.addEventListener('click',pgTry);
+  document.getElementById('pg-pw').addEventListener('keydown',e=>{if(e.key==='Enter')pgTry();});
+  if(sessionStorage.getItem(SK)==='1')document.getElementById('pw-gate').classList.add('hidden');
+});
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+window.onload=()=>updatePreviews();
+</script>
+</body>
+</html>

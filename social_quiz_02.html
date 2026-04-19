@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地理クエスト｜日本のすがた RPGクイズ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --panel: #111827;
+    --border: #1f3050;
+    --gold: #ffd700;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #e2e8f0;
+    --muted: #6b8aaa;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* PIXEL STARS */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: 
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(2px 2px at 10% 60%, rgba(255,215,0,0.2), transparent),
+      radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.25), transparent);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 680px;
+    position: relative;
+    z-index:1;
+  }
+
+  /* TITLE SCREEN */
+  #title-screen {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(59,130,246,0.2);
+  }
+
+  .pixel-title {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: clamp(20px, 5vw, 32px);
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.5), 2px 2px 0 rgba(0,0,0,0.8);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    to { text-shadow: 0 0 30px rgba(255,215,0,0.8), 0 0 60px rgba(255,215,0,0.3); }
+  }
+
+  .title-sub { font-size: 13px; color: var(--muted); margin-bottom: 30px; letter-spacing: 1px; }
+
+  .hero-sprite {
+    font-size: 80px;
+    margin: 20px 0;
+    animation: float 3s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .title-info {
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 20px 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #a0c4e8;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-block;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    box-shadow: 0 4px 0 #1e3a8a, 0 8px 20px rgba(37,99,235,0.3);
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); transform: translateY(-2px); box-shadow: 0 6px 0 #1e3a8a, 0 12px 25px rgba(37,99,235,0.4); }
+  .btn-answer {
+    display: block;
+    width: 100%;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    background: #1a2848;
+    border: 2px solid #2a4070;
+    border-radius: 12px;
+    color: #e8f0ff;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-answer:hover:not(:disabled) {
+    background: #1e3a6e;
+    border-color: #4a80d0;
+    transform: translateX(4px);
+  }
+  .btn-answer.correct {
+    background: #0f3d28;
+    border-color: #10b981;
+    color: #6ee7b7;
+  }
+  .btn-answer.wrong {
+    background: #3d1515;
+    border-color: #ef4444;
+    color: #fca5a5;
+  }
+  .btn-answer:disabled { cursor: default; }
+
+  /* GAME SCREEN */
+  #game-screen { display: none; }
+
+  /* HUD */
+  .hud {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .hud-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: 'DotGothic16', sans-serif;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .hud-item span {
+    color: var(--gold);
+    font-size: 15px;
+  }
+
+  /* HP BAR */
+  .hp-wrap { flex: 1; min-width: 120px; }
+  .hp-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: 'DotGothic16', sans-serif; }
+  .hp-bar-bg { height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .hp-bar { height: 100%; border-radius: 6px; transition: width 0.5s ease, background 0.5s; }
+
+  /* BATTLE SCENE */
+  .battle-scene {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  .battle-scene::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(transparent, rgba(15,25,60,0.5));
+  }
+  .battle-scene-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    font-size: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .battle-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+  }
+  .enemy-side { text-align: center; }
+  .enemy-sprite { font-size: 56px; display: block; margin-bottom: 4px; animation: enemy-float 2s ease-in-out infinite; }
+  @keyframes enemy-float { 0%,100%{transform:translateY(0) scaleX(-1);} 50%{transform:translateY(-6px) scaleX(-1);} }
+  .enemy-name-plate {
+    background: rgba(239,68,68,0.2);
+    border: 1px solid rgba(239,68,68,0.4);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #fca5a5;
+    font-family: 'DotGothic16', sans-serif;
+  }
+
+  .hero-side { text-align: center; }
+  .hero-battle-sprite { font-size: 48px; display: block; margin-bottom: 4px; }
+  .hero-name-plate {
+    background: rgba(59,130,246,0.2);
+    border: 1px solid rgba(59,130,246,0.4);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #93c5fd;
+    font-family: 'DotGothic16', sans-serif;
+  }
+
+  /* MESSAGE BOX */
+  .message-box {
+    background: #1a2540;
+    border: 2px solid #2a4070;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    min-height: 70px;
+    position: relative;
+    color: #ddeeff;
+  }
+  .message-box .hint {
+    display: inline-block;
+    background: #2d1f5e;
+    border: 1px solid #6d4fbf;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #d8c8ff;
+    margin-top: 8px;
+    margin-left: 0;
+    display: block;
+  }
+
+  /* QUESTION BOX */
+  .question-box {
+    background: #162035;
+    border: 2px solid #2a4a80;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .question-level {
+    font-size: 11px;
+    color: #7ab8ff;
+    font-family: 'DotGothic16', sans-serif;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .question-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.6;
+    color: #ffffff;
+  }
+
+  /* FEEDBACK */
+  .feedback {
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    display: none;
+  }
+  .feedback.correct-fb { background: #0d3020; border: 2px solid #10b981; color: #d0fff0; }
+  .feedback.wrong-fb { background: #3a0f0f; border: 2px solid #ef4444; color: #ffe0e0; }
+  .feedback-title { font-weight: 900; margin-bottom: 6px; font-size: 16px; }
+  .feedback.correct-fb .feedback-title { color: #34d399; }
+  .feedback.wrong-fb .feedback-title { color: #f87171; }
+  .feedback-exp { color: #a0c8e8; font-size: 13px; margin-top: 6px; }
+
+  /* NEXT BTN */
+  .btn-next {
+    display: none;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #3b1286;
+    transition: all 0.15s;
+    letter-spacing: 1px;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #3b1286; }
+  .btn-next:active { transform: translateY(2px); box-shadow: 0 2px 0 #3b1286; }
+
+  /* RESULT SCREEN */
+  #result-screen {
+    display: none;
+    text-align: center;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 30px 20px;
+  }
+  .result-title {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 28px;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    margin-bottom: 20px;
+  }
+  .result-score {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 52px;
+    color: white;
+    margin: 20px 0;
+  }
+  .result-score span { color: var(--gold); }
+  .result-rank {
+    font-size: 16px;
+    padding: 10px 30px;
+    border-radius: 30px;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+  .rank-s { background: rgba(255,215,0,0.2); border: 2px solid var(--gold); color: var(--gold); }
+  .rank-a { background: rgba(59,130,246,0.2); border: 2px solid var(--blue); color: #93c5fd; }
+  .rank-b { background: rgba(16,185,129,0.2); border: 2px solid var(--green); color: #6ee7b7; }
+  .rank-c { background: rgba(239,68,68,0.15); border: 2px solid var(--red); color: #fca5a5; }
+
+  .result-msg { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.8; }
+  .result-wrong-list { text-align: left; margin: 16px 0; }
+  .wrong-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .wrong-q { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .wrong-correct { color: #6ee7b7; }
+
+  /* EXP BAR */
+  .exp-section { margin: 16px 0; }
+  .exp-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-family: 'DotGothic16', sans-serif; }
+  .exp-bg { height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .exp-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 8px; transition: width 1.5s ease; width: 0%; }
+
+  /* LEVEL UP */
+  .levelup-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), #f59e0b);
+    color: #1a1000;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 14px;
+    padding: 8px 24px;
+    border-radius: 30px;
+    margin: 10px;
+    box-shadow: 0 0 20px rgba(255,215,0,0.4);
+    animation: pulse 1s ease infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+
+  /* SHAKE ANIMATION */
+  @keyframes shake {
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-6px);}
+    40%{transform:translateX(6px);}
+    60%{transform:translateX(-4px);}
+    80%{transform:translateX(4px);}
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* FLASH */
+  @keyframes flash-green { 0%,100%{background:var(--panel);} 50%{background:rgba(16,185,129,0.15);} }
+  .flash-correct { animation: flash-green 0.5s ease; }
+
+  .q-count { font-size: 12px; color: var(--muted); font-family: 'DotGothic16', sans-serif; }
+</style>
+</head>
+<body>
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">&#x1F3D4;&#xFE0F;</span>
+<div class="pg-title">&#x4E2D;&#x5B66;&#x53D7;&#x9A13;&#x3078;&#x306E;&#x9053;</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">&#x1F511; &#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x306D;</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">&#x25B6;</button>
+</div>
+<div class="pg-err" id="pg-err">&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x304C;&#x3061;&#x304C;&#x3046;&#x3088;&#xFF01;</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    var enc=new TextEncoder();
+    crypto.subtle.digest("SHA-256",enc.encode(v)).then(function(buf){
+      if(hex(buf)===H){
+        sessionStorage.setItem(SK,"1");
+        document.getElementById("pw-gate").classList.add("hidden");
+      } else {
+        document.getElementById("pg-err").classList.add("show");
+        document.getElementById("pg-card").classList.add("pgshk");
+        setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);
+        setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);
+        document.getElementById("pg-pw").value="";
+      }
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div id="app">
+
+<!-- TITLE SCREEN -->
+<div id="title-screen">
+  <div class="pixel-title">🐟 社会クエスト<br/>日本の水産業</div>
+  <div class="title-sub">中学受験　社会小５上　第２回</div>
+  <span class="hero-sprite">🧙‍♂️</span>
+  <div class="title-info">
+    ✦ 全10問　RPG風クイズ<br/>
+    ✦ 正解すれば次のレベルへ進める！<br/>
+    ✦ 間違えると HPが減るぞ！<br/>
+    ✦ 全問クリアしてSランクを目指せ！
+  </div>
+  <button class="btn btn-primary" onclick="startGame()">
+    ▶　ゲームスタート！
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-item">Lv<span id="level-display">1</span></div>
+    <div class="hud-item">⭐<span id="score-display">0</span></div>
+    <div class="hud-item q-count">Q<span id="q-num">1</span>/10</div>
+    <div class="hp-wrap">
+      <div class="hp-label">HP：<span id="hp-num">5</span>/5</div>
+      <div class="hp-bar-bg"><div class="hp-bar" id="hp-bar" style="width:100%;background:linear-gradient(90deg,#10b981,#059669);"></div></div>
+    </div>
+  </div>
+
+  <!-- BATTLE SCENE -->
+  <div class="battle-scene" id="battle-scene">
+    <div class="battle-scene-bg" id="scene-bg">🗾</div>
+    <div class="battle-flex">
+      <div class="enemy-side">
+        <span class="enemy-sprite" id="enemy-sprite">❓</span>
+        <div class="enemy-name-plate" id="enemy-name">問題モンスター</div>
+      </div>
+      <div class="hero-side">
+        <span class="hero-battle-sprite">🧙‍♂️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGE -->
+  <div class="message-box" id="message-box">
+    「さあ、答えてみせろ！」
+  </div>
+
+  <!-- QUESTION -->
+  <div class="question-box">
+    <div class="question-level" id="q-level">LEVEL 1</div>
+    <div class="question-text" id="question-text"></div>
+  </div>
+
+  <!-- ANSWERS -->
+  <div id="answers-area"></div>
+
+  <!-- FEEDBACK -->
+  <div class="feedback" id="feedback">
+    <div class="feedback-title" id="feedback-title"></div>
+    <div id="feedback-body"></div>
+    <div class="feedback-exp" id="feedback-exp"></div>
+  </div>
+
+  <!-- NEXT -->
+  <button class="btn-next" id="btn-next" onclick="nextQuestion()"></button>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-title" id="result-title">クリア！</div>
+  <div style="font-size:80px;margin:10px 0;" id="result-emoji">🏆</div>
+  <div class="result-score"><span id="final-score">0</span> / 10</div>
+  <div class="result-rank" id="result-rank">S ランク</div>
+  <div class="result-msg" id="result-msg"></div>
+  <div class="exp-section">
+    <div class="exp-label">経験値獲得</div>
+    <div class="exp-bg"><div class="exp-fill" id="exp-fill"></div></div>
+  </div>
+  <div id="levelup-area"></div>
+  <div id="wrong-review"></div>
+  <button class="btn btn-primary" onclick="restart()" style="margin-top:20px;">
+    🔄　もう一度チャレンジ！
+  </button>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    // 難易度3: 数字の正確な把握。1984年という年号と1282万tを両方問う
+    level: 1,
+    enemy: "🐟",
+    enemyName: "漁かくモンスター",
+    bg: "🌊",
+    message: "日本の水産業が世界一だった年と漁かく量を答えよ！",
+    q: "日本の漁かく量が世界一だったのは何年で、そのときの量はおよそいくつ？",
+    choices: [
+      "1974年・約850万t",
+      "1984年・約1282万t",
+      "1994年・約800万t",
+      "1964年・約600万t"
+    ],
+    correct: 1,
+    explanation: "1984年に約1282万tを記録し、世界一になりました。その後はしだいに減り、2023年には約290万tになっています。",
+    hint: "「いちきゅうはちよん（1984）年」に覚えよう。年号と数字をセットで！"
+  },
+  {
+    // 難易度3: 現在の世界一・割合の正確な把握
+    level: 2,
+    enemy: "🌏",
+    enemyName: "世界漁業モンスター",
+    bg: "🗺️",
+    message: "現在、世界で一番漁かく量が多い国はどこじゃ！",
+    q: "2022年の世界の漁かく量（計9229万t）で最も多い国と、その割合の正しい組み合わせは？",
+    choices: [
+      "インドネシア・約14%",
+      "アメリカ・約12%",
+      "中国・約14%",
+      "日本・約10%"
+    ],
+    correct: 2,
+    explanation: "2022年の世界漁かく量は9229万tで、中国が14.3%と最も多く世界一です。日本は3.2%まで落ちています。",
+    hint: "かつて世界一だった日本。今の世界一はアジアの大国…"
+  },
+  {
+    // 難易度3: 漁法と魚のマッチング
+    level: 3,
+    enemy: "🎣",
+    enemyName: "漁法モンスター",
+    bg: "🚢",
+    message: "漁法と魚の組み合わせ、まちがっているのはどれじゃ！",
+    q: "魚と漁法の組み合わせとして誤っているものはどれ？",
+    choices: [
+      "まぐろ → はえなわ漁法",
+      "かつお → 一本づり",
+      "すけとうだら → 底引きあみ漁法",
+      "いわし → はえなわ漁法"
+    ],
+    correct: 3,
+    explanation: "いわしはまきあみ漁法でとります。まぐろははえなわ漁法、かつおは一本づり、すけとうだらは底引きあみ漁法が正解です。",
+    hint: "かつおは1匹ずつ手作業でとる。傷がつかないことが大切な理由…"
+  },
+  {
+    // 難易度4: すけとうだらの加工品まで問う
+    level: 4,
+    enemy: "🦑",
+    enemyName: "加工モンスター",
+    bg: "🏭",
+    message: "すけとうだらの卵と身が何になるか答えよ！",
+    q: "すけとうだらの「卵」と「身」はそれぞれ何に加工されるか、正しい組み合わせは？",
+    choices: [
+      "卵→いくら、身→かまぼこ",
+      "卵→たらこ、身→かまぼこ",
+      "卵→数の子、身→ちくわ",
+      "卵→たらこ、身→刺し身"
+    ],
+    correct: 1,
+    explanation: "すけとうだらの卵はたらこに、身はかまぼこやちくわなどの練り物に加工されます。いくらはさけの卵、数の子はにしんの卵です。",
+    hint: "「すけとうだら」の卵は「たら（子）」…名前の中にヒントがある！"
+  },
+  {
+    // 難易度3: 漁港の特徴マッチング
+    level: 5,
+    enemy: "⚓",
+    enemyName: "漁港モンスター",
+    bg: "🏙️",
+    message: "漁港とその特徴、正しい組み合わせを選べ！",
+    q: "漁港とその説明の組み合わせで正しいものはどれ？",
+    choices: [
+      "焼津港（静岡県）→ かにの水あげで有名",
+      "境港（鳥取県）→ かつお・まぐろの遠洋漁業の基地",
+      "釧路港（北海道）→ すけとうだら・さけ・ますの水あげが多い",
+      "銚子港（千葉県）→ 日本海側の漁港"
+    ],
+    correct: 2,
+    explanation: "釧路港（北海道）はすけとうだら・さけ・ますで有名。かにの水あげは境港（鳥取県）、かつお・まぐろの遠洋漁業の基地は焼津港（静岡県）です。",
+    hint: "北海道の漁港→冷たい海でとれる魚を思い浮かべよう"
+  },
+  {
+    // 難易度4: 3種類の漁業の範囲を正確に区別
+    level: 6,
+    enemy: "🚢",
+    enemyName: "漁業種類モンスター",
+    bg: "🌊",
+    message: "3種類の漁業、その説明として正しいものはどれじゃ！",
+    q: "漁業の種類の説明として正しいものはどれ？",
+    choices: [
+      "沿岸漁業は経済水域（200カイリ）以内でおこなう",
+      "遠洋漁業は領海（12カイリ）以内の小型船で日帰りする",
+      "沖合漁業は経済水域（200カイリ）以内で中型船を使う",
+      "沿岸漁業は数十日かけて遠くの公海でおこなう"
+    ],
+    correct: 2,
+    explanation: "沖合漁業は経済水域（200カイリ）以内で中型の船を使います。沿岸漁業は領海（12カイリ）以内・小型船・日帰り、遠洋漁業は公海や他国のEEZで大型船・数十日〜数か月です。",
+    hint: "3つの距離を整理：12カイリ・200カイリ・公海（どこでも）。中間はどれ？"
+  },
+  {
+    // 難易度4: 遠洋漁業が減った理由を正確に
+    level: 7,
+    enemy: "📉",
+    enemyName: "激減モンスター",
+    bg: "⚙️",
+    message: "遠洋漁業の漁かく量が激減した理由はどれじゃ！",
+    q: "遠洋漁業の漁かく量が減った主な理由として正しいものの組み合わせは？",
+    choices: [
+      "①赤潮の増加　②漁業人口の高齢化",
+      "①1970年代のオイルショックで燃料費が上昇　②各国がEEZを設けて制限",
+      "①地球温暖化で魚が減少　②円高で輸出できなくなった",
+      "①1980年代の不況　②漁船の老朽化"
+    ],
+    correct: 1,
+    explanation: "遠洋漁業が減った主な理由は①1970年代のオイルショックで燃料代が大幅に上昇したこと、②各国が排他的経済水域（EEZ）を設けて外国の漁業を制限したことです。赤潮は沿岸・沖合漁業の問題です。",
+    hint: "沖合漁業が減った理由（赤潮・人口減）と混同しないように。遠洋は「遠くに行けなくなった」理由を考えよう"
+  },
+  {
+    // 難易度4: 養殖と栽培漁業の違いを正確に
+    level: 8,
+    enemy: "🌱",
+    enemyName: "育てるモンスター",
+    bg: "🐠",
+    message: "養殖漁業と栽培漁業の違いを答えよ！",
+    q: "養殖漁業と栽培漁業の説明として正しいものはどれ？",
+    choices: [
+      "養殖漁業は稚魚を自然の海に放流し、成長したらとる",
+      "栽培漁業はいけすで育てて出荷する。えさ代がかかる",
+      "栽培漁業は卵をふ化させた稚魚を放流し、成長したら自然の中でとる",
+      "養殖漁業と栽培漁業はどちらも完全に同じ方法でおこなう"
+    ],
+    correct: 2,
+    explanation: "栽培漁業は卵をふ化させた稚魚を川や海に放流し、成長したら自然の中でとります。えさ代・いけす代がかかりません。養殖漁業はいけすで育てて出荷し、えさ代・いけす代がかかります。",
+    hint: "「放流する」のはどっち？名前に「栽培（育てて自然に返す）」のヒントがある"
+  },
+  {
+    // 難易度4: 魚介類の自給率と輸入先の組み合わせ
+    level: 9,
+    enemy: "📦",
+    enemyName: "輸入モンスター",
+    bg: "🌍",
+    message: "魚介類の自給率と主な輸入先を答えよ！",
+    q: "日本の魚介類の自給率と、主な輸入水産物の組み合わせとして正しいものは？",
+    choices: [
+      "自給率ほぼ100%・主な輸入品はさんまとあじ",
+      "自給率約60%・主な輸入品はさけ・ます・えび・まぐろ",
+      "自給率約30%・主な輸入品はたらとかつお",
+      "自給率約80%・主な輸入品はいわしとさば"
+    ],
+    correct: 1,
+    explanation: "現在の魚介類自給率は約60%（飼料用含む）。主な輸入品はさけ・ます・えび・まぐろです。1980年代はほぼ100%でしたが、漁かく量の減少とともに輸入が増えました。",
+    hint: "自給率が下がった＝輸入が増えた。高級魚・大型魚の輸入が多い…"
+  },
+  {
+    // 難易度4: 「森は海の恋人」の理由まで問う
+    level: 10,
+    enemy: "🌲",
+    enemyName: "環境モンスター",
+    bg: "🌿",
+    message: "最後じゃ！「森は海の恋人」の意味を答えよ！",
+    q: "宮城県の漁師たちが海の上流の山に木を植える活動をおこなう理由として正しいものはどれ？",
+    choices: [
+      "山に木を植えると観光客が増えて収入になるから",
+      "森林の養分が川を通じて海に届きプランクトンが増える。また土砂が海に流れるのを防ぐから",
+      "木を切って漁船の材料にするため",
+      "山の木が海岸線を守り津波の被害を減らすから"
+    ],
+    correct: 1,
+    explanation: "「森は海の恋人」は宮城県の漁師たちの活動で、①森林の養分が水を豊かにしてプランクトンを増やし魚のえさになる、②土砂が海に流れ出すのを防ぐ、という2つの理由があります。",
+    hint: "森と海はどうつながっている？「川」を介して何が運ばれてくるか考えよう"
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let hp = 5;
+let wrongQuestions = [];
+let level = 1;
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('q-num').textContent = currentQ + 1;
+  document.getElementById('level-display').textContent = level;
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('q-level').textContent = `LEVEL ${q.level} ★`.padEnd(12, '　');
+  document.getElementById('question-text').textContent = q.q;
+  document.getElementById('enemy-sprite').textContent = q.enemy;
+  document.getElementById('enemy-name').textContent = q.enemyName;
+  document.getElementById('scene-bg').textContent = q.bg;
+  document.getElementById('message-box').innerHTML = `「${q.message}」<span class="hint">💡 ヒント：${q.hint}</span>`;
+
+  const area = document.getElementById('answers-area');
+  area.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-answer';
+    btn.textContent = `${['Ａ','Ｂ','Ｃ','Ｄ'][i]}　${c}`;
+    btn.onclick = () => answer(i);
+    area.appendChild(btn);
+  });
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  updateHP();
+}
+
+function answer(idx) {
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.btn-answer');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+
+  if (idx === q.correct) {
+    // CORRECT
+    btns[idx].classList.add('correct');
+    score++;
+    level = Math.min(10, Math.floor(score / 2) + 1);
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('level-display').textContent = level;
+
+    fb.classList.add('correct-fb');
+    document.getElementById('feedback-title').textContent = '⚔️ 大ダメージ！　せいかい！';
+    document.getElementById('feedback-body').innerHTML = `<b style="color:#6ee7b7;">${q.choices[q.correct]}</b><br/><br/>${q.explanation}`;
+    document.getElementById('feedback-exp').textContent = `＋10 経験値ゲット！`;
+    document.getElementById('battle-scene').classList.add('flash-correct');
+    setTimeout(() => document.getElementById('battle-scene').classList.remove('flash-correct'), 500);
+    document.getElementById('message-box').innerHTML = '「やるな…！ダメージを受けた！」';
+  } else {
+    // WRONG
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    hp = Math.max(0, hp - 1);
+    updateHP();
+    wrongQuestions.push({ q: q.q, correct: q.choices[q.correct] });
+
+    fb.classList.add('wrong-fb');
+    document.getElementById('feedback-title').textContent = '💥 まちがい！　HPが減った！';
+    document.getElementById('feedback-body').innerHTML = `<b style="color:#fca5a5;">正しい答え：${q.choices[q.correct]}</b><br/><br/>${q.explanation}`;
+    document.getElementById('feedback-exp').textContent = '次は絶対覚えよう！';
+    document.getElementById('battle-scene').classList.add('shake');
+    setTimeout(() => document.getElementById('battle-scene').classList.remove('shake'), 400);
+    document.getElementById('message-box').innerHTML = '「くらえ！HPが減ってしまった…」';
+  }
+
+  fb.style.display = 'block';
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = currentQ < questions.length - 1 ? '▶　次の問題へ' : '🏆　結果を見る！';
+}
+
+function updateHP() {
+  const ratio = hp / 5 * 100;
+  const bar = document.getElementById('hp-bar');
+  bar.style.width = ratio + '%';
+  document.getElementById('hp-num').textContent = hp;
+  if (ratio > 60) bar.style.background = 'linear-gradient(90deg,#10b981,#059669)';
+  else if (ratio > 30) bar.style.background = 'linear-gradient(90deg,#f59e0b,#d97706)';
+  else bar.style.background = 'linear-gradient(90deg,#ef4444,#dc2626)';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('game-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  document.getElementById('final-score').textContent = score;
+
+  let rank, rankClass, emoji, msg;
+  if (score === 10) {
+    rank = '🌟 Ｓランク 🌟'; rankClass = 'rank-s'; emoji = '🏆';
+    msg = '完璧です！全問正解！\n「日本の水産業」マスター達成！\n中学受験本番でも絶対に解けるぞ！';
+  } else if (score >= 8) {
+    rank = '✨ Ａランク ✨'; rankClass = 'rank-a'; emoji = '🥇';
+    msg = `すばらしい！${score}問正解！\nあと少しで完璧！\n間違えた問題を復習しよう。`;
+  } else if (score >= 6) {
+    rank = '⭐ Ｂランク ⭐'; rankClass = 'rank-b'; emoji = '🥈';
+    msg = `${score}問正解！よく頑張った！\n間違えた問題の解説をよく読んで、もう一度チャレンジしよう！`;
+  } else {
+    rank = '💪 Ｃランク 💪'; rankClass = 'rank-c'; emoji = '🔰';
+    msg = `${score}問正解。まだまだ伸びしろあり！\nストーリー教材をもう一度読んでから、再チャレンジしよう！`;
+  }
+
+  document.getElementById('result-title').textContent = score >= 8 ? 'クリア！！' : 'ゲームオーバー…？いや、まだだ！';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-rank').textContent = rank;
+  document.getElementById('result-rank').className = `result-rank ${rankClass}`;
+  document.getElementById('result-msg').textContent = msg;
+
+  if (score === 10) {
+    document.getElementById('levelup-area').innerHTML = '<div class="levelup-badge">🎉 レベルMAX達成！</div>';
+  }
+
+  const expPct = Math.min(100, score * 10);
+  setTimeout(() => {
+    document.getElementById('exp-fill').style.width = expPct + '%';
+  }, 500);
+
+  if (wrongQuestions.length > 0) {
+    let html = '<div class="result-wrong-list"><div style="font-size:13px;color:#6b8aaa;font-family:DotGothic16,sans-serif;margin-bottom:10px;">📝 間違えた問題の復習</div>';
+    wrongQuestions.forEach(w => {
+      html += `<div class="wrong-item"><div class="wrong-q">問：${w.q}</div><div class="wrong-correct">✅ 正解：${w.correct}</div></div>`;
+    });
+    html += '</div>';
+    document.getElementById('wrong-review').innerHTML = html;
+  }
+}
+
+function restart() {
+  currentQ = 0; score = 0; hp = 5; wrongQuestions = []; level = 1;
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('title-screen').style.display = 'block';
+  document.getElementById('exp-fill').style.width = '0%';
+  document.getElementById('levelup-area').innerHTML = '';
+  document.getElementById('wrong-review').innerHTML = '';
+}
+</script>
+</body>
+</html>

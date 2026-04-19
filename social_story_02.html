@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サクトと海の仕事の秘密</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1628;--panel:#111e36;--border:#1e3a5f;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(14,122,186,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(91,200,245,.08) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+/* TITLE */
+.title-screen{text-align:center;padding:40px 20px 30px;border-bottom:1px solid var(--border);margin-bottom:30px;}
+.story-tag{display:inline-block;background:var(--ocean);color:#fff;font-size:11px;font-weight:700;
+  letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(22px,5vw,36px);
+  font-weight:900;line-height:1.3;color:var(--gold);text-shadow:0 0 30px rgba(255,209,102,.4);margin-bottom:10px;}
+
+/* CHAPTER */
+.chapter{margin-bottom:36px;}
+.chapter-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;
+  background:linear-gradient(90deg,var(--ocean),transparent);border-radius:10px;border-left:4px solid var(--sky);}
+.chapter-num{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--sky);}
+.chapter-title{font-size:18px;font-weight:900;color:#fff;}
+.chapter-icon{font-size:24px;}
+
+/* SCENE */
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+
+/* DIALOGUE */
+.dialogue{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;border:2px solid;overflow:hidden;}
+.avatar.sakuto{background:rgba(91,200,245,.15);border-color:var(--sky);}
+.avatar.gorilla{background:rgba(255,209,102,.15);border-color:var(--gold);}
+.av-svg{width:60px;height:60px;}
+
+.bubble-wrap{flex:1;}
+.bubble-name{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.bubble-name.sakuto{color:var(--sky);}
+.bubble-name.gorilla{color:var(--gold);}
+.bubble{background:rgba(255,255,255,.05);border-radius:0 14px 14px 14px;
+  padding:12px 16px;font-size:14px;line-height:1.7;border:1px solid rgba(255,255,255,.08);}
+.bubble.sakuto{border-left:3px solid var(--sky);}
+.bubble.gorilla{border-left:3px solid var(--gold);}
+
+/* BOXES */
+.knowledge{background:linear-gradient(135deg,rgba(14,122,186,.2),rgba(14,122,186,.05));
+  border:1px solid rgba(91,200,245,.3);border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13px;}
+.knowledge-title{font-size:12px;font-weight:900;color:var(--sky);letter-spacing:1px;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.knowledge ul{padding-left:16px;}
+.knowledge li{margin-bottom:5px;line-height:1.6;}
+.knowledge b{color:#fff;}
+.memo{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.3);
+  border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;}
+.memo-title{font-size:12px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+.danger{background:rgba(239,71,111,.08);border:1px solid rgba(239,71,111,.3);
+  border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;}
+.danger-title{font-size:12px;font-weight:900;color:var(--coral);margin-bottom:6px;}
+
+/* MAP / GRAPHIC WRAPPER */
+.map-wrap{background:rgba(5,20,45,.9);border:1px solid rgba(91,200,245,.25);
+  border-radius:14px;padding:12px;margin:14px 0;overflow:hidden;}
+.map-title{font-size:12px;font-weight:700;color:var(--sky);letter-spacing:1px;
+  margin-bottom:8px;text-align:center;}
+.map-wrap svg{width:100%;display:block;margin:0 auto;}
+
+/* FISHING METHOD CARDS */
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.method-card{background:#0e1e38;border:1px solid var(--border);border-radius:12px;
+  padding:12px 14px;font-size:12px;line-height:1.7;}
+.method-card .m-title{font-weight:900;font-size:13px;color:var(--sky);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.method-card .m-fish{color:var(--gold);font-size:11px;margin-bottom:4px;}
+.method-card .m-desc{color:#c8d8f0;}
+
+/* FISHERY TYPE CARDS */
+.fishery-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;}
+.fishery-card{background:#0e1e38;border:1px solid var(--border);border-radius:12px;
+  padding:12px;text-align:center;font-size:12px;}
+.fishery-card .f-icon{font-size:28px;display:block;margin-bottom:6px;}
+.fishery-card .f-name{font-weight:900;font-size:13px;margin-bottom:4px;}
+.fishery-card.coastal .f-name{color:#5bc8f5;}
+.fishery-card.offshore .f-name{color:#06d6a0;}
+.fishery-card.deep .f-name{color:#ffd166;}
+.fishery-card .f-range{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.fishery-card .f-fish{font-size:11px;color:#c8d8f0;line-height:1.5;}
+
+/*育てる漁業 */
+.sodateru-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.sodateru-card{background:#0a2010;border:1px solid #1a4a28;border-radius:12px;
+  padding:12px 14px;font-size:12px;line-height:1.7;}
+.sodateru-card .s-title{font-weight:900;font-size:13px;color:#06d6a0;margin-bottom:6px;}
+.sodateru-card .s-desc{color:#b0e8c0;}
+.sodateru-card .s-note{font-size:11px;color:var(--muted);margin-top:6px;}
+
+/* BAR CHART for catch amounts */
+.bar-section{padding:8px 4px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-label{width:90px;flex-shrink:0;font-size:11px;color:#ccc;text-align:right;line-height:1.3;}
+.bar-outer{flex:1;display:flex;align-items:center;gap:8px;}
+.bar-bg{flex:1;height:24px;background:rgba(255,255,255,.05);border-radius:5px;
+  overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:5px;}
+.bar-val{font-size:11px;font-weight:700;white-space:nowrap;min-width:38px;color:var(--sky);}
+
+/* NARRATIVE / SUMMARY */
+.narrative{font-size:14px;color:#bcd8f0;font-style:italic;padding:10px 0;line-height:1.8;}
+.summary-box{background:#0d2a1e;
+  border:2px solid rgba(6,214,160,.5);border-radius:16px;padding:20px;margin-top:30px;}
+.summary-title{font-size:16px;font-weight:900;color:#06d6a0;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sum-item{background:#0a1f16;border:1px solid #1a4a32;border-radius:10px;padding:12px 14px;
+  font-size:12px;line-height:1.8;color:#d0f0e0;}
+.sum-item strong{color:#ffd166;display:block;margin-bottom:6px;font-size:13px;}
+
+em{color:var(--gold);font-style:normal;font-weight:700;}
+.footer{text-align:center;padding:30px;color:var(--border);font-size:11px;letter-spacing:1px;}
+
+@media(max-width:600px){
+  .summary-grid{grid-template-columns:1fr;}
+  .method-grid{grid-template-columns:1fr;}
+  .fishery-grid{grid-template-columns:1fr;}
+  .sodateru-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">&#x1F3D4;&#xFE0F;</span>
+<div class="pg-title">&#x4E2D;&#x5B66;&#x53D7;&#x9A13;&#x3078;&#x306E;&#x9053;</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">&#x1F511; &#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x306D;</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">&#x25B6;</button>
+</div>
+<div class="pg-err" id="pg-err">&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x304C;&#x3061;&#x304C;&#x3046;&#x3088;&#xFF01;</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    var enc=new TextEncoder();
+    crypto.subtle.digest("SHA-256",enc.encode(v)).then(function(buf){
+      if(hex(buf)===H){
+        sessionStorage.setItem(SK,"1");
+        document.getElementById("pw-gate").classList.add("hidden");
+      } else {
+        document.getElementById("pg-err").classList.add("show");
+        document.getElementById("pg-card").classList.add("pgshk");
+        setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);
+        setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);
+        document.getElementById("pg-pw").value="";
+      }
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="container">
+
+<!-- SHARED SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- SAKUTO: twin brother of Ousuke. Same face, hair slightly spiked up -->
+    <symbol id="av-sakuto" viewBox="0 0 60 60">
+      <!-- body — navy like Ousuke but slightly different shade -->
+      <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a5a9f"/>
+      <!-- neck -->
+      <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+      <!-- head -->
+      <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+      <!-- black hair — same color but spiked up (different path) -->
+      <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+      <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+      <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+      <!-- spiked fringe (different from Ousuke's flat fringe) -->
+      <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+      <!-- eyes -->
+      <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+      <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+      <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+      <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+      <!-- eyebrows — slightly more raised/angled than Ousuke -->
+      <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- nose -->
+      <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+      <!-- slightly wider smile -->
+      <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- cheeks -->
+      <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+      <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+      <!-- ears -->
+      <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+      <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    </symbol>
+
+    <!-- GORILLA MACHO (same as v4) -->
+    <symbol id="av-gorilla" viewBox="0 0 60 60">
+      <rect x="6" y="40" width="48" height="20" rx="9" fill="#3a2510"/>
+      <ellipse cx="20" cy="45" rx="11" ry="8" fill="#472e18"/>
+      <ellipse cx="40" cy="45" rx="11" ry="8" fill="#472e18"/>
+      <line x1="30" y1="39" x2="30" y2="59" stroke="#251508" stroke-width="2"/>
+      <ellipse cx="30" cy="25" rx="20" ry="21" fill="#3a2510"/>
+      <ellipse cx="30" cy="12" rx="17" ry="7" fill="#251508"/>
+      <ellipse cx="9" cy="26" rx="6" ry="7" fill="#3a2510"/>
+      <ellipse cx="51" cy="26" rx="6" ry="7" fill="#3a2510"/>
+      <ellipse cx="30" cy="30" rx="14" ry="13" fill="#5a3c22"/>
+      <ellipse cx="22" cy="22" rx="4" ry="3.5" fill="#0f0800"/>
+      <ellipse cx="38" cy="22" rx="4" ry="3.5" fill="#0f0800"/>
+      <circle cx="23" cy="21" r="1.2" fill="#fff" opacity=".65"/>
+      <circle cx="39" cy="21" r="1.2" fill="#fff" opacity=".65"/>
+      <ellipse cx="30" cy="29" rx="6" ry="4.5" fill="#251508"/>
+      <ellipse cx="26.5" cy="30" rx="2.2" ry="1.8" fill="#0f0800"/>
+      <ellipse cx="33.5" cy="30" rx="2.2" ry="1.8" fill="#0f0800"/>
+      <path d="M20,36 Q30,43 40,36" fill="none" stroke="#0f0800" stroke-width="2.2" stroke-linecap="round"/>
+      <rect x="24" y="36" width="12" height="4" rx="2" fill="#f5f0e0"/>
+      <path d="M11,15 Q30,8 49,15" fill="none" stroke="#d4a000" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+      <text x="30" y="18" text-anchor="middle" font-size="5" fill="#7a5800" font-weight="bold">ゴリ</text>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- TITLE -->
+<div class="title-screen">
+  <div class="story-tag">📖 ストーリー教材（小５上）第２回</div>
+  <div class="story-title">🐟 サクトと海の仕事の秘密</div>
+</div>
+
+<!-- =========================================
+     CHAPTER 1: 日本の水産業の歴史
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🏆</span>
+    <div><div class="chapter-num">CHAPTER 1</div><div class="chapter-title">かつて世界一だった！日本の水産業</div></div>
+  </div>
+  <div class="scene">
+    <p class="narrative">夏休み、サクトはオウスケと一緒にゴリマッチョおじさんの家に遊びに行った。おじさんの家には、大きな魚の写真や古い漁網が飾ってあった。</p>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">おじさん、日本って昔から魚をたくさん食べてたんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">そうじゃ！日本は四方を海に囲まれた島国じゃから、昔から魚介類でタンパク質をとってきたんじゃ。しかも<em>1984年には漁かく量1282万t</em>で<em>世界一</em>を記録したほどじゃ！</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">世界一！？今もそうなんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">残念ながら、その後はしだいに減っていって、<em>2023年は約290万t</em>ほどになっておる。今、世界一の漁かく量をあげているのは<em>中国</em>じゃ。ちなみに今のお正月に食べるおせち料理を考えてみなさい。たい・こんぶ・えび・数の子…ほとんどが魚介類じゃろう？</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">📋 日本の水産業　基本データ</div>
+      <ul>
+        <li>日本は<b>四方を海に囲まれた島国</b>→ 昔から魚介類でタンパク質をとってきた</li>
+        <li>最盛期：<b>1984年に1282万t</b>を記録（世界一）</li>
+        <li>2023年：<b>約290万t</b>まで減少</li>
+        <li>現在の世界一：<b>中国（14.3%）</b>（2022年、全世界9229万t）</li>
+        <li>日本の現在の漁かく量は世界の約<b>3.2%</b></li>
+      </ul>
+    </div>
+
+    <!-- 世界の漁かく量グラフ -->
+    <div class="map-wrap">
+      <div class="map-title">🌍 世界の漁かく量の割合（2022年　計9229万t）</div>
+      <div class="bar-section" style="padding:10px 8px;">
+        <div class="bar-row">
+          <div class="bar-label">中国</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#ef4444,#b91c1c);"></div></div>
+            <span class="bar-val">14.3%</span>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">インドネシア</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:56%;background:linear-gradient(90deg,#f97316,#c2410c);"></div></div>
+            <span class="bar-val">8.0%</span>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">インド</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:42%;background:linear-gradient(90deg,#eab308,#a16207);"></div></div>
+            <span class="bar-val">6.0%</span>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">ペルー</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:41%;background:linear-gradient(90deg,#84cc16,#4d7c0f);"></div></div>
+            <span class="bar-val">5.8%</span>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">ロシア</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:38%;background:linear-gradient(90deg,#22c55e,#15803d);"></div></div>
+            <span class="bar-val">5.4%</span>
+          </div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">日本</div>
+          <div class="bar-outer">
+            <div class="bar-bg"><div class="bar-fill" style="width:22%;background:linear-gradient(90deg,#5bc8f5,#1a6b9a);"></div></div>
+            <span class="bar-val">3.2%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 2: 主な魚と漁法
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🎣</span>
+    <div><div class="chapter-num">CHAPTER 2</div><div class="chapter-title">どうやって魚をとる？　漁法の秘密</div></div>
+  </div>
+  <div class="scene">
+    <p class="narrative">おじさんは壁の大きな絵を指さしながら、漁法の話を始めた。</p>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">魚によって、とり方がまったく違うんじゃよ。まず日本で一番たくさんとれる魚は何だと思う？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">まぐろ！……じゃないのかな？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">惜しい！漁かく量1・2位を争うのは<em>いわしとさば</em>じゃ。近海で群れをつくって泳いでいるから一網打尽にできる<em>まきあみ漁法</em>が使われるんじゃ。まぐろは大型の魚じゃから<em>はえなわ漁法</em>、かつおは<em>一本づり</em>でとるんじゃよ。</div>
+      </div>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="m-title">🌀 まきあみ漁法</div>
+        <div class="m-fish">対象魚：いわし・さば</div>
+        <div class="m-desc">魚の群れのまわりに網を入れ、取り囲んだあとに網をしぼって魚をとる</div>
+      </div>
+      <div class="method-card">
+        <div class="m-title">🪝 はえなわ漁法</div>
+        <div class="m-fish">対象魚：まぐろ</div>
+        <div class="m-desc">長い縄に多くのつり針をつけ、水中に沈めて大型の魚をとる</div>
+      </div>
+      <div class="method-card">
+        <div class="m-title">🎣 一本づり</div>
+        <div class="m-fish">対象魚：かつお</div>
+        <div class="m-desc">1本の竿と針でかつおを1匹ずつ手作業でとる。傷がつかない利点がある</div>
+      </div>
+      <div class="method-card">
+        <div class="m-title">🔻 底引きあみ漁法</div>
+        <div class="m-fish">対象魚：すけとうだら</div>
+        <div class="m-desc">網を船で引きずり、海底付近を泳ぐ魚をとる。卵はたらこ、身はかまぼこに</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 3: 漁場と漁港
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">⚓</span>
+    <div><div class="chapter-num">CHAPTER 3</div><div class="chapter-title">魚が集まる場所と日本の漁港</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">魚って海のどこにでもいるんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">いい質問じゃ！魚が集まる場所は決まっているんじゃ。まず<em>大陸だな</em>という海底が浅い地帯（水深200mまで）は海草がよく育ち、よい漁場になる。それから第１回で習った<em>潮目（暖流と寒流がぶつかる場所）</em>にも魚が大量に集まるんじゃ。わかる？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">あ、オウスケから聞いた！暖流と寒流がぶつかるところにプランクトンが集まって、そこに魚が来るやつですよね！</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">そうじゃ、よく覚えておったな！八戸港・石巻港あたりが潮目の近くで、よい漁場なんじゃ。主な漁港も覚えておくといいぞ！</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">⚓ 日本の主な漁港（5つ）</div>
+      <ul>
+        <li>🏭 <b>銚子港（千葉県）</b>…さば・いわしなど中型魚。沖合漁業の基地</li>
+        <li>🏭 <b>焼津港（静岡県）</b>…かつお・まぐろ。遠洋漁業の基地</li>
+        <li>🏭 <b>境港（鳥取県）</b>…日本海側の漁港。<b>かに</b>の水あげで有名</li>
+        <li>🏭 <b>釧路港（北海道）</b>…すけとうだら・さけ・ます</li>
+        <li>🏭 <b>八戸港（青森県）・石巻港（宮城県）</b>…潮目の近く。いかの水あげ（八戸）が有名</li>
+      </ul>
+    </div>
+
+    <!-- 漁場・漁港マップ -->
+    <div class="map-wrap">
+      <div class="map-title">🗺️ 日本の主な漁港と漁場</div>
+      <svg viewBox="0 0 680 460" xmlns="http://www.w3.org/2000/svg">
+        <rect width="680" height="460" fill="#071c38"/>
+
+        <!-- Sea labels -->
+        <text x="118" y="185" fill="#5bc8f5" font-size="12" font-family="sans-serif" opacity=".8" font-weight="bold">日本海</text>
+        <text x="470" y="235" fill="#5bc8f5" font-size="13" font-family="sans-serif" opacity=".8" font-weight="bold">太　平　洋</text>
+        <text x="400" y="78"  fill="#5bc8f5" font-size="10" font-family="sans-serif" opacity=".75">オホーツク海</text>
+
+        <!-- Japan landmass (12:4:2:1) -->
+        <!-- Honshu -->
+        <path d="M282,168 C300,148 330,138 362,140 C394,142 422,156 436,174 C450,192 450,218 438,238 C426,258 404,272 378,280 C352,288 322,286 298,274 C272,262 254,240 252,216 C250,192 264,186 282,168Z" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.5"/>
+        <path d="M252,218 C242,230 228,240 212,242 C196,244 184,234 186,222 C188,210 202,204 216,208 C230,212 244,216 252,218Z" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.2"/>
+        <!-- Hokkaido -->
+        <path d="M394,88 C408,78 430,78 448,88 C462,98 468,116 460,130 C452,144 434,150 414,146 C394,142 380,128 378,114 C376,100 382,96 394,88Z" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.5"/>
+        <!-- Kyushu -->
+        <path d="M208,256 C220,248 236,248 246,258 C254,268 250,286 238,292 C226,298 210,290 204,278 C198,266 198,262 208,256Z" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.5"/>
+        <!-- Shikoku -->
+        <path d="M272,282 C282,274 298,274 306,284 C312,292 308,306 296,310 C284,314 270,306 266,296 C262,286 264,288 272,282Z" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.2"/>
+        <!-- Ryukyu -->
+        <line x1="206" y1="294" x2="148" y2="360" stroke="#4aaa5a" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <circle cx="158" cy="346" r="5" fill="#2d5e3a" stroke="#4aaa5a" stroke-width="1.2"/>
+
+        <!-- 潮目 area -->
+        <ellipse cx="435" cy="230" rx="28" ry="22" fill="rgba(255,255,200,.08)" stroke="#ffd166" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <text x="466" y="224" fill="#ffd166" font-size="10" font-family="sans-serif" font-weight="bold">🐟 潮目</text>
+        <text x="466" y="237" fill="#ffd166" font-size="9" font-family="sans-serif">よい漁場！</text>
+
+        <!-- ★ FISHING PORTS ★ -->
+        <!-- 釧路 -->
+        <circle cx="482" cy="118" r="8" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="494" y="113" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">釧路港</text>
+        <text x="494" y="125" fill="#f0c080" font-size="9" font-family="sans-serif">（北海道）</text>
+        <!-- 八戸 -->
+        <circle cx="432" cy="162" r="8" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="444" y="157" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">八戸港</text>
+        <text x="444" y="169" fill="#f0c080" font-size="9" font-family="sans-serif">（青森県）</text>
+        <!-- 石巻 -->
+        <circle cx="420" cy="194" r="7" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="432" y="189" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">石巻港</text>
+        <text x="432" y="201" fill="#f0c080" font-size="9" font-family="sans-serif">（宮城県）</text>
+        <!-- 銚子 -->
+        <circle cx="424" cy="248" r="8" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="436" y="243" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">銚子港</text>
+        <text x="436" y="255" fill="#f0c080" font-size="9" font-family="sans-serif">（千葉県）</text>
+        <!-- 焼津 -->
+        <circle cx="378" cy="274" r="8" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="310" y="282" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">焼津港</text>
+        <text x="314" y="294" fill="#f0c080" font-size="9" font-family="sans-serif">（静岡県）</text>
+        <line x1="372" y1="278" x2="348" y2="284" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2"/>
+        <!-- 境港 -->
+        <circle cx="242" cy="232" r="8" fill="#f97316" stroke="white" stroke-width="1.5"/>
+        <text x="176" y="224" fill="white" font-size="10" font-family="sans-serif" font-weight="bold">境港</text>
+        <text x="166" y="236" fill="#f0c080" font-size="9" font-family="sans-serif">（鳥取県）</text>
+        <line x1="242" y1="234" x2="216" y2="234" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 4: 漁業の種類
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🚢</span>
+    <div><div class="chapter-num">CHAPTER 4</div><div class="chapter-title">3種類の漁業　どこでとるかで変わる</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">漁業は、どこの海でとるかによって3種類に分けられるんじゃ。どんな分け方だと思う？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">近くの海か、遠くの海かで違うとか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">その通り！大まかには<em>沿岸漁業・沖合漁業・遠洋漁業</em>の3つじゃ。距離と船の大きさで全然違うんじゃよ。</div>
+      </div>
+    </div>
+
+    <div class="fishery-grid">
+      <div class="fishery-card coastal">
+        <span class="f-icon">🛶</span>
+        <div class="f-name">沿岸漁業</div>
+        <div class="f-range">領海（12カイリ）以内<br/>小型の船・<b>日帰り</b></div>
+        <div class="f-fish" style="margin:6px 0;">あじ・たら・たい・さばなど</div>
+        <div style="font-size:11px;color:#ef9090;background:rgba(239,71,111,.12);border-radius:8px;padding:6px 8px;margin-top:6px;line-height:1.6;">
+          😞 <b>悩み</b><br/>赤潮やヘドロで魚が減少。漁かく量が少なく収入も低い
+        </div>
+      </div>
+      <div class="fishery-card offshore">
+        <span class="f-icon">🚤</span>
+        <div class="f-name">沖合漁業</div>
+        <div class="f-range">経済水域（200カイリ）以内<br/>中型の船・<b>数日</b></div>
+        <div class="f-fish" style="margin:6px 0;">いわし・さんま・さば・かれい・すけとうだらなど</div>
+        <div style="font-size:11px;color:#ef9090;background:rgba(239,71,111,.12);border-radius:8px;padding:6px 8px;margin-top:6px;line-height:1.6;">
+          😞 <b>悩み</b><br/>海水温の変化や漁業人口の減少で、漁かく量は<b>1980年代ピークの半分以下</b>に
+        </div>
+      </div>
+      <div class="fishery-card deep">
+        <span class="f-icon">🚢</span>
+        <div class="f-name">遠洋漁業</div>
+        <div class="f-range">公海・他国の経済水域<br/>大型の船・<b>数十日〜数か月</b></div>
+        <div class="f-fish" style="margin:6px 0;">まぐろ・かつおなど大型魚</div>
+        <div style="font-size:11px;color:#ef9090;background:rgba(239,71,111,.12);border-radius:8px;padding:6px 8px;margin-top:6px;line-height:1.6;">
+          😞 <b>悩み</b><br/>かつて最も多かったが<b>1970年代のオイルショック</b>以降、燃料費高騰と各国のEEZ設定で激減
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 5: 育てる漁業
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🌱</span>
+    <div><div class="chapter-num">CHAPTER 5</div><div class="chapter-title">「とる」から「育てる」漁業へ</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">魚がどんどん減っているなら、もう魚は食べられなくなっちゃうんですか…？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">そこで生まれたのが「<em>育てる漁業</em>」という考え方じゃ。天然の魚に頼るだけでなく、自分たちで魚を育ててしまおうということじゃな。大きく２種類あるんじゃが、わかるか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">いけすで育てるやつ…？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">それが<em>養殖漁業</em>じゃ。卵からかえして（ふ化）いけすの中で成長するまで育てる。もうひとつが<em>栽培漁業</em>で、卵をふ化させた後に稚魚を川や海に放流して、成長したら自然の海でとるんじゃ。養殖とは違って、えさ代やいけす代があまりかからないのが利点じゃな。</div>
+      </div>
+    </div>
+
+    <div class="sodateru-grid">
+      <div class="sodateru-card">
+        <div class="s-title">🐟 養殖漁業</div>
+        <div class="s-desc">卵からふ化させ、<b>いけすの中で育てて</b>出荷する。自分で管理するぶん安定した供給ができる。</div>
+        <div class="s-note">⚠️ えさ代・いけす代がかかる。赤潮の発生原因にもなる懸念あり。</div>
+      </div>
+      <div class="sodateru-card">
+        <div class="s-title">🌊 栽培漁業</div>
+        <div class="s-desc">卵をふ化させたあと、魚の子ども（<b>稚魚</b>）を川や海に放流。成長したら自然の中でとる。</div>
+        <div class="s-note">✅ えさ代・いけす代があまりかからない利点がある。</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">🌿 「森は海の恋人」〜持続可能な漁業</div>
+      <ul>
+        <li>クロマグロの<b>完全養殖</b>：2002年に近畿大学が成功し、商品化も進んでいる</li>
+        <li>宮城県では<b>かき養殖</b>の漁師たちが海に流れ込む川の上流に木を植える活動をおこなっている</li>
+        <li>理由：①森林の養分が水を豊かにしてプランクトンを増やす　②土砂が海に流れ出すのを防ぐ</li>
+        <li>2013年、<b>「和食」がユネスコの無形文化遺産</b>に登録。すし・うなぎが代表的だが、原材料のクロマグロ・ニホンウナギは乱かくで絶滅の恐れがある</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 6: 水産業の課題
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">📉</span>
+    <div><div class="chapter-num">CHAPTER 6</div><div class="chapter-title">水産業がかかえる課題</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">最後に、水産業が今どんな問題を抱えているか話しておこう。まず魚の自給率じゃが、1980年代ごろはほぼ<em>100%</em>だったのが、今は<em>約60%</em>（飼料用を含む）まで落ちておる。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">じゃあ今は魚を外国から買っているんですね。どこから？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">日本が多く輸入しているのは<em>さけ・ます・えび・まぐろ</em>じゃ。輸入先は中国・チリ・ロシア・アメリカ・ノルウェー・ベトナムなどじゃ。それからもうひとつ大きな問題がある。漁業で働く人が激減して、高齢化も進んでいるんじゃよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">どれくらい減ったんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar gorilla"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-gorilla"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name gorilla">ゴリマッチョおじさん</div>
+        <div class="bubble gorilla">1980年代に<em>40万人を超えていた漁業人口</em>が、今は<em>約13万人</em>ほどになってしまった。農業・林業と同じように、水産業でも高齢化が急速に進んでいるんじゃ。</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">📊 水産業の課題まとめ</div>
+      <ul>
+        <li>魚介類の<b>自給率：約60%</b>（1980年代はほぼ100%）</li>
+        <li>主な輸入水産物：<b>さけ・ます・えび・まぐろ</b></li>
+        <li>主な輸入先：<b>中国・チリ・ロシア・アメリカ・ノルウェー</b>など</li>
+        <li>漁業人口：<b>40万人超→約13万人</b>に激減、高齢化も進行中</li>
+        <li>えびの養殖と<b>マングローブ林の破壊</b>（東南アジア）という環境問題も</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <div class="summary-title">📝 まとめ　サクトが学んだこと</div>
+  <div class="summary-grid">
+    <div class="sum-item"><strong>🏆 かつて世界一</strong>1984年に1282万tで世界一。2023年は約290万t。今の世界一は中国</div>
+    <div class="sum-item"><strong>🎣 魚と漁法</strong>いわし・さば→まきあみ、まぐろ→はえなわ、かつお→一本づり、すけとうだら→底引き</div>
+    <div class="sum-item"><strong>⚓ 漁場と漁港</strong>潮目・大陸だなが好漁場。銚子・焼津・境・釧路・八戸/石巻が主要漁港</div>
+    <div class="sum-item"><strong>🚢 3種類の漁業</strong>沿岸（12カイリ内）・沖合（200カイリ内）・遠洋（公海・他国EEZ）</div>
+    <div class="sum-item"><strong>🌱 育てる漁業</strong>養殖漁業（いけすで育てる）・栽培漁業（稚魚を放流）</div>
+    <div class="sum-item"><strong>📉 課題</strong>自給率約60%・輸入増加・漁業人口40万→13万・高齢化</div>
+  </div>
+</div>
+
+<div class="footer">✦ 「日本の水産業」ストーリー教材（小５上）第２回　中学受験　社会・地理 ✦</div>
+</div>
+</body>
+</html>
