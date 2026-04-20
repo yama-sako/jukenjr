@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>オウスケと資源と電気の謎</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1220;--panel:#111828;--border:#1e3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--red:#ff6b6b;
+  --orange:#ff9f43;--purple:#a29bfe;
+  --text:#e8f4fd;--muted:#7aaec8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(14,122,186,.1) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(255,159,67,.06) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+.title-screen{text-align:center;padding:40px 20px 30px;border-bottom:2px solid #2a5080;margin-bottom:30px;}
+.story-tag{display:inline-block;background:#1a6bbf;color:#fff;font-size:11px;font-weight:700;
+  letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(22px,5vw,36px);
+  font-weight:900;line-height:1.3;color:#ffd166;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 30px rgba(255,209,102,.4);margin-bottom:10px;}
+
+.chapter{margin-bottom:36px;}
+.chapter-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;
+  background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));
+  border-radius:10px;border-left:4px solid #5bc8f5;
+  box-shadow:inset 0 1px 0 rgba(91,200,245,.2);}
+.chapter-header.jiji{background:linear-gradient(90deg,#5a1a2a,rgba(239,71,111,.15));border-left-color:#ef476f;}
+.chapter-num{font-size:11px;font-weight:900;letter-spacing:2px;color:#90d8ff;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);}
+.chapter-header.jiji .chapter-num{color:#ff9aaa;}
+.chapter-title{font-size:18px;font-weight:900;color:#ffffff;
+  text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.chapter-icon{font-size:24px;}
+
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+
+.dialogue{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;border:2px solid;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;}
+.avatar.ousuke{background:rgba(6,214,160,.15);border-color:var(--green);}
+.avatar.sakuto{background:rgba(91,200,245,.15);border-color:var(--sky);}
+.avatar.kariwa{background:rgba(162,155,254,.15);border-color:var(--purple);}
+.avatar.yuri{background:rgba(255,159,67,.15);border-color:var(--orange);}
+.avatar.morio{background:rgba(52,211,153,.15);border-color:#34d399;}
+.av-svg{width:60px;height:60px;}
+
+.bubble-wrap{flex:1;}
+.bubble-name{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.bubble-name.ousuke{color:var(--green);}
+.bubble-name.sakuto{color:var(--sky);}
+.bubble-name.kariwa{color:var(--purple);}
+.bubble-name.yuri{color:var(--orange);}
+.bubble-name.morio{color:#34d399;}
+.bubble{background:rgba(255,255,255,.05);border-radius:0 14px 14px 14px;
+  padding:12px 16px;font-size:14px;line-height:1.7;border:1px solid rgba(255,255,255,.08);}
+.bubble.ousuke{border-left:3px solid var(--green);}
+.bubble.sakuto{border-left:3px solid var(--sky);}
+.bubble.kariwa{border-left:3px solid var(--purple);}
+.bubble.yuri{border-left:3px solid var(--orange);}
+.bubble.morio{border-left:3px solid #34d399;}
+
+/* MARKER highlight */
+.marker{background:rgba(255,220,50,.25);border-radius:3px;padding:1px 4px;
+  border-bottom:2px solid #ffd700;font-weight:700;color:#fff;}
+
+.knowledge{background:linear-gradient(135deg,rgba(14,122,186,.2),rgba(14,122,186,.05));
+  border:1px solid rgba(91,200,245,.3);border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13px;}
+.knowledge-title{font-size:12px;font-weight:900;color:var(--sky);letter-spacing:1px;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.knowledge ul{padding-left:16px;}
+.knowledge li{margin-bottom:5px;line-height:1.6;}
+.knowledge b{color:#fff;}
+
+.memo{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.3);
+  border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;}
+.memo-title{font-size:12px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+
+.danger{background:rgba(239,71,111,.08);border:1px solid rgba(239,71,111,.3);
+  border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;}
+.danger-title{font-size:12px;font-weight:900;color:var(--coral);margin-bottom:6px;}
+
+.jiji-box{background:rgba(239,71,111,.06);border:2px solid rgba(239,71,111,.4);
+  border-radius:14px;padding:16px;margin:14px 0;font-size:13px;}
+.jiji-title{font-size:13px;font-weight:900;color:var(--coral);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;}
+
+.map-wrap{background:rgba(5,15,35,.9);border:1px solid rgba(91,200,245,.25);
+  border-radius:14px;padding:12px;margin:14px 0;overflow:hidden;}
+.map-title{font-size:12px;font-weight:700;color:var(--sky);letter-spacing:1px;
+  margin-bottom:8px;text-align:center;}
+.map-wrap svg{width:100%;display:block;margin:0 auto;}
+
+.power-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+@media(max-width:500px){.power-grid{grid-template-columns:1fr;}}
+.power-card{background:#0a1828;border:1px solid var(--border);border-radius:12px;
+  padding:14px;font-size:12px;line-height:1.7;}
+.power-card .pc-title{font-weight:900;font-size:13px;margin-bottom:6px;}
+.power-card .pc-good{color:#6ee7b7;margin-bottom:4px;}
+.power-card .pc-bad{color:#fca5a5;}
+
+.bar-section{padding:8px 4px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-label{width:100px;flex-shrink:0;font-size:11px;color:#ccc;text-align:right;line-height:1.3;}
+.bar-outer{flex:1;display:flex;align-items:center;gap:8px;}
+.bar-bg{flex:1;height:24px;background:rgba(255,255,255,.05);border-radius:5px;
+  overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:5px;}
+.bar-val{font-size:11px;font-weight:700;white-space:nowrap;min-width:42px;color:var(--sky);}
+
+.narrative{font-size:14px;color:#bcd8f0;font-style:italic;padding:10px 0;line-height:1.8;}
+
+.summary-box{background:#0d2a1e;border:2px solid rgba(6,214,160,.5);border-radius:16px;
+  padding:20px;margin-top:30px;}
+.summary-title{font-size:16px;font-weight:900;color:#06d6a0;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sum-item{background:#0a1f16;border:1px solid #1a4a32;border-radius:10px;padding:12px 14px;
+  font-size:12px;line-height:1.8;color:#d0f0e0;}
+.sum-item strong{color:#ffd166;display:block;margin-bottom:6px;font-size:13px;}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr;}}
+
+em{color:var(--gold);font-style:normal;font-weight:700;}
+.footer{text-align:center;padding:30px;color:var(--border);font-size:11px;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">&#x1F3D4;&#xFE0F;</span>
+<div class="pg-title">&#x4E2D;&#x5B66;&#x53D7;&#x9A13;&#x3078;&#x306E;&#x9053;</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">&#x1F511; &#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x306D;</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">&#x25B6;</button>
+</div>
+<div class="pg-err" id="pg-err">&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x304C;&#x3061;&#x304C;&#x3046;&#x3088;&#xFF01;</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="container">
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <!-- OUSUKE -->
+  <symbol id="av-ousuke" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a6bbf"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- SAKUTO -->
+  <symbol id="av-sakuto" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a5a9f"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- YURI: same-age girl, brown hair, ribbon -->
+  <symbol id="av-yuri" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#c04080"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f5c8a0"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f5c8a0"/>
+    <!-- brown hair -->
+    <ellipse cx="30" cy="13" rx="17" ry="10" fill="#5a2808"/>
+    <ellipse cx="12" cy="22" rx="5" ry="10" fill="#5a2808"/>
+    <ellipse cx="48" cy="22" rx="5" ry="10" fill="#5a2808"/>
+    <!-- long hair sides -->
+    <path d="M12,30 Q10,44 16,50" stroke="#5a2808" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M48,30 Q50,44 44,50" stroke="#5a2808" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- fringe -->
+    <path d="M14,18 Q20,12 30,12 Q40,12 46,18 Q38,15 30,16 Q22,15 14,18Z" fill="#5a2808"/>
+    <!-- ribbon -->
+    <path d="M24,10 Q26,6 30,8 Q34,6 36,10 Q32,8 30,10 Q28,8 24,10Z" fill="#ef4444" opacity=".9"/>
+    <!-- eyes with lashes -->
+    <ellipse cx="23" cy="26" rx="3.2" ry="3.5" fill="#3a1808"/>
+    <ellipse cx="37" cy="26" rx="3.2" ry="3.5" fill="#3a1808"/>
+    <circle cx="24" cy="25" r="1" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r="1" fill="#fff" opacity=".8"/>
+    <path d="M20,22 Q23,20 26,22" fill="none" stroke="#3a1808" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M34,22 Q37,20 40,22" fill="none" stroke="#3a1808" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- nose -->
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4907a" opacity=".5"/>
+    <!-- smile -->
+    <path d="M25,34 Q30,39 35,34" fill="none" stroke="#c06050" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="20" cy="31" rx="4" ry="2.5" fill="#ff9999" opacity=".5"/>
+    <ellipse cx="40" cy="31" rx="4" ry="2.5" fill="#ff9999" opacity=".5"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f5c8a0"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f5c8a0"/>
+  </symbol>
+
+  <!-- KARIWA: professional woman, glasses, short hair, blazer -->
+  <symbol id="av-kariwa" viewBox="0 0 60 60">
+    <!-- blazer dark purple -->
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#3a2870"/>
+    <!-- collar white -->
+    <path d="M22,42 L30,50 L38,42" fill="none" stroke="white" stroke-width="2"/>
+    <!-- tie/badge -->
+    <rect x="27" y="42" width="6" height="10" fill="#a29bfe" opacity=".8"/>
+    <!-- neck -->
+    <rect x="24" y="34" width="12" height="12" rx="5" fill="#f5c8a0"/>
+    <!-- head -->
+    <ellipse cx="30" cy="23" rx="17" ry="18" fill="#f5c8a0"/>
+    <!-- short dark brown hair -->
+    <ellipse cx="30" cy="11" rx="17" ry="9" fill="#2a1408"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#2a1408"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#2a1408"/>
+    <!-- clean fringe -->
+    <path d="M14,17 Q20,10 30,10 Q40,10 46,17 Q40,14 30,15 Q20,14 14,17Z" fill="#2a1408"/>
+    <!-- glasses -->
+    <rect x="17" y="20" width="11" height="9" rx="3" fill="none" stroke="#a29bfe" stroke-width="1.5"/>
+    <rect x="32" y="20" width="11" height="9" rx="3" fill="none" stroke="#a29bfe" stroke-width="1.5"/>
+    <line x1="28" y1="24" x2="32" y2="24" stroke="#a29bfe" stroke-width="1.5"/>
+    <line x1="17" y1="24" x2="13" y2="23" stroke="#a29bfe" stroke-width="1.2"/>
+    <line x1="43" y1="24" x2="47" y2="23" stroke="#a29bfe" stroke-width="1.2"/>
+    <!-- eyes behind glasses -->
+    <ellipse cx="22.5" cy="24" rx="3" ry="3.2" fill="#2a1808"/>
+    <ellipse cx="37.5" cy="24" rx="3" ry="3.2" fill="#2a1808"/>
+    <circle cx="23.5" cy="23" r=".9" fill="#fff" opacity=".75"/>
+    <circle cx="38.5" cy="23" r=".9" fill="#fff" opacity=".75"/>
+    <!-- eyebrows -->
+    <path d="M18,19 Q22.5,17 27,19" fill="none" stroke="#2a1408" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,19 Q37.5,17 42,19" fill="none" stroke="#2a1408" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- nose -->
+    <ellipse cx="30" cy="29" rx="2" ry="1.5" fill="#d4907a" opacity=".5"/>
+    <!-- composed smile -->
+    <path d="M25,33 Q30,37 35,33" fill="none" stroke="#c06050" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="30" rx="4" ry="2.5" fill="#ffaaaa" opacity=".35"/>
+    <ellipse cx="41" cy="30" rx="4" ry="2.5" fill="#ffaaaa" opacity=".35"/>
+    <ellipse cx="12" cy="24" rx="4" ry="5" fill="#f5c8a0"/>
+    <ellipse cx="48" cy="24" rx="4" ry="5" fill="#f5c8a0"/>
+  </symbol>
+
+  <!-- MORIO: Yuri's father, forestry worker, outdoor look, short black hair -->
+  <symbol id="av-morio" viewBox="0 0 60 60">
+    <!-- body work shirt green -->
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#2d5a1a"/>
+    <!-- pocket detail -->
+    <rect x="14" y="46" width="10" height="8" rx="2" fill="#1a3a0a" opacity=".6"/>
+    <!-- neck -->
+    <rect x="24" y="35" width="12" height="12" rx="5" fill="#d4985a"/>
+    <!-- head tanned -->
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#d4985a"/>
+    <!-- short black hair, slightly messy -->
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q42,15 36,14 Q30,13 24,14 Q18,15 14,18Z" fill="#1a1008"/>
+    <!-- slight stubble shadow -->
+    <ellipse cx="30" cy="35" rx="12" ry="5" fill="#c07840" opacity=".3"/>
+    <!-- eyes -->
+    <ellipse cx="23" cy="25" rx="3.2" ry="3.2" fill="#2a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3.2" fill="#2a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <!-- strong eyebrows -->
+    <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="2" stroke-linecap="round"/>
+    <!-- nose -->
+    <ellipse cx="30" cy="30" rx="2.5" ry="2" fill="#b07030" opacity=".6"/>
+    <!-- warm smile -->
+    <path d="M23,35 Q30,41 37,35" fill="none" stroke="#a06030" stroke-width="2" stroke-linecap="round"/>
+    <!-- cheeks weathered -->
+    <ellipse cx="19" cy="32" rx="4.5" ry="3" fill="#e09060" opacity=".3"/>
+    <ellipse cx="41" cy="32" rx="4.5" ry="3" fill="#e09060" opacity=".3"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#d4985a"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#d4985a"/>
+  </symbol>
+</defs>
+</svg>
+
+<!-- TITLE -->
+<div class="title-screen">
+  <div class="story-tag">📖 ストーリー教材（小５上）第３回</div>
+  <div class="story-title">⚡ オウスケと資源と電気の謎</div>
+</div>
+
+<!-- =========================================
+     CHAPTER 1: 日本は資源小国
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🌏</span>
+    <div><div class="chapter-num">CHAPTER 1</div><div class="chapter-title">日本は「資源小国」——なぜ輸入に頼るのか？</div></div>
+  </div>
+  <div class="scene">
+    <p class="narrative">夏休みのある日、オウスケはサクトと一緒に、同じクラスの友達ユリの家を訪ねた。ユリのお母さん・柏崎カリワさんは電力会社「ジャパン電力」の研究員で、今日はちょうど在宅勤務中だった。</p>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">柏崎さん、電力会社ってことは電気のこと何でも知ってるんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">ふふ、何でもは難しいけど、電気と資源のことなら話せるわよ。ところで、今みんなが使っている電気って、何から作られているか知ってる？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar yuri"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-yuri"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name yuri">ユリ</div>
+        <div class="bubble yuri">石油とか石炭じゃないの？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">半分正解。でもまず大事なのは、そういった資源を日本はほとんど<em>自分では作れない</em>ということ。日本のエネルギー自給率はなんと<em>わずか12.6%</em>（2022年）なの。残りの87%以上を外国からの輸入に頼っているのよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">12.6%って少なすぎる！なんでそんなに少ないんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">昔の日本は石炭が豊富で、資源が豊かな国だったの。でも掘り尽くしてしまったり、外国から安くて質の良いものが入ってくるようになったりして、どんどん輸入に頼るようになっていったのよ。今、日本が<em>100%自給できる資源は石灰石</em>くらいしかないの。</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">📋 日本の主な鉱物資源と使いみち</div>
+      <ul>
+        <li><b>石炭</b>……鉄鋼の原料・火力発電に利用。「黒いダイヤ」とも呼ばれた</li>
+        <li><b>石油</b>……火力発電・ガソリンなどに利用。原油を精製して作る</li>
+        <li><b>鉄鉱石</b>……鉄鋼の原料。輸入先はオーストラリア・ブラジル・カナダ</li>
+        <li><b>ウラン</b>……原子力発電の燃料</li>
+        <li><b>ボーキサイト</b>……アルミニウムの原料。100%輸入</li>
+        <li><b>石灰石</b>……セメント・鉄鋼の原料。<em>日本が唯一ほぼ100%自給できる資源</em></li>
+        <li><b>銅（銅鉱）</b>……電線や硬貨の原料。チリ・オーストラリア・インドネシアから輸入</li>
+      </ul>
+    </div>
+
+    <div class="map-wrap">
+      <div class="map-title">⚡ 主な国のエネルギー自給率（2022年）</div>
+      <div class="bar-section">
+        <div class="bar-row">
+          <div class="bar-label">ロシア</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#ef4444,#b91c1c);"></div></div><span class="bar-val">180.9%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">アメリカ</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:59%;background:linear-gradient(90deg,#f97316,#c2410c);"></div></div><span class="bar-val">106.6%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">中国</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:45%;background:linear-gradient(90deg,#eab308,#a16207);"></div></div><span class="bar-val">82.1%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">インド</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:35%;background:linear-gradient(90deg,#84cc16,#4d7c0f);"></div></div><span class="bar-val">62.4%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">ドイツ</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:20%;background:linear-gradient(90deg,#22c55e,#15803d);"></div></div><span class="bar-val">35.3%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">韓国</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:11%;background:linear-gradient(90deg,#5bc8f5,#1a6b9a);"></div></div><span class="bar-val">20.3%</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:#ffd166;font-weight:700;">日 本</div>
+          <div class="bar-outer"><div class="bar-bg"><div class="bar-fill" style="width:7%;background:linear-gradient(90deg,#a29bfe,#6c5ce7);"></div></div><span class="bar-val" style="color:#ffd166;">12.6%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="memo">
+      <div class="memo-title">📝 武蔵・芝レベルの記述対策</div>
+      「なぜ日本はエネルギー自給率が低いのか」という問いに対して、以下の3点をセットで答えられるようにしよう。<br/><br/>
+      <span class="marker">①資源が少ない島国であること</span><br/>
+      <span class="marker">②経済成長で大量のエネルギーが必要になったこと</span><br/>
+      <span class="marker">③外国から安く輸入できるようになったこと</span>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 2: 地下資源と石油の世界
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🛢️</span>
+    <div><div class="chapter-num">CHAPTER 2</div><div class="chapter-title">石炭・石油・天然ガス——地下資源の世界</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">石油・石炭・天然ガスって、どれも似てるように思えるんですけど、何が違うんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">いい質問ね。3つとも大昔の生き物が変化してできた「化石燃料」という点では同じよ。でも状態も使いみちも少しずつ違うの。<em>石炭</em>は固体、<em>石油</em>は液体、<em>天然ガス</em>は気体。そして燃やしたときに出る二酸化炭素の量が一番少ないのが天然ガスなの。だから今は火力発電で天然ガスが一番多く使われているのよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar yuri"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-yuri"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name yuri">ユリ</div>
+        <div class="bubble yuri">天然ガスって気体なのに、どうやって船で運ぶの？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">気体のままだと体積が大きすぎて運べないから、マイナス162度まで冷やして液体にするの。それが<em>液化天然ガス（LNG）</em>よ。液体にすると体積が600分の1になるから、専用の船で運べるのよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">石油はどこから輸入してるんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">原油の<em>90%以上を中東地域（西アジア）</em>から輸入しているの。サウジアラビアが38%で最も多く、次にアラブ首長国連邦、クウェート、カタールと続くわ。日本での石油の産地は新潟県・秋田県でわずかにとれるだけよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">知ってる！僕たちむかし秋田県に住んでたんだけど、道端で石油を掘っているところをお父さんに案内してもらったよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">あら、すごいわね。秋田に今もそんな油田が残っているなんて、私も見たことないわ。</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">🛢️ 3つの化石燃料まとめ</div>
+      <ul>
+        <li><b>石炭</b>：固体。18世紀イギリスの産業革命から世界のエネルギーの中心に。石油に主役を奪われた（エネルギー革命）。輸入先1位は<b>オーストラリア66.4%</b></li>
+        <li><b>石油（原油）</b>：液体。重油・ガソリンなどに精製。輸入の<b>90%以上が中東</b>。日本では新潟・秋田でわずかに産出</li>
+        <li><b>天然ガス（LNG）</b>：気体→液化して輸送。CO₂排出が最も少ない。輸入先1位は<b>オーストラリア33.8%</b></li>
+        <li><b>シェールオイル・シェールガス</b>：地下の頁岩（シェール）から採れる。主にアメリカ・カナダで採掘</li>
+        <li><b>レアアース（希土類元素）</b>：携帯電話などに使用。廃棄物からの回収→<b>都市鉱山</b></li>
+      </ul>
+    </div>
+
+    <div class="danger">
+      <div class="danger-title">⚠️ オイルショック（石油危機）とは</div>
+      <p>1970年代、中東で戦争が起こり、産油国が石油の輸出を制限したため、世界的に原油価格が急騰した。日本では「トイレットペーパーがなくなる」というデマが広がりスーパーに人が殺到。このできごとをきっかけに<b>石油備蓄基地</b>が建設された。1970年代に2度起こり、省エネルギー化や石油に代わるエネルギー源の開発が進んだ。</p>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 3: 🌟時事 ホルムズ海峡とイラン
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header jiji">
+    <span class="chapter-icon">🌍</span>
+    <div><div class="chapter-num">CHAPTER 3　時事テーマ</div><div class="chapter-title">ホルムズ海峡——日本の命綱が危ない</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">石油の90%が中東からって、もし中東で何か起きたら日本ってやばくない？最近イランとか中東のニュースよくやっているけど。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">ホルムズ海峡封鎖って僕もニュースで見たよ！</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">二人ともよくニュースを見ていてえらいわね。ホルムズ海峡の片側にあるイランが、核開発問題をめぐってアメリカと激しく対立していて、今も戦争状態になっているの。イランはイスラムの大国で、過去にも何度か「<em>ホルムズ海峡を封鎖する</em>」と宣言したことがあって、そのたびに原油価格が世界中で急騰してきたのよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar yuri"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-yuri"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name yuri">ユリ</div>
+        <div class="bubble yuri">封鎖されたら日本はどうなるの？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">石油の輸入がストップすれば、発電所が止まり、工場が止まり、ガソリンスタンドから燃料が消えるわ。だから日本は法律で<em>180日分の石油を備蓄する義務</em>があるの。でも半年しかもたない。だからこそ中東の政治情勢は日本にとっても他人事じゃないのよ。</div>
+      </div>
+    </div>
+
+    <!-- ホルムズ海峡地図 -->
+    <div class="map-wrap">
+      <div class="map-title">🗺️ ホルムズ海峡と中東の産油国</div>
+      <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="360" fill="#071828"/>
+        <!-- 海 -->
+        <ellipse cx="300" cy="180" rx="290" ry="165" fill="#0a3050" opacity=".7"/>
+        <!-- アラビア半島 -->
+        <path d="M180,60 C220,55 280,65 320,90 C350,110 360,140 355,180 C350,220 330,260 300,290 C270,260 240,230 220,200 C200,170 185,130 180,100 Z" fill="#2a5a30" stroke="#3a8a40" stroke-width="1.5"/>
+        <!-- イラン -->
+        <path d="M320,60 C360,50 420,55 460,80 C490,100 500,130 490,160 C480,185 455,200 430,200 C400,195 370,175 350,155 C335,138 325,110 320,85 Z" fill="#5a3a10" stroke="#8a5a20" stroke-width="1.5"/>
+        <!-- イラク -->
+        <path d="M200,55 C215,52 240,55 255,65 C265,75 268,90 262,105 C250,100 230,90 215,80 C205,72 200,62 200,55Z" fill="#4a5a20" stroke="#6a8a30" stroke-width="1.5"/>
+        <!-- ホルムズ海峡 -->
+        <ellipse cx="388" cy="195" rx="28" ry="18" fill="rgba(255,100,50,.15)" stroke="#ff6432" stroke-width="2" stroke-dasharray="5 3"/>
+        <text x="388" y="190" text-anchor="middle" fill="#ff9966" font-size="9" font-family="sans-serif" font-weight="bold">ホルムズ</text>
+        <text x="388" y="202" text-anchor="middle" fill="#ff9966" font-size="9" font-family="sans-serif" font-weight="bold">海峡</text>
+        <text x="388" y="214" text-anchor="middle" fill="#ff6432" font-size="8" font-family="sans-serif">約55km</text>
+        <!-- タンカーの矢印 -->
+        <path d="M420,220 Q480,230 540,210" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#arr2)"/>
+        <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2,1L8,5L2,9" fill="none" stroke="#ffd166" stroke-width="1.5"/></marker></defs>
+        <text x="490" y="208" fill="#ffd166" font-size="9" font-family="sans-serif">タンカーが通過</text>
+        <text x="490" y="220" fill="#ffd166" font-size="9" font-family="sans-serif">→日本・アジアへ</text>
+        <!-- 国名ラベル -->
+        <text x="265" y="160" fill="#a0d080" font-size="12" font-family="sans-serif" font-weight="bold">サウジ</text>
+        <text x="265" y="174" fill="#a0d080" font-size="12" font-family="sans-serif" font-weight="bold">アラビア</text>
+        <text x="430" y="120" fill="#e0c080" font-size="13" font-family="sans-serif" font-weight="bold">イ ラ ン</text>
+        <text x="215" y="80" fill="#c0d060" font-size="11" font-family="sans-serif">イラク</text>
+        <!-- UAE -->
+        <circle cx="370" cy="212" r="4" fill="#5bc8f5"/>
+        <text x="348" y="230" fill="#5bc8f5" font-size="9" font-family="sans-serif">UAE</text>
+        <!-- 警告マーク -->
+        <text x="365" y="175" font-size="16" text-anchor="middle">⚠️</text>
+      </svg>
+    </div>
+
+    <div class="jiji-box">
+      <div class="jiji-title">🌍 時事テーマ：ホルムズ海峡とイラン問題（2026年）</div>
+      <ul style="padding-left:16px;line-height:1.9;font-size:13px;">
+        <li><b>イランの核開発問題</b>：イランはウラン濃縮を進め、核兵器開発疑惑をかけられている。アメリカはイランへの経済制裁を続けていたが、2026年2月にイラン各地を攻撃。イランがホルムズ海峡を封鎖し、原油価格が上昇した</li>
+        <li><b>ホルムズ海峡の重要性</b>：世界の石油輸送量の約<b>20%</b>がここを通過。日本の原油輸入の大部分もここを通る。幅は約55km</li>
+        <li><b>日本の対応</b>：<span class="marker">①石油の備蓄（180日分）</span>　<span class="marker">②輸入先の多様化（中東依存を減らしアメリカ・ロシア・アフリカへ）</span>　<span class="marker">③再生可能エネルギーの普及</span></li>
+      </ul>
+    </div>
+
+    <div class="memo">
+      <div class="memo-title">📝 武蔵・芝レベルの記述対策</div>
+      「日本が中東への石油依存から脱却するために必要な取り組みを述べよ」という問いに対して、複数の視点から答えることが重要。<br/><br/>
+      <span class="marker">①再生可能エネルギーの開発・普及</span><br/>
+      <span class="marker">②原子力発電の活用（安全対策を前提に）</span><br/>
+      <span class="marker">③省エネルギーの推進</span><br/>
+      <span class="marker">④輸入先の多様化</span><br/><br/>
+      「1つだけ」では不十分。複数の政策を組み合わせて答えよう。
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 4: 発電の種類
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">💡</span>
+    <div><div class="chapter-num">CHAPTER 4</div><div class="chapter-title">4つの発電方法——長所と短所を比べてみよう</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">電気ってどうやって作るんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">主に4種類あるわよ。面白いことに、水力・火力・原子力は全部<em>「水を沸かして蒸気でタービンを回す」</em>という基本は同じなの。違うのは何で水を沸かすか、ということ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">水力発電は水の力で回すんだから、水は沸かさないですよね？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">鋭い！水力発電だけは違うわ。高いところから落ちる水の力で直接タービンを回すの。だからCO₂も出ないし燃料もいらない。でも山にダムを作るから場所が限られるし、建設費がかかるのが難点よ。</div>
+      </div>
+    </div>
+
+    <div class="power-grid">
+      <div class="power-card">
+        <div class="pc-title">💧 水力発電</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">川の上流にダムを作り水の落下力でタービンを回す。山間部に建設</div>
+        <div class="pc-good">✅ CO₂を出さない　✅ 燃料不要</div>
+        <div class="pc-bad">❌ 建設費が高い　❌ 場所が限られる　❌ 発電量が少ない</div>
+      </div>
+      <div class="power-card">
+        <div class="pc-title">🔥 火力発電</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">石炭・石油・天然ガスを燃やして水を沸かし蒸気でタービンを回す。海沿いに建設</div>
+        <div class="pc-good">✅ 発電量が多い　✅ 建設費が安い</div>
+        <div class="pc-bad">❌ CO₂が発生し地球温暖化につながる　❌ 大気汚染を引き起こす</div>
+      </div>
+      <div class="power-card">
+        <div class="pc-title">⚛️ 原子力発電</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">ウラン・プルトニウムの核反応で水を沸かす。冷却に海水が必要なため海沿いに建設</div>
+        <div class="pc-good">✅ 発電量が多い　✅ CO₂を出さない</div>
+        <div class="pc-bad">❌ 放射性物質もれで事故の危険　❌ 放射性廃棄物の処理が困難</div>
+      </div>
+      <div class="power-card">
+        <div class="pc-title">🌿 再生可能エネルギー</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">太陽光・風力・地熱など。最も発電量が多いのは太陽光</div>
+        <div class="pc-good">✅ 燃料の輸入不要　✅ CO₂を出さない</div>
+        <div class="pc-bad">❌ 発電量が少なくコストがかかる　❌ 天候に左右される　❌ 場所が限られる（地熱）</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">📊 日本のエネルギー供給割合の変化</div>
+      <!-- 1970年度 -->
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;color:#ffd166;font-weight:700;margin-bottom:8px;">▶ 1970年度（石油全盛期）</div>
+        <div style="display:flex;height:28px;border-radius:6px;overflow:hidden;border:1px solid #2a3a55;">
+          <div style="width:69.9%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;white-space:nowrap;padding:0 4px;">石油 69.9%</div>
+          <div style="width:21.3%;background:#6b7280;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;white-space:nowrap;padding:0 4px;">石炭 21.3%</div>
+          <div style="width:6%;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;padding:0 2px;">天然G</div>
+          <div style="width:2.8%;background:#a855f7;"></div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;font-size:10px;color:#8090b0;">
+          <span>🟥石油 <span style="color:#ef4444;">69.9%</span></span>
+          <span>⬜石炭 <span style="color:#9ca3af;">21.3%</span></span>
+          <span>🟩天然ガス <span style="color:#22c55e;">1.3%</span></span>
+          <span>🟣原子力 <span style="color:#a855f7;">0.4%</span></span>
+          <span>💧水力 <span style="color:#5bc8f5;">6.0%</span></span>
+        </div>
+      </div>
+      <!-- 2023年度 -->
+      <div>
+        <div style="font-size:11px;color:#ffd166;font-weight:700;margin-bottom:8px;">▶ 2023年度（現在）</div>
+        <div style="display:flex;height:28px;border-radius:6px;overflow:hidden;border:1px solid #2a3a55;">
+          <div style="width:35.6%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;white-space:nowrap;padding:0 4px;">石油 35.6%</div>
+          <div style="width:24.5%;background:#6b7280;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;white-space:nowrap;padding:0 4px;">石炭 24.5%</div>
+          <div style="width:20.7%;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;white-space:nowrap;padding:0 2px;">天然G 20.7%</div>
+          <div style="width:4.1%;background:#a855f7;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;">原</div>
+          <div style="width:6.5%;background:#5bc8f5;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;">水力</div>
+          <div style="width:8.6%;background:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;">新E等</div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;font-size:10px;color:#8090b0;">
+          <span>🟥石油 <span style="color:#ef4444;">35.6%</span></span>
+          <span>⬜石炭 <span style="color:#9ca3af;">24.5%</span></span>
+          <span>🟩天然ガス <span style="color:#22c55e;">20.7%</span></span>
+          <span>🟣原子力 <span style="color:#a855f7;">4.1%</span></span>
+          <span>💧水力 <span style="color:#5bc8f5;">6.5%</span></span>
+          <span>🟡新エネ等 <span style="color:#f59e0b;">8.6%</span></span>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:#a0c0e0;line-height:1.7;">
+        <b style="color:#fff;">変化のポイント：</b>石油が激減し（70%→36%）天然ガスが急増。2011年以降は原子力が激減し再生可能エネルギーが拡大。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 5: 🌟時事 福島第一原発事故15年
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header jiji">
+    <span class="chapter-icon">⚛️</span>
+    <div><div class="chapter-num">CHAPTER 5　時事テーマ</div><div class="chapter-title">福島第一原発事故から15年——何が起きたのか</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">震災のことはお父さんから、当時取材したって話を聞いたことあるよ。原子炉も爆発したんですよね。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">そうなのよ。原子炉って冷やせなくなると核燃料が溶け始めるの。これを<em>メルトダウン（炉心溶融）</em>というわ。1号機から3号機で次々とメルトダウンが起きて、水素爆発も起きた。大量の放射性物質が外に漏れ出して、半径20kmの住民約15万人が避難を余儀なくされたの。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">僕も原発避難の話、お父さんに聞いた。今も避難生活を続けている人がいるって。原発が爆発したのも、まだ終わってないんですよね。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa"><em>2011年3月11日</em>の東日本大震災から、今年で15年よ。2011年から<em>廃炉作業</em>が始まって、完全に終わるまでに<em>30〜40年かかる</em>と言われているの。溶け落ちた核燃料（デブリ）の取り出しが今も続いている。2023年には処理水の海洋放出も始まって、漁業者や近隣の国々との間で問題になったわ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">処理水ってなんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">溶けた核燃料を冷やし続けた水に放射性物質が混じるの。それを<em>特殊な装置</em>で大半の放射性物質を除去した水が処理水よ。ただし<em>トリチウム</em>という物質は除去できないため、基準値以下に薄めて海に放出することにしたの。科学的には安全とされているけれど、感情的な反発や風評被害の問題が残っているわ。</div>
+      </div>
+    </div>
+
+    <div class="jiji-box">
+      <div class="jiji-title">⚛️ 時事テーマ：2026年は福島第一原発事故15年</div>
+      <ul style="padding-left:16px;line-height:1.9;font-size:13px;">
+        <li><b>事故の概要</b>：2011年3月11日、東日本大震災による津波で電源喪失→メルトダウン→水素爆発→放射性物質漏洩</li>
+        <li><b>規模</b>：1986年のチェルノブイリ（旧ソ連）と並ぶ<b>最悪レベル</b></li>
+        <li><b>課題</b>：廃炉は溶け落ちた燃料デブリの取り出し作業が難航。処理水の海洋放出は中国・韓国などが日本産水産物の輸入を一時停止</li>
+        <li><b>原発の再稼働</b>：事故後に全国の原発が運転停止したが、川内原発（鹿児島県）や柏崎刈羽原発（新潟県）など一部が再稼働。賛否をめぐり議論続く</li>
+      </ul>
+    </div>
+
+    <div class="memo">
+      <div class="memo-title">📝 武蔵・芝レベルの記述対策</div>
+      「原子力発電の再稼働に賛成か反対か」——どちらか一方だけでなく両面を理解したうえで答えること。<br/><br/>
+      <b>賛成側の理由：</b><br/>
+      <span class="marker">CO₂排出なし・安定した電力供給・エネルギー自給率向上</span><br/><br/>
+      <b>反対側の理由：</b><br/>
+      <span class="marker">事故リスク・廃棄物処理問題・住民の不安</span><br/><br/>
+      「どちらが正しい」というより「なぜそう考えるか」を根拠とともに答えよう。
+    </div>
+  </div>
+</div>
+
+<!-- =========================================
+     CHAPTER 6: 日本の林業
+     ========================================= -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🌲</span>
+    <div><div class="chapter-num">CHAPTER 6</div><div class="chapter-title">日本の林業——豊かな森が危機に</div></div>
+  </div>
+  <div class="scene">
+
+    <div class="dialogue">
+      <div class="avatar morio"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-morio"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name morio">柏崎モリオさん</div>
+        <div class="bubble morio">おや、きょうはユリの友達がたくさん来ているんだな。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar yuri"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-yuri"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name yuri">ユリ</div>
+        <div class="bubble yuri">あ、お父さん、おかえり。サクト、オウスケ、お父さんは林業の仕事をしているんだよ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar kariwa"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-kariwa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kariwa">柏崎カリワさん</div>
+        <div class="bubble kariwa">林業は資源問題とも深くつながっているの。日本は国土の約<em>3分の2が森林</em>という、世界でも有数の森林大国よ。フィンランドやスウェーデンと並ぶほどなの。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">でも木材って外国から輸入してますよね？自給率はどれくらいなんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar morio"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-morio"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name morio">柏崎モリオさん</div>
+        <div class="bubble morio">木材の自給率は<em>約43%（2023年）</em>だよ。森があるのに木を伐らないのはなぜか……それが林業の構造的な問題なんだ。</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">なんで自分の国に森があるのに使わないんですか？</div>
+      </div>
+    </div>
+
+    <div class="dialogue">
+      <div class="avatar morio"><svg class="av-svg" viewBox="0 0 60 60"><use href="#av-morio"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name morio">柏崎モリオさん</div>
+        <div class="bubble morio">林業は苗木を植えてから伐採できるまで<em>40年から70年もかかる</em>んだ。収入が不安定で、若い人が集まらない。高齢化も進んで、働く人が1960年の44万人から今では<em>約6万4千人</em>まで減ってしまったんだ。だから安い外材（外国産の木材）を輸入する方が経済的になってしまっているんだよ。</div>
+      </div>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">🌲 林業の基礎知識まとめ</div>
+      <ul>
+        <li>日本の国土の<b>約3分の2（約67%）が森林</b>。ちく積量5242百万m³（2017年）</li>
+        <li>針葉樹71%（すぎ・ひのき・まつ）・広葉樹29%（ぶな・なら・けやき）</li>
+        <li>林業の作業：<b>植林→下草がり→枝うち→間伐→伐採→出荷</b>（植えてから最低40年）</li>
+        <li><b>天然の三大美林</b>：青森（津軽）ひば・秋田すぎ・木曽ひのき</li>
+        <li><b>人工の三大美林</b>：吉野すぎ・尾鷲ひのき・天竜すぎ</li>
+      </ul>
+    </div>
+
+    <div class="knowledge">
+      <div class="knowledge-title">🌿 森林の6つの役割（「緑のダム」）</div>
+      <ul>
+        <li>① 雨水をたくわえ、<b>水害や干害を防ぐ</b>（緑のダム）</li>
+        <li>② 水をきれいにする</li>
+        <li>③ 養分をたくわえ、川や海に栄養をあたえる</li>
+        <li>④ <b>二酸化炭素を吸収</b>する（地球温暖化対策）</li>
+        <li>⑤ 気温が上がるのを防ぐ</li>
+        <li>⑥ 風や砂の害から作物を守る（<b>防風林・防砂林</b>）</li>
+      </ul>
+    </div>
+
+    <div class="memo">
+      <div class="memo-title">💡 記述ポイント：なぜ日本は木材を輸入するのか</div>
+      森林が多いのに木材を輸入する理由を問われたら、<b>①林業は収入が不安定で後継者不足・高齢化が進んでいる ②植えてから収入になるまで数十年かかる ③東南アジアなどからの安い外材が入ってくるようになったため国産材が競争で負けた</b>の3点をセットで。「熱帯林の破壊」という環境問題との関連も重要。
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <div class="summary-title">📝 まとめ　ふたりが学んだこと</div>
+  <div class="summary-grid">
+    <div class="sum-item"><strong>🌏 日本は資源小国</strong>エネルギー自給率12.6%（2022年）。100%自給できるのは石灰石のみ。石油の90%以上を中東から輸入</div>
+    <div class="sum-item"><strong>🛢️ 3つの化石燃料</strong>石炭（固体）・石油（液体）・天然ガス（気体→LNG）。オイルショックで石油備蓄基地が建設された</div>
+    <div class="sum-item"><strong>🌍 ホルムズ海峡</strong>幅約55kmの世界最重要海峡。日本の原油の大半が通過。イランとの関係で2026年封鎖・原油価格上昇</div>
+    <div class="sum-item"><strong>💡 4種類の発電</strong>水力・火力・原子力・再生可能エネルギー。それぞれ長所・短所あり。2023年は火力中心</div>
+    <div class="sum-item"><strong>⚛️ 福島第一原発事故</strong>2011年3月11日。メルトダウン→廃炉40年計画。処理水海洋放出問題。チェルノブイリ並みの最悪レベル</div>
+    <div class="sum-item"><strong>🌲 林業の課題</strong>国土の3分の2が森林も自給率43%（2023年）。高齢化・後継者不足。モリオさんのような林業家が支えている</div>
+  </div>
+</div>
+
+<div class="footer">✦ 「日本の資源と林業」ストーリー教材（小５上）第３回　中学受験　社会 ✦</div>
+</div>
+</body>
+</html>
