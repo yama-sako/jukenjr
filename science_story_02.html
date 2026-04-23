@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科第2回 物のあたたまり方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;--panel:#0d1a2e;--border:#1a3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+  --purple:#a29bfe;--orange:#fd9644;--pink:#fd79a8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8;padding-bottom:60px;}
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+.story-header{background:linear-gradient(135deg,#0a1a3a 0%,#0e2a50 50%,#061528 100%);padding:32px 16px 24px;text-align:center;border-bottom:2px solid var(--border);position:relative;overflow:hidden;}
+.story-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,209,102,.06) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(239,71,111,.04) 0%,transparent 50%);}
+.subject-badge{display:inline-block;background:linear-gradient(135deg,#064a2a,#0a7a44);border:1.5px solid var(--green);border-radius:20px;padding:4px 16px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:2px;margin-bottom:10px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(20px,5vw,30px);font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.8);line-height:1.3;margin-bottom:6px;}
+.chapter{margin:0 auto;max-width:720px;padding:0 12px;}
+.chapter-header{background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));border-left:4px solid var(--ocean);border-radius:0 10px 10px 0;padding:12px 16px;margin:28px 0 16px;}
+.chapter-num{font-size:11px;color:var(--sky);letter-spacing:2px;font-weight:700;}
+.chapter-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(16px,4vw,20px);font-weight:900;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.dialogue-block{display:flex;gap:12px;align-items:flex-start;margin:10px 0;}
+.dialogue-block.reverse{flex-direction:row-reverse;}
+.av-wrap{flex-shrink:0;}
+.av-wrap svg{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--panel);}
+.bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;flex:1;font-size:14px;line-height:1.7;position:relative;}
+.bubble::before{content:'';position:absolute;top:16px;width:8px;height:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);}
+.dialogue-block:not(.reverse) .bubble::before{left:-5px;clip-path:polygon(100% 0,100% 100%,0 50%);}
+.dialogue-block.reverse .bubble::before{right:-5px;clip-path:polygon(0 0,0 100%,100% 50%);}
+.speaker{font-size:11px;font-weight:700;margin-bottom:4px;}
+.sp-sakuto{color:var(--sky);}
+.sp-ousuke{color:#6eb5ff;}
+.sp-sensei{color:var(--green);}
+.knowledge,.memo,.danger,.experiment-box{border-radius:12px;padding:14px 16px;margin:14px 0;color:#e8f4fd;}
+.knowledge{background:#0d2a44;border:1.5px solid rgba(91,200,245,.5);}
+.knowledge::before{content:'📘 ';font-size:15px;}
+.memo{background:#2a2000;border:1.5px solid rgba(255,209,102,.6);}
+.memo::before{content:'✏️ ';}
+.danger{background:#2a0a12;border:1.5px solid rgba(239,71,111,.6);}
+.danger::before{content:'⚠️ ';}
+.experiment-box{background:#251500;border:1.5px solid rgba(253,150,68,.55);}
+.experiment-box::before{content:'🔬 実験 ';}
+.box-title{font-weight:700;font-size:13px;margin-bottom:6px;color:#e8f4fd;}
+.marker{background:linear-gradient(transparent 55%,rgba(255,209,102,.55) 55%);padding:0 2px;color:#e8f4fd;}
+.visual-panel{background:rgba(5,15,35,.6);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;text-align:center;}
+.visual-panel svg{max-width:100%;height:auto;}
+.visual-caption{font-size:13px;color:var(--muted);margin-top:8px;text-align:center;}
+.jiji-box{border-radius:12px;padding:14px 16px;margin:14px 0;background:#2a0810;border:2px solid rgba(239,71,111,.65);color:#e8f4fd;}
+.summary-box{background:#0a1f14;border:2px solid rgba(6,214,160,.45);border-radius:16px;padding:20px;margin:20px 0;}
+.summary-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:16px;font-weight:900;color:var(--green);margin-bottom:14px;text-align:center;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+.summary-card{background:#0d2218;border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px;color:#e8f4fd;}
+.summary-card-title{font-size:12px;color:var(--green);font-weight:700;margin-bottom:6px;}
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 12px 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+/* 熱量計算ボックス */
+.calc-box{background:#160d2a;border:2px solid rgba(162,155,254,.55);border-radius:14px;padding:16px;margin:14px 0;color:#e8f4fd;}
+.calc-box .box-title{color:#c8c0ff;}
+.calc-step{background:#1e1535;border-radius:8px;padding:10px 14px;margin:8px 0;font-size:14px;color:#e8f4fd;}
+.calc-formula{font-size:16px;font-weight:900;color:#c8c0ff;text-align:center;padding:10px;background:#120b22;border-radius:8px;margin:8px 0;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🔥</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="av-ousuke" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<symbol id="av-sakuto" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<symbol id="av-sensei" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#e8e8f0"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#3a2010"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <path d="M13,16 Q30,8 47,16 Q40,12 30,13 Q20,12 13,16Z" fill="#3a2010"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <line x1="26" y1="42" x2="24" y2="58" stroke="#ccc" stroke-width="1"/>
+  <line x1="34" y1="42" x2="36" y2="58" stroke="#ccc" stroke-width="1"/>
+</symbol>
+</defs>
+</svg>
+
+<!-- HEADER -->
+<div class="story-header">
+  <div class="subject-badge">⚗️ 理科小５上　第２回</div>
+  <div class="story-title">物のあたたまり方</div>
+</div>
+
+<!-- ===================== CHAPTER 1 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 1</div>
+  <div class="chapter-title">🌡️ 熱の移動と熱量</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    熱いお風呂に水を足すと温度が下がるけど、あれって熱が逃げてるってこと？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    そう！熱はかならず<strong>温度の高い方から低い方へ</strong>移動するんだよ。逆は絶対起こらない。温度が同じになると、熱の移動がストップするの。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    じゃあ熱をもらった水は温度が上がって、熱を失ったお湯は温度が下がる。そりゃそうか。
+  </div>
+</div>
+</div>
+
+<!-- 熱の移動ビジュアル -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="200" fill="#060f1e" rx="10"/>
+    <text x="160" y="24" text-anchor="middle" fill="#ffd166" font-size="15" font-weight="bold" font-family="sans-serif">熱の移動の向き</text>
+
+    <!-- 高温側 -->
+    <rect x="20" y="44" width="110" height="110" rx="10" fill="rgba(239,71,111,0.2)" stroke="#ef476f" stroke-width="2"/>
+    <text x="75" y="80" text-anchor="middle" fill="#ef476f" font-size="16" font-weight="bold" font-family="sans-serif">高 温</text>
+    <text x="75" y="102" text-anchor="middle" fill="#ef476f" font-size="14" font-family="sans-serif">温度が</text>
+    <text x="75" y="120" text-anchor="middle" fill="#ef476f" font-size="14" font-family="sans-serif">高い物</text>
+    <text x="75" y="142" text-anchor="middle" fill="#ff8080" font-size="13" font-family="sans-serif">▼ 温度が下がる</text>
+
+    <!-- 矢印（熱の移動） -->
+    <line x1="134" y1="99" x2="184" y2="99" stroke="#ffd166" stroke-width="4"/>
+    <polygon points="192,99 180,93 180,105" fill="#ffd166"/>
+    <text x="163" y="88" text-anchor="middle" fill="#ffd166" font-size="13" font-weight="bold" font-family="sans-serif">熱の移動</text>
+
+    <!-- 低温側 -->
+    <rect x="196" y="44" width="110" height="110" rx="10" fill="rgba(91,200,245,0.2)" stroke="#5bc8f5" stroke-width="2"/>
+    <text x="251" y="80" text-anchor="middle" fill="#5bc8f5" font-size="16" font-weight="bold" font-family="sans-serif">低 温</text>
+    <text x="251" y="102" text-anchor="middle" fill="#5bc8f5" font-size="14" font-family="sans-serif">温度が</text>
+    <text x="251" y="120" text-anchor="middle" fill="#5bc8f5" font-size="14" font-family="sans-serif">低い物</text>
+    <text x="251" y="142" text-anchor="middle" fill="#80d0ff" font-size="13" font-family="sans-serif">▲ 温度が上がる</text>
+
+    <text x="160" y="178" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">温度が同じになると → 熱の移動がとまる</text>
+  </svg>
+  <div class="visual-caption">熱は必ず高温→低温の向きにしか移動しない</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">熱の移動の3つのポイント</div>
+  ① 熱は<span class="marker">温度の高い物から低い物へ</span>移動する（逆は起こらない）<br>
+  ② 熱をもらった物は温度が上がり、熱を失った物は温度が下がる<br>
+  ③ <span class="marker">2つの物の温度が同じになると、熱の移動はとまる</span><br>
+  ④ 体積の少ない物のほうが、体積の多い物より温度変化が大きい
+</div>
+
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    熱の「量」って、どうやって表すの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    熱の大きさは<strong>熱量</strong>で表します。単位は<strong>カロリー（cal）</strong>。水1gを1℃上げるのに必要な熱量が<span class="marker">1カロリー</span>って覚えてね。
+  </div>
+</div>
+
+<div class="calc-box">
+  <div class="box-title">🧮 熱量の計算式（最重要！）</div>
+  <div class="calc-formula">熱量（cal）＝ 水の重さ（g）× 温度変化（℃）</div>
+  <div class="calc-step">例①：水10gを5℃上げるには？　→　10 × 5 ＝ <strong>50 cal</strong></div>
+  <div class="calc-step">例②：70℃の水100gがもつ熱量は？　→　100 × 70 ＝ <strong>7000 cal</strong>　（0℃基準）</div>
+  <div style="margin-top:8px;font-size:13px;color:var(--muted);">※「もつ熱量」を求めるときは0℃を基準として計算する</div>
+</div>
+
+<!-- 熱量計算 例題 -->
+<div class="memo">
+  <div class="box-title">⭐ 入試頻出！　混合後の水温の求め方</div>
+  <div class="calc-step">問：70℃の水100gと10℃の水500gを混ぜると何℃になる？</div>
+  <div class="calc-step">① 70℃の水100gの熱量　→　100 × 70 ＝ 7000 cal</div>
+  <div class="calc-step">② 10℃の水500gの熱量　→　500 × 10 ＝ 5000 cal</div>
+  <div class="calc-step">③ 合計の熱量　→　7000 + 5000 ＝ 12000 cal</div>
+  <div class="calc-step">④ 合計の水の重さ　→　100 + 500 ＝ 600 g</div>
+  <div class="calc-step" style="border:2px solid #ffd166;background:#2a2000;color:#e8f4fd;">⑤ 混合後の水温　→　12000 ÷ 600 ＝ <strong style="color:#ffd166;font-size:16px;">20℃</strong></div>
+</div>
+</div><!-- chapter -->
+
+<!-- ===================== CHAPTER 2 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 2</div>
+  <div class="chapter-title">🔩 金属のあたたまり方（伝導）</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    金属の棒を一端から熱すると、じわじわと反対側まで熱くなるよね。なんで離れたところまで伝わるの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    それが<strong>伝導</strong>！固体中や直接ふれている物どうしで、熱したところから順番に遠い方へと熱が伝わっていく方法だよ。
+  </div>
+</div>
+</div>
+
+<!-- 伝導ビジュアル：金属棒とろうの溶け方 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="240" fill="#060f1e" rx="10"/>
+    <text x="160" y="24" text-anchor="middle" fill="#ffd166" font-size="15" font-weight="bold" font-family="sans-serif">伝導：金属棒のあたたまり方</text>
+
+    <!-- 金属棒 -->
+    <rect x="30" y="80" width="260" height="36" rx="8" fill="rgba(180,140,60,0.4)" stroke="#d4a040" stroke-width="2"/>
+    <text x="160" y="103" text-anchor="middle" fill="#ffd166" font-size="14" font-family="sans-serif">金 属 棒</text>
+
+    <!-- 炎 -->
+    <ellipse cx="46" cy="130" rx="16" ry="22" fill="rgba(255,120,20,0.5)"/>
+    <ellipse cx="46" cy="122" rx="10" ry="16" fill="rgba(255,200,50,0.6)"/>
+    <text x="46" y="158" text-anchor="middle" fill="#fd9644" font-size="13" font-family="sans-serif">炎</text>
+
+    <!-- ろうのしずく（順番に溶けていく） -->
+    <!-- 位置1（炎に近い・溶けた） -->
+    <circle cx="80" cy="72" r="9" fill="rgba(255,209,102,0.3)" stroke="#ffd166" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <text x="80" y="60" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">①溶けた</text>
+
+    <!-- 位置2 -->
+    <circle cx="130" cy="72" r="9" fill="rgba(255,209,102,0.55)" stroke="#ffd166" stroke-width="2"/>
+    <text x="130" y="60" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">②溶ける</text>
+
+    <!-- 位置3 -->
+    <circle cx="185" cy="72" r="9" fill="rgba(200,180,120,0.6)" stroke="#d4b060" stroke-width="2"/>
+    <text x="185" y="60" text-anchor="middle" fill="#d4b060" font-size="12" font-family="sans-serif">③次に</text>
+
+    <!-- 位置4（まだ溶けていない） -->
+    <circle cx="240" cy="72" r="9" fill="rgba(160,160,180,0.5)" stroke="#8090a0" stroke-width="2"/>
+    <text x="240" y="60" text-anchor="middle" fill="#8090a0" font-size="12" font-family="sans-serif">④まだ</text>
+
+    <!-- 矢印：熱の伝わり方向 -->
+    <line x1="60" y1="115" x2="260" y2="115" stroke="#ef476f" stroke-width="2.5" stroke-dasharray="8,4"/>
+    <polygon points="268,115 256,109 256,121" fill="#ef476f"/>
+    <text x="160" y="134" text-anchor="middle" fill="#ef476f" font-size="13" font-weight="bold" font-family="sans-serif">熱が順番に伝わっていく</text>
+
+    <!-- まとめ -->
+    <rect x="30" y="168" width="260" height="54" rx="8" fill="rgba(14,122,186,0.15)" stroke="#0e7aba" stroke-width="1.5"/>
+    <text x="160" y="188" text-anchor="middle" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">伝導のポイント</text>
+    <text x="160" y="208" text-anchor="middle" fill="#e8f4fd" font-size="13" font-family="sans-serif">熱したところに近い方から順番にろうがとける</text>
+  </svg>
+  <div class="visual-caption">棒に塗ったろうは炎に近い側から順に溶けていく＝伝導</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">熱の伝わりやすさ（伝導のしやすさ）</div>
+  <div style="text-align:center;padding:10px 0;font-size:15px;font-weight:700;line-height:2;">
+    <span style="color:#ffd166;">銀</span> → <span style="color:#ffd166;">銅</span> → <span style="color:#5bc8f5;">アルミニウム</span> → <span style="color:#7aaec8;">鉄</span> → <span style="color:#a29bfe;">ガラス</span> → <span style="color:#8090b0;">木</span> → <span style="color:#6070a0;">空気</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:0 4px;">
+    <span>【熱を伝えやすい】</span>
+    <span>【熱を伝えにくい】</span>
+  </div>
+</div>
+
+<div class="memo">
+  <div class="box-title">身近な伝導の例</div>
+  ・フライパンや鍋は熱を伝えやすい<span class="marker">金属</span>、取っ手は伝えにくい<span class="marker">木やプラスチック</span><br>
+  ・服を重ねて着ると、熱を伝えにくい<span class="marker">空気の層</span>が間にできて暖かい<br>
+  ・二重ガラス窓も空気の層で断熱<br>
+  ・魔法びんは二重構造で間が<span class="marker">真空</span>→熱が移動できないので温度を保つ
+</div>
+
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    じゃあ金属板の真ん中を熱したらどっちに伝わるの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    熱したところから<strong>円を描くように全方向へ均等に</strong>広がっていくよ。切れ込みが入った板だと、熱は切れ込みをまたいで伝わらないから向こう側は温まりにくい。これは入試でよく出る！
+  </div>
+</div>
+</div><!-- chapter -->
+
+<!-- ===================== CHAPTER 3 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 3</div>
+  <div class="chapter-title">🌊 水と空気のあたたまり方（対流）</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    水って金属みたいに端から順番に温まるんじゃないの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    水や空気は伝導でも伝わるけど、それより大事な仕組みがあるよ。あたためられた水はぼう張して<strong>軽くなって上へ</strong>のぼり、冷たい水が下に来る。この「流れ」で全体が温まる。これを<strong>対流</strong>っていうんだ。
+  </div>
+</div>
+</div>
+
+<!-- 対流ビジュアル：縦1つ＝容器断面図 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg" style="max-width:340px;width:100%">
+    <rect width="300" height="320" fill="#060f1e" rx="10"/>
+    <text x="150" y="24" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">水の対流のしくみ</text>
+
+    <!-- 容器 -->
+    <rect x="50" y="40" width="200" height="200" rx="8" fill="rgba(14,122,186,0.15)" stroke="#0e7aba" stroke-width="2"/>
+
+    <!-- 炎（下から加熱） -->
+    <ellipse cx="150" cy="258" rx="22" ry="16" fill="rgba(255,120,20,0.5)"/>
+    <ellipse cx="150" cy="252" rx="14" ry="12" fill="rgba(255,200,50,0.6)"/>
+    <text x="150" y="278" text-anchor="middle" fill="#fd9644" font-size="13" font-family="sans-serif">アルコールランプ</text>
+
+    <!-- あたたかい水（上昇・赤） -->
+    <!-- 中央上昇 -->
+    <line x1="150" y1="220" x2="150" y2="80" stroke="#ef476f" stroke-width="3"/>
+    <polygon points="150,70 143,82 157,82" fill="#ef476f"/>
+    <text x="150" y="62" text-anchor="middle" fill="#ef476f" font-size="13" font-weight="bold" font-family="sans-serif">あたたかい水が上がる</text>
+
+    <!-- 水面付近で左右に広がる -->
+    <line x1="150" y1="78" x2="74" y2="78" stroke="#ef476f" stroke-width="2.5"/>
+    <line x1="150" y1="78" x2="226" y2="78" stroke="#ef476f" stroke-width="2.5"/>
+
+    <!-- 左右で下降（冷たい水） -->
+    <line x1="68" y1="78" x2="68" y2="218" stroke="#5bc8f5" stroke-width="2.5"/>
+    <polygon points="68,226 62,214 74,214" fill="#5bc8f5"/>
+    <line x1="232" y1="78" x2="232" y2="218" stroke="#5bc8f5" stroke-width="2.5"/>
+    <polygon points="232,226 226,214 238,214" fill="#5bc8f5"/>
+
+    <!-- 底付近で中央へ -->
+    <line x1="68" y1="222" x2="140" y2="222" stroke="#5bc8f5" stroke-width="2.5"/>
+    <line x1="232" y1="222" x2="160" y2="222" stroke="#5bc8f5" stroke-width="2.5"/>
+
+    <!-- ラベル -->
+    <text x="80" y="150" fill="#5bc8f5" font-size="13" font-family="sans-serif">冷たい</text>
+    <text x="80" y="167" fill="#5bc8f5" font-size="13" font-family="sans-serif">水が下降</text>
+    <text x="220" y="150" text-anchor="end" fill="#5bc8f5" font-size="13" font-family="sans-serif">冷たい</text>
+    <text x="220" y="167" text-anchor="end" fill="#5bc8f5" font-size="13" font-family="sans-serif">水が下降</text>
+
+    <!-- まとめ -->
+    <rect x="40" y="292" width="220" height="22" rx="6" fill="rgba(6,214,160,0.1)" stroke="rgba(6,214,160,0.4)" stroke-width="1"/>
+    <text x="150" y="307" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">この流れが「対流」！全体が温まる</text>
+  </svg>
+  <div class="visual-caption">底を加熱→あたたかい水が上昇→冷たい水が下降→循環して全体が温まる</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">対流の大切なルール</div>
+  ・あたためられた水・空気は<span class="marker">ぼう張して軽くなり上にのぼる</span><br>
+  ・冷たい水・空気は重いので下に来る<br>
+  ・この循環で全体がしだいにあたたまる＝<strong>対流</strong><br>
+  ・<span class="marker">上部を加熱しても下部は温まりにくい</span>（上が温まっても対流が起こらないため）
+</div>
+
+<div class="danger">
+  <div class="box-title">入試頻出！「上を熱したら下はあたたまる？」</div>
+  試験管の上部の水を熱すると、<strong>上の水は沸騰しても下の氷はとけない</strong>。これは熱したところより下では対流が起きないから。<span class="marker">「加熱した場所より下の部分には対流が起こらない」</span>をしっかり覚えよう！
+</div>
+
+<!-- 冷房・暖房ビジュアル -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="260" fill="#060f1e" rx="10"/>
+    <text x="160" y="24" text-anchor="middle" fill="#ffd166" font-size="15" font-weight="bold" font-family="sans-serif">冷房・暖房の設置位置と対流</text>
+
+    <!-- 左：冷房（上に設置） -->
+    <!-- 部屋の箱 -->
+    <rect x="14" y="40" width="136" height="160" rx="6" fill="rgba(91,200,245,0.06)" stroke="#5bc8f5" stroke-width="1.5"/>
+    <text x="82" y="58" text-anchor="middle" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">冷 房</text>
+
+    <!-- エアコン（上） -->
+    <rect x="24" y="62" width="60" height="22" rx="4" fill="rgba(91,200,245,0.3)" stroke="#5bc8f5" stroke-width="1.5"/>
+    <text x="54" y="77" text-anchor="middle" fill="#5bc8f5" font-size="12" font-family="sans-serif">冷房器具</text>
+
+    <!-- 冷気が下降 -->
+    <line x1="54" y1="84" x2="54" y2="174" stroke="#5bc8f5" stroke-width="2.5"/>
+    <polygon points="54,182 48,170 60,170" fill="#5bc8f5"/>
+    <!-- 底で広がる -->
+    <line x1="54" y1="178" x2="130" y2="178" stroke="#5bc8f5" stroke-width="2"/>
+    <!-- 右側上昇 -->
+    <line x1="132" y1="178" x2="132" y2="92" stroke="#a29bfe" stroke-width="2" stroke-dasharray="4,3"/>
+    <polygon points="132,84 126,96 138,96" fill="#a29bfe"/>
+
+    <text x="82" y="138" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">冷たい空気が</text>
+    <text x="82" y="154" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">下に広がる</text>
+    <text x="82" y="212" text-anchor="middle" fill="#5bc8f5" font-size="12" font-family="sans-serif">上に設置！</text>
+
+    <!-- 右：暖房（下に設置） -->
+    <rect x="170" y="40" width="136" height="160" rx="6" fill="rgba(239,71,111,0.06)" stroke="#ef476f" stroke-width="1.5"/>
+    <text x="238" y="58" text-anchor="middle" fill="#ef476f" font-size="14" font-weight="bold" font-family="sans-serif">暖 房</text>
+
+    <!-- ストーブ（下） -->
+    <rect x="266" y="162" width="30" height="26" rx="4" fill="rgba(239,71,111,0.35)" stroke="#ef476f" stroke-width="1.5"/>
+    <text x="281" y="179" text-anchor="middle" fill="#ff8080" font-size="11" font-family="sans-serif">暖房</text>
+
+    <!-- 暖気が上昇 -->
+    <line x1="281" y1="160" x2="281" y2="74" stroke="#ef476f" stroke-width="2.5"/>
+    <polygon points="281,66 275,78 287,78" fill="#ef476f"/>
+    <!-- 上で広がる -->
+    <line x1="281" y1="70" x2="186" y2="70" stroke="#ef476f" stroke-width="2"/>
+    <!-- 左側下降 -->
+    <line x1="184" y1="70" x2="184" y2="156" stroke="#a29bfe" stroke-width="2" stroke-dasharray="4,3"/>
+    <polygon points="184,164 178,152 190,152" fill="#a29bfe"/>
+
+    <text x="238" y="118" text-anchor="middle" fill="#ff9090" font-size="13" font-family="sans-serif">あたたかい空気が</text>
+    <text x="238" y="134" text-anchor="middle" fill="#ff9090" font-size="13" font-family="sans-serif">上に広がる</text>
+    <text x="238" y="212" text-anchor="middle" fill="#ef476f" font-size="12" font-family="sans-serif">下に設置！</text>
+
+    <!-- 凡例 -->
+    <text x="160" y="244" text-anchor="middle" fill="#7aaec8" font-size="12" font-family="sans-serif">対流を利用して部屋全体を効率よく温める・冷やす</text>
+  </svg>
+  <div class="visual-caption">冷房は上に・暖房は下に設置するのは対流を利用しているから</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    お風呂の水も、上のほうがあたたかくても手を突っ込むと下は冷たくなっているときがあるよね。あたたかい水が上に集まるからだね。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    空気もあたたかい空気が上にいくから、おれたちの家の２階の寝る部屋はいつもあたたかいんだなあ。
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    だから寝るときいつもパンイチになっちゃうんだよね。
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    パンツの話は禁止です。
+  </div>
+</div>
+</div>
+</div><!-- chapter -->
+
+<!-- ===================== CHAPTER 4 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 4</div>
+  <div class="chapter-title">☀️ 大地のあたたまり方（放射）</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    太陽の熱はどうやって地球まで届くの？宇宙は空気がないのに伝導も対流もできないよね？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    すごく鋭い！太陽の熱は<strong>放射</strong>という方法で届くんだよ。放射は光と同じように真空中も直進して物に当たる。伝導・対流と並んで3つ目の熱の伝わり方だね。
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">放射の特徴</div>
+  ・真空の宇宙空間も直進して伝わる（伝導・対流は物質が必要）<br>
+  ・光と同じように直進し、物に当たると<span class="marker">反射</span>する<br>
+  ・<span class="marker">黒い物体に吸収されやすく、白い物体には吸収されにくい</span>
+</div>
+
+<!-- 色と吸収のビジュアル（縦棒グラフ形式） -->
+<div class="visual-panel">
+  <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg" style="max-width:340px;width:100%">
+    <rect width="300" height="280" fill="#060f1e" rx="10"/>
+    <text x="150" y="24" text-anchor="middle" fill="#ffd166" font-size="15" font-weight="bold" font-family="sans-serif">色と熱の吸収しやすさ</text>
+    <text x="150" y="44" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">（直射日光を当てたときの温度変化）</text>
+
+    <!-- Y軸 -->
+    <line x1="44" y1="60" x2="44" y2="210" stroke="#2a4a6a" stroke-width="1.5"/>
+    <text x="36" y="78" text-anchor="end" fill="#7aaec8" font-size="12" font-family="sans-serif">大</text>
+    <text x="36" y="200" text-anchor="end" fill="#7aaec8" font-size="12" font-family="sans-serif">小</text>
+    <text x="150" y="260" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">吸収しやすい ← 色 → 吸収しにくい</text>
+
+    <!-- 棒グラフ（左から：黒・青・赤・黄・白） -->
+    <!-- 黒：最も高い -->
+    <rect x="56" y="70" width="36" height="138" rx="4" fill="rgba(40,40,40,0.9)" stroke="#666" stroke-width="1.5"/>
+    <text x="74" y="220" text-anchor="middle" fill="#ccc" font-size="14" font-weight="bold" font-family="sans-serif">黒</text>
+    <text x="74" y="64" text-anchor="middle" fill="#aaa" font-size="12" font-family="sans-serif">最大</text>
+
+    <!-- 青 -->
+    <rect x="104" y="90" width="36" height="118" rx="4" fill="rgba(30,80,200,0.7)" stroke="#5b8cff" stroke-width="1.5"/>
+    <text x="122" y="220" text-anchor="middle" fill="#8ab0ff" font-size="14" font-weight="bold" font-family="sans-serif">青</text>
+
+    <!-- 赤 -->
+    <rect x="152" y="112" width="36" height="96" rx="4" fill="rgba(200,40,40,0.7)" stroke="#ef476f" stroke-width="1.5"/>
+    <text x="170" y="220" text-anchor="middle" fill="#ff8080" font-size="14" font-weight="bold" font-family="sans-serif">赤</text>
+
+    <!-- 黄 -->
+    <rect x="200" y="138" width="36" height="70" rx="4" fill="rgba(200,180,30,0.7)" stroke="#ffd166" stroke-width="1.5"/>
+    <text x="218" y="220" text-anchor="middle" fill="#ffd166" font-size="14" font-weight="bold" font-family="sans-serif">黄</text>
+
+    <!-- 白：最も低い -->
+    <rect x="248" y="170" width="36" height="38" rx="4" fill="rgba(220,230,240,0.3)" stroke="#aabbcc" stroke-width="1.5"/>
+    <text x="266" y="220" text-anchor="middle" fill="#ccddee" font-size="14" font-weight="bold" font-family="sans-serif">白</text>
+    <text x="266" y="164" text-anchor="middle" fill="#8090a0" font-size="12" font-family="sans-serif">最小</text>
+  </svg>
+  <div class="visual-caption">黒→青→赤→黄→白の順に熱を吸収しやすい（温度変化が大きい）</div>
+</div>
+
+<div class="memo">
+  <div class="box-title">放射の身近な例</div>
+  ① 百葉箱は<span class="marker">白く塗られている</span>→日光を反射して正しい気温を測るため<br>
+  ② 夏に白い服→日光を反射して涼しい。冬に黒い服→日光を吸収して暖かい<br>
+  ③ 黒くなった雪はとけやすい（熱を吸収しやすいから）<br>
+  ④ ストーブの内側の<span class="marker">反射板</span>→熱を前方に反射して効率よく温める<br>
+  ⑤ 魔法びんの内側は<span class="marker">銀メッキ</span>→放射熱を反射して温度を保つ
+</div>
+</div><!-- chapter -->
+
+<!-- ===================== CHAPTER 5 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 5</div>
+  <div class="chapter-title">⚙️ 金属のぼう張と収縮・身近な応用</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    線路のレールって夏に気をつけないといけないって聞いたことある。金属も伸び縮みするの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    そう！金属も温度が上がるとぼう張して長くなる。でも変化の大きさは空気や水よりずっと小さい。それでも工業では問題になるくらい重要なんだよ。
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">金属のぼう張の特徴</div>
+  ・あたためるとぼう張（体積増）、冷やすと収縮（体積減）は金属も同じ<br>
+  ・ただし体積変化は<span class="marker">気体＞液体＞固体（金属）</span>の順で小さい<br>
+  ・金属球を熱すると輪を通らなくなる（体積が増えるため）<br>
+  ・輪を熱すると内側も外側も大きくなり、球が通るようになる
+</div>
+
+<!-- 金属のぼう張応用ビジュアル（3段カード式） -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="340" fill="#060f1e" rx="10"/>
+    <text x="160" y="24" text-anchor="middle" fill="#ffd166" font-size="15" font-weight="bold" font-family="sans-serif">金属のぼう張・身近な応用</text>
+
+    <!-- ① 電線のたるみ -->
+    <rect x="16" y="40" width="288" height="84" rx="8" fill="rgba(255,209,102,0.06)" stroke="rgba(255,209,102,0.35)" stroke-width="1.5"/>
+    <text x="28" y="62" fill="#ffd166" font-size="14" font-weight="bold" font-family="sans-serif">① 電線のたるみ</text>
+    <!-- 夏（たるむ） -->
+    <line x1="36" y1="82" x2="86" y2="82" stroke="#7aaec8" stroke-width="1.5"/>
+    <path d="M86,82 Q110,100 134,82" fill="none" stroke="#fd9644" stroke-width="2.5"/>
+    <line x1="134" y1="82" x2="156" y2="82" stroke="#7aaec8" stroke-width="1.5"/>
+    <text x="110" y="112" text-anchor="middle" fill="#fd9644" font-size="13" font-family="sans-serif">夏：のびてたるむ</text>
+    <!-- 冬（ぴんと張る） -->
+    <line x1="168" y1="88" x2="218" y2="88" stroke="#7aaec8" stroke-width="1.5"/>
+    <line x1="218" y1="88" x2="298" y2="88" stroke="#5bc8f5" stroke-width="2.5"/>
+    <text x="240" y="112" text-anchor="middle" fill="#5bc8f5" font-size="13" font-family="sans-serif">冬：縮んでぴんと</text>
+
+    <!-- ② レールのつなぎ目 -->
+    <rect x="16" y="136" width="288" height="84" rx="8" fill="rgba(91,200,245,0.06)" stroke="rgba(91,200,245,0.35)" stroke-width="1.5"/>
+    <text x="28" y="158" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">② 線路のレールのつなぎ目</text>
+    <!-- 夏（すき間せまい） -->
+    <rect x="36" y="166" width="80" height="22" rx="3" fill="rgba(180,140,60,0.5)" stroke="#d4a040" stroke-width="1.5"/>
+    <rect x="118" y="166" width="80" height="22" rx="3" fill="rgba(180,140,60,0.5)" stroke="#d4a040" stroke-width="1.5"/>
+    <line x1="116" y1="177" x2="118" y2="177" stroke="#fff" stroke-width="1"/>
+    <text x="110" y="204" text-anchor="middle" fill="#fd9644" font-size="13" font-family="sans-serif">夏：すき間が狭い</text>
+    <!-- 冬（すき間広い） -->
+    <rect x="168" y="166" width="60" height="22" rx="3" fill="rgba(180,140,60,0.5)" stroke="#d4a040" stroke-width="1.5"/>
+    <rect x="238" y="166" width="60" height="22" rx="3" fill="rgba(180,140,60,0.5)" stroke="#d4a040" stroke-width="1.5"/>
+    <line x1="228" y1="177" x2="238" y2="177" stroke="#5bc8f5" stroke-width="3"/>
+    <text x="238" y="204" text-anchor="middle" fill="#5bc8f5" font-size="13" font-family="sans-serif">冬：すき間が広い</text>
+
+    <!-- ③ バイメタル -->
+    <!-- ③ バイメタル：高さを108に拡張してタイトルとラベルの間隔を確保 -->
+    <rect x="16" y="232" width="288" height="108" rx="8" fill="rgba(6,214,160,0.06)" stroke="rgba(6,214,160,0.35)" stroke-width="1.5"/>
+    <text x="28" y="252" fill="#06d6a0" font-size="14" font-weight="bold" font-family="sans-serif">③ バイメタル</text>
+    <!-- 「ぼう張しやすい金属」ラベル：タイトルから18px下 -->
+    <text x="40" y="272" fill="#ffd166" font-size="12" font-family="sans-serif">ぼう張しやすい金属</text>
+    <!-- 常温：まっすぐ（ラベルから6px下） -->
+    <rect x="36" y="278" width="100" height="16" rx="4" fill="rgba(180,140,60,0.5)" stroke="#d4a040" stroke-width="1.5"/>
+    <rect x="36" y="296" width="100" height="16" rx="4" fill="rgba(91,200,245,0.5)" stroke="#5bc8f5" stroke-width="1.5"/>
+    <text x="40" y="326" fill="#7aaec8" font-size="12" font-family="sans-serif">常温：まっすぐ</text>
+    <!-- 加熱：曲がる -->
+    <path d="M178,280 Q210,286 236,298" fill="none" stroke="#d4a040" stroke-width="8"/>
+    <path d="M178,294 Q208,302 228,316" fill="none" stroke="#5bc8f5" stroke-width="8"/>
+    <text x="210" y="326" text-anchor="middle" fill="#06d6a0" font-size="12" font-family="sans-serif">加熱：曲がってスイッチOFF</text>
+  </svg>
+  <div class="visual-caption">金属のぼう張は身近なところで活用されている</div>
+</div>
+
+<div class="memo">
+  <div class="box-title">バイメタルの仕組み</div>
+  2種類の金属をはり合わせたもの。ぼう張の大きさが<span class="marker">異なる金属を重ねると、温度が変わったとき曲がる</span>。こたつ・アイロン・サーモスタットなどの温度調節器に使われている。
+</div>
+
+<div class="jiji-box">
+  <div class="box-title">🗞️ 時事テーマ：夏の猛暑とインフラへの影響</div>
+  近年の猛暑で線路のレールが膨張し、変形する事故が増えている。昔はつなぎ目に余裕を持たせて対応していたが、現代の線路は溶接で一体化しているものが多く、事前の温度管理が重要になっている。金属のぼう張の知識が社会インフラを守っているんだね。
+</div>
+</div><!-- chapter -->
+
+<!-- ===================== CHAPTER 6 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 6</div>
+  <div class="chapter-title">🧮 熱量計算の発展問題</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    熱量の計算って、氷が出てくるともっと難しくなるって聞いたけど……
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    氷を溶かすときも熱量が必要なんだよ。「0℃の氷1gを0℃の水1gにする」のに<span class="marker">80カロリー必要</span>。これが加わると計算が少し複雑になるね。手順通りに解けば必ず解けるよ！
+  </div>
+</div>
+</div>
+
+<div class="calc-box">
+  <div class="box-title">🧮 発展：氷が混ざった場合の計算手順</div>
+  <div style="margin-bottom:8px;font-size:14px;color:var(--text);">問：0℃の氷100gを90℃の水400gに入れると何℃になる？（氷1gを溶かすのに80cal必要）</div>
+  <div class="calc-step">① 90℃の水400gがもつ熱量　→　400 × 90 ＝ 36000 cal</div>
+  <div class="calc-step">② 氷100gを溶かすために必要な熱量　→　80 × 100 ＝ 8000 cal</div>
+  <div class="calc-step">③ 溶かした後に残る熱量　→　36000 − 8000 ＝ 28000 cal</div>
+  <div class="calc-step">④ 水の合計　→　400 + 100 ＝ 500 g</div>
+  <div class="calc-step" style="border:2px solid #c8c0ff;background:#160d2a;color:#e8f4fd;">⑤ 混合後の水温　→　28000 ÷ 500 ＝ <strong style="color:#c8c0ff;font-size:16px;">56℃</strong></div>
+</div>
+
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    なるほど！まず全体の熱量を出して、そのあとに氷を溶かすのに熱量を「使う」から、その分を引けばいいんだね。
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    その通り！「もらった熱量＝使った熱量」が熱量計算の大原則。氷を溶かすのに使った分を引くと、残りが水を温めるのに使われる。この考え方さえ身につければ応用問題も解けるよ。
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="summary-box">
+  <div class="summary-title">📝 まとめ　オウスケが学んだこと</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-card-title">🌡️ 熱の移動と熱量</div>
+      熱は高温→低温へ移動。熱量＝重さ×温度変化（cal）。混合後の温度は合計熱量÷合計重さ。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🔩 伝導</div>
+      固体中を熱したところから順番に熱が伝わる。銀＞銅＞アルミ＞鉄＞ガラス＞木＞空気の順。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🌊 対流</div>
+      水・空気があたたまると軽くなり上昇→循環。上部加熱では下は温まらない。冷房は上・暖房は下。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">☀️ 放射・金属のぼう張</div>
+      放射は真空も伝わる。黒が最も吸収。金属も温度でぼう張・収縮。バイメタル・レール・電線に応用。
+    </div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+  <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/science_quiz_02.html">⚔️ クイズに挑戦！</a>
+</div>
+</div><!-- chapter -->
+
+</body>
+</html>

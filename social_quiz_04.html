@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会クエスト｜交通と情報 RPGクイズ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --panel: #111827;
+    --border: #1f3050;
+    --gold: #ffd700;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #e2e8f0;
+    --muted: #6b8aaa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(2px 2px at 10% 60%, rgba(255,215,0,0.2), transparent),
+      radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.25), transparent);
+    pointer-events:none;
+    z-index:0;
+  }
+  #app { width: 100%; max-width: 680px; position: relative; z-index:1; }
+
+  #title-screen {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(59,130,246,0.2);
+  }
+  .pixel-title {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: clamp(20px, 5vw, 32px);
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.5), 2px 2px 0 rgba(0,0,0,0.8);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    to { text-shadow: 0 0 30px rgba(255,215,0,0.8), 0 0 60px rgba(255,215,0,0.3); }
+  }
+  .title-sub { font-size: 13px; color: var(--muted); margin-bottom: 30px; letter-spacing: 1px; }
+  .hero-sprite {
+    font-size: 80px;
+    margin: 20px 0;
+    animation: float 3s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .title-info {
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 20px 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #a0c4e8;
+  }
+
+  .btn { display: inline-block; padding: 14px 40px; border: none; border-radius: 10px; font-family: 'DotGothic16', sans-serif; font-size: 16px; cursor: pointer; transition: all 0.15s; text-decoration: none; letter-spacing: 1px; }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; box-shadow: 0 4px 0 #1e3a8a, 0 8px 20px rgba(37,99,235,0.3); }
+  .btn-primary:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); transform: translateY(-2px); }
+  .btn-answer { display: block; width: 100%; padding: 16px 20px; margin-bottom: 10px; background: #1a2848; border: 2px solid #2a4070; border-radius: 12px; color: #e8f0ff; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; text-align: left; cursor: pointer; transition: all 0.15s; }
+  .btn-answer:hover:not(:disabled) { background: #1e3a6e; border-color: #4a80d0; transform: translateX(4px); }
+  .btn-answer.correct { background: #0f3d28; border-color: #10b981; color: #6ee7b7; }
+  .btn-answer.wrong { background: #3d1515; border-color: #ef4444; color: #fca5a5; }
+  .btn-answer:disabled { cursor: default; }
+
+  #game-screen { display: none; }
+  .hud { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  .hud-item { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; font-size: 12px; font-family: 'DotGothic16', sans-serif; color: var(--muted); flex-shrink: 0; }
+  .hud-item span { color: var(--gold); font-size: 15px; }
+  .hp-wrap { flex: 1; min-width: 120px; }
+  .hp-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: 'DotGothic16', sans-serif; }
+  .hp-bar-bg { height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .hp-bar { height: 100%; border-radius: 6px; transition: width 0.5s ease, background 0.5s; }
+
+  .battle-scene { background: var(--panel); border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; min-height: 120px; position: relative; overflow: hidden; }
+  .battle-scene::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, rgba(15,25,60,0.5)); }
+  .battle-scene-bg { position: absolute; inset: 0; opacity: 0.06; font-size: 100px; display: flex; align-items: center; justify-content: center; }
+  .battle-flex { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 1; }
+  .enemy-side { text-align: center; }
+  .enemy-sprite { font-size: 56px; display: block; margin-bottom: 4px; animation: enemy-float 2s ease-in-out infinite; }
+  @keyframes enemy-float { 0%,100%{transform:translateY(0) scaleX(-1);} 50%{transform:translateY(-6px) scaleX(-1);} }
+  .enemy-name-plate { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; padding: 4px 12px; font-size: 11px; color: #fca5a5; font-family: 'DotGothic16', sans-serif; }
+  .hero-side { text-align: center; }
+  .hero-battle-sprite { font-size: 48px; display: block; margin-bottom: 4px; }
+  .hero-name-plate { background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); border-radius: 8px; padding: 4px 12px; font-size: 11px; color: #93c5fd; font-family: 'DotGothic16', sans-serif; }
+
+  .message-box { background: #1a2540; border: 2px solid #2a4070; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 14px; line-height: 1.8; min-height: 70px; position: relative; color: #ddeeff; }
+  .message-box .hint { display: block; background: #2d1f5e; border: 1px solid #6d4fbf; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #d8c8ff; margin-top: 8px; }
+  .question-box { background: #162035; border: 2px solid #2a4a80; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .question-level { font-size: 11px; color: #7ab8ff; font-family: 'DotGothic16', sans-serif; margin-bottom: 8px; letter-spacing: 1px; }
+  .question-text { font-size: 16px; font-weight: 700; line-height: 1.6; color: #ffffff; }
+
+  .feedback { border-radius: 12px; padding: 14px 16px; margin: 12px 0; font-size: 14px; line-height: 1.7; display: none; }
+  .feedback.correct-fb { background: #0d3020; border: 2px solid #10b981; color: #d0fff0; }
+  .feedback.wrong-fb { background: #3a0f0f; border: 2px solid #ef4444; color: #ffe0e0; }
+  .feedback-title { font-weight: 900; margin-bottom: 6px; font-size: 16px; }
+  .feedback.correct-fb .feedback-title { color: #34d399; }
+  .feedback.wrong-fb .feedback-title { color: #f87171; }
+  .feedback-exp { color: #a0c8e8; font-size: 13px; margin-top: 6px; }
+
+  .btn-next { display: none; width: 100%; padding: 14px; background: linear-gradient(135deg, #7c3aed, #5b21b6); color: white; border: none; border-radius: 10px; font-family: 'DotGothic16', sans-serif; font-size: 15px; cursor: pointer; box-shadow: 0 4px 0 #3b1286; transition: all 0.15s; letter-spacing: 1px; }
+  .btn-next:hover { transform: translateY(-2px); }
+  .btn-next:active { transform: translateY(2px); box-shadow: 0 2px 0 #3b1286; }
+
+  #result-screen { display: none; text-align: center; background: var(--panel); border: 2px solid var(--border); border-radius: 20px; padding: 30px 20px; }
+  .result-title { font-family: 'DotGothic16', sans-serif; font-size: 28px; color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.5); margin-bottom: 20px; }
+  .result-score { font-family: 'DotGothic16', sans-serif; font-size: 52px; color: white; margin: 20px 0; }
+  .result-score span { color: var(--gold); }
+  .result-rank { font-size: 16px; padding: 10px 30px; border-radius: 30px; display: inline-block; margin-bottom: 20px; font-weight: 900; letter-spacing: 2px; }
+  .rank-s { background: rgba(255,215,0,0.2); border: 2px solid var(--gold); color: var(--gold); }
+  .rank-a { background: rgba(59,130,246,0.2); border: 2px solid var(--blue); color: #93c5fd; }
+  .rank-b { background: rgba(16,185,129,0.2); border: 2px solid var(--green); color: #6ee7b7; }
+  .rank-c { background: rgba(239,68,68,0.15); border: 2px solid var(--red); color: #fca5a5; }
+  .result-msg { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.8; }
+  .result-wrong-list { text-align: left; margin: 16px 0; }
+  .wrong-item { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; }
+  .wrong-q { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .wrong-correct { color: #6ee7b7; }
+  .exp-section { margin: 16px 0; }
+  .exp-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-family: 'DotGothic16', sans-serif; }
+  .exp-bg { height: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .exp-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 8px; transition: width 1.5s ease; width: 0%; }
+  .levelup-badge { display: inline-block; background: linear-gradient(135deg, var(--gold), #f59e0b); color: #1a1000; font-family: 'DotGothic16', sans-serif; font-size: 14px; padding: 8px 24px; border-radius: 30px; margin: 10px; box-shadow: 0 0 20px rgba(255,215,0,0.4); animation: pulse 1s ease infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+  .shake { animation: shake 0.4s ease; }
+  @keyframes flash-green { 0%,100%{background:var(--panel);} 50%{background:rgba(16,185,129,0.15);} }
+  .flash-correct { animation: flash-green 0.5s ease; }
+  .q-count { font-size: 12px; color: var(--muted); font-family: 'DotGothic16', sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">&#x1F683;</span>
+<div class="pg-title">&#x4E2D;&#x5B66;&#x53D7;&#x9A13;&#x3078;&#x306E;&#x9053;</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">&#x1F511; &#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x306D;</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">&#x25B6;</button>
+</div>
+<div class="pg-err" id="pg-err">&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x304C;&#x3061;&#x304C;&#x3046;&#x3088;&#xFF01;</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div id="app">
+
+<!-- TITLE SCREEN -->
+<div id="title-screen">
+  <div class="pixel-title">⚡ 社会クエスト<br/>交通と情報</div>
+  <div class="title-sub">中学受験　社会小５上　第４回</div>
+  <span class="hero-sprite">🧙‍♂️</span>
+  <div class="title-info">
+    ✦ 全10問　RPG風クイズ<br/>
+    ✦ 正解すれば次のレベルへ進める！<br/>
+    ✦ 間違えると HPが減るぞ！<br/>
+    ✦ 全問クリアしてSランクを目指せ！
+  </div>
+  <button class="btn btn-primary" onclick="startGame()">
+    ▶　ゲームスタート！
+  </button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+  <div class="hud">
+    <div class="hud-item">Q <span id="q-num">1</span>/10</div>
+    <div class="hp-wrap">
+      <div class="hp-label">HP ❤️ <span id="hp-text">5/5</span></div>
+      <div class="hp-bar-bg"><div class="hp-bar" id="hp-bar" style="width:100%;background:#10b981;"></div></div>
+    </div>
+    <div class="hud-item">EXP <span id="exp-text">0</span></div>
+  </div>
+
+  <div class="battle-scene" id="battle-scene">
+    <div class="battle-scene-bg" id="battle-bg">🚄</div>
+    <div class="battle-flex">
+      <div class="enemy-side">
+        <span class="enemy-sprite" id="enemy-sprite">🚆</span>
+        <div class="enemy-name-plate" id="enemy-name">交通モンスター</div>
+      </div>
+      <div class="hero-side">
+        <span class="hero-battle-sprite">🧙‍♂️</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-box" id="message-box">
+    <span id="message-text"></span>
+    <span class="hint" id="hint-text" style="display:none;"></span>
+  </div>
+
+  <div class="question-box">
+    <div class="question-level" id="q-level">難易度 ★★★</div>
+    <div class="question-text" id="q-text"></div>
+  </div>
+
+  <div id="choices-area"></div>
+
+  <div class="feedback" id="feedback">
+    <div class="feedback-title" id="feedback-title"></div>
+    <div id="feedback-body"></div>
+    <div class="feedback-exp" id="feedback-exp"></div>
+  </div>
+
+  <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+    ▶ 次の問題へ
+  </button>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-title">⚔️ クエスト完了！</div>
+  <div class="result-score"><span id="result-score-num">0</span> / 10</div>
+  <div class="result-rank" id="result-rank">S ランク</div>
+  <div class="result-msg" id="result-msg"></div>
+  <div class="exp-section">
+    <div class="exp-label">獲得経験値</div>
+    <div class="exp-bg"><div class="exp-fill" id="exp-fill"></div></div>
+  </div>
+  <div id="levelup-area"></div>
+  <div id="wrong-review"></div>
+  <button class="btn btn-primary" onclick="restart()" style="margin-top:20px;">
+    🔄　もう一度チャレンジ！
+  </button>
+</div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    level: 1,
+    enemy: "🚃",
+    enemyName: "輸送モンスター",
+    bg: "🗾",
+    message: "2020年度の旅客輸送で最もシェアが大きい交通手段はどれじゃ！",
+    q: "2020年度の国内旅客輸送の割合として、最もシェアが大きい交通手段はどれか。",
+    choices: ["鉄道（約66%）", "自動車（約72%）", "航空機（約30%）", "船（約20%）"],
+    correct: 1,
+    explanation: "2020年度の旅客輸送は自動車が約72.2%で最大。1965年度は鉄道が約66.8%で最大でした。戦後の経済成長・自動車普及・高速道路整備により逆転しました。",
+    hint: "1965年→2020年で「主役交代」が起きた。どちらが増えた？"
+  },
+  {
+    level: 2,
+    enemy: "🚄",
+    enemyName: "新幹線モンスター",
+    bg: "⚡",
+    message: "日本で最初に開業した新幹線はどれじゃ！年と路線名を答えよ！",
+    q: "日本で最初に開業した新幹線と、その開業年の正しい組み合わせはどれか。",
+    choices: [
+      "山陽新幹線・1972年（昭和47年）",
+      "東海道新幹線・1964年（昭和39年）",
+      "東北新幹線・1982年（昭和57年）",
+      "北陸新幹線・2015年（平成27年）"
+    ],
+    correct: 1,
+    explanation: "日本初の新幹線は1964年（昭和39年）に東京〜新大阪間で開業した東海道新幹線。東京オリンピックの年です。当時の所要時間は4時間（現在は2時間30分）。",
+    hint: "1964年は東京で何かあった年…夏の大きなイベントを思い出して！"
+  },
+  {
+    level: 3,
+    enemy: "🛣️",
+    enemyName: "道路モンスター",
+    bg: "🏗️",
+    message: "日本初の高速道路の名前と開業年を答えよ！",
+    q: "日本で最初に開通した高速道路として正しいものはどれか。",
+    choices: [
+      "東名高速道路・1969年（愛知県〜東京都）",
+      "名神高速道路・1963年（愛知県〜兵庫県）",
+      "中央自動車道・1967年（東京都〜山梨県）",
+      "関越自動車道・1971年（東京都〜新潟県）"
+    ],
+    correct: 1,
+    explanation: "日本初の高速道路は1963年（昭和38年）に部分開通した名神高速道路（愛知県〜兵庫県）。東名高速道路（東京〜小牧）は1969年全通です。「名神→東名」の順番に注意！",
+    hint: "「名神」と「東名」は開通の順番がある。「名」「東名」どちらが先かな"
+  },
+  {
+    level: 3,
+    enemy: "🚢",
+    enemyName: "船モンスター",
+    bg: "🌊",
+    message: "鉄道・自動車・船・航空機の長所短所を正しく説明しているものはどれじゃ！",
+    q: "次のうち、各交通手段の長所・短所の説明として誤っているものはどれか。",
+    choices: [
+      "鉄道の長所：渋滞がなく時間通りに運行され、空気をよごす心配が少ない",
+      "自動車の長所：目的地まで直接行くことができ、宅配便などの戸口輸送が可能",
+      "船の長所：最も速い輸送手段であり、長距離輸送に最も有利",
+      "航空機の短所：大量の荷物を運ぶことができず、輸送費が高い"
+    ],
+    correct: 2,
+    explanation: "「最も速い」のは航空機であり、船の特徴ではありません。船の長所は「多くの荷物を一度に運べる」こと。短所は「運ぶのに時間がかかる」ことです。",
+    hint: "「最も速い」交通手段はどれ？船じゃないよね…"
+  },
+  {
+    level: 3,
+    enemy: "💨",
+    enemyName: "CO₂モンスター",
+    bg: "🌱",
+    message: "旅客輸送のCO₂排出量が最も少ない交通手段はどれじゃ！",
+    q: "旅客輸送1人キロあたりのCO₂排出量を比べたとき、最も少ない交通手段はどれか。",
+    choices: ["バス", "乗用車", "航空機", "鉄道"],
+    correct: 3,
+    explanation: "鉄道は旅客輸送のCO₂排出量が最も少なく、指数100（実際25g・CO₂/人キロ）。バスは360、航空機は496、乗用車は528と鉄道に比べてかなり多い。環境面での鉄道の優位性はよく出題される。",
+    hint: "「環境にやさしい交通手段」といえば？長距離でも渋滞なし…"
+  },
+  {
+    level: 4,
+    enemy: "🚂",
+    enemyName: "鉄道史モンスター",
+    bg: "🎌",
+    message: "日本初の鉄道に関する正しい組み合わせを答えよ！",
+    q: "日本で最初に鉄道が開通した年・区間・蒸気機関車の輸入元の正しい組み合わせはどれか。",
+    choices: [
+      "1872年（明治5年）・新橋〜横浜・イギリスから輸入",
+      "1869年（明治2年）・東京〜大阪・アメリカから輸入",
+      "1872年（明治5年）・新橋〜横浜・フランスから輸入",
+      "1877年（明治10年）・横浜〜名古屋・ドイツから輸入"
+    ],
+    correct: 0,
+    explanation: "日本初の鉄道は1872年（明治5年）に新橋〜横浜間で開通。蒸気機関車はイギリスから輸入されました。「汽笛一声 新橋を……」で始まる鉄道唱歌でも知られています。",
+    hint: "「汽笛一声 新橋を……」この唱歌の最初の駅名は？機関車の輸入元はどこ？"
+  },
+  {
+    level: 4,
+    enemy: "📻",
+    enemyName: "情報史モンスター",
+    bg: "📡",
+    message: "情報手段の歴史について正しい順番を答えよ！",
+    q: "次の情報手段・通信手段を、日本で普及・開始した年が古い順に正しく並べたものはどれか。\n（郵便制度・ラジオ放送・テレビ放送・インターネット）",
+    choices: [
+      "テレビ→ラジオ→郵便→インターネット",
+      "郵便→ラジオ→テレビ→インターネット",
+      "ラジオ→郵便→テレビ→インターネット",
+      "郵便→テレビ→ラジオ→インターネット"
+    ],
+    correct: 1,
+    explanation: "郵便制度（1871年・明治4年）→ラジオ放送（1925年・大正末）→テレビ放送（1953年・昭和28年）→インターネット（現代）の順。前島密が近代郵便制度を作り、1円切手の図案になっています。",
+    hint: "郵便は明治初期。ラジオは大正末期。テレビは昭和20年代後半。順番を覚えよう！"
+  },
+  {
+    level: 4,
+    enemy: "📱",
+    enemyName: "情報化モンスター",
+    bg: "💻",
+    message: "インターネットの特徴について正しいものを答えよ！",
+    q: "インターネットの特徴について正しいものの組み合わせはどれか。\n①好きな時にアクセスできる\n②誤った情報が広い範囲に伝わるおそれがある\n③リアルタイムには情報を得られない\n④利用者によっては、かたよった情報だけが手に入る場合がある",
+    choices: [
+      "①と③",
+      "②と③",
+      "①・②・④",
+      "①・②・③・④すべて正しい"
+    ],
+    correct: 2,
+    explanation: "①〇：好きな時にアクセス可能。②〇：誤情報が広まるおそれ。③✗：インターネットはリアルタイムに情報を得ることができる（むしろ長所）。④〇：かたよった情報だけが手に入る可能性あり。",
+    hint: "③「リアルタイムに情報を得られない」はどの情報手段の短所？インターネットでも同じ？"
+  },
+  {
+    level: 4,
+    enemy: "©️",
+    enemyName: "著作権モンスター",
+    bg: "📝",
+    message: "著作権・肖像権について正しいものを答えよ！",
+    q: "著作権や肖像権に関する説明として正しいものはどれか。",
+    choices: [
+      "新聞や雑誌の記事には著作権がなく、自由にコピーして使ってよい",
+      "インターネット上の画像は著作権がないので、自由に使用できる",
+      "他人の文章をそのまま自分の名前で出版すると著作権法違反になる",
+      "写真を撮ることは誰でも自由で、肖像権は問題にならない"
+    ],
+    correct: 2,
+    explanation: "他人の文章・写真などには著作権があり、無断でそのまま出版すると著作権法違反になります。肖像権は人物写真にも適用されます。インターネット上の画像にも著作権は存在します。",
+    hint: "「著作権」とは作者の権利。インターネット上でも著作権は消えない！"
+  },
+  {
+    level: 4,
+    enemy: "🛤️",
+    enemyName: "モーダルシフトモンスター",
+    bg: "🌿",
+    message: "モーダルシフトとその目的について正しいものを答えよ！",
+    q: "「モーダルシフト」について正しく説明しているものはどれか。",
+    choices: [
+      "旅客輸送を自動車から航空機に切り替えることで、輸送速度を上げること",
+      "長距離の貨物輸送をトラックから船や鉄道に切り替えることで、環境負荷や長距離ドライバー不足の問題に対応すること",
+      "国内輸送から国際輸送に切り替えることで、物流コストを下げること",
+      "鉄道輸送を船輸送に全面的に切り替えることで、速度より大量輸送を優先すること"
+    ],
+    correct: 1,
+    explanation: "モーダルシフトとは、長距離の貨物輸送をトラック（自動車）から環境に優しい船や鉄道に切り替えること。CO₂排出量の削減と長距離ドライバー不足の解消の両面で注目されています。",
+    hint: "「モーダル」＝輸送手段。「シフト」＝切り替え。環境問題と人手不足が背景にある"
+  }
+];
+
+let currentQ = 0, hp = 5, maxHp = 5, exp = 0, wrongList = [];
+
+function startGame() {
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('q-num').textContent = currentQ + 1;
+  document.getElementById('enemy-sprite').textContent = q.enemy;
+  document.getElementById('enemy-name').textContent = q.enemyName;
+  document.getElementById('battle-bg').textContent = q.bg;
+  document.getElementById('message-text').textContent = q.message;
+  const hint = document.getElementById('hint-text');
+  if (currentQ < 4 && q.hint) {
+    hint.textContent = '💡 ヒント：' + q.hint;
+    hint.style.display = 'block';
+  } else {
+    hint.style.display = 'none';
+  }
+  document.getElementById('q-level').textContent = '難易度 ★★★' + (q.level >= 3 ? '★' : '');
+  document.getElementById('q-text').textContent = q.q;
+
+  const area = document.getElementById('choices-area');
+  area.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-answer';
+    btn.textContent = ['A', 'B', 'C', 'D'][i] + '．' + c;
+    btn.onclick = () => answer(i, btn);
+    area.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none';
+  fb.className = 'feedback';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function answer(idx, btn) {
+  const q = questions[currentQ];
+  const allBtns = document.querySelectorAll('.btn-answer');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+
+  if (idx === q.correct) {
+    btn.classList.add('correct');
+    allBtns[q.correct].classList.add('correct');
+    fb.className = 'feedback correct-fb';
+    document.getElementById('feedback-title').textContent = '✅ 正解！';
+    document.getElementById('feedback-body').textContent = q.explanation;
+    document.getElementById('feedback-exp').textContent = '+10 EXP 獲得！';
+    exp += 10;
+    document.getElementById('exp-text').textContent = exp;
+    document.getElementById('battle-scene').classList.add('flash-correct');
+    setTimeout(() => document.getElementById('battle-scene').classList.remove('flash-correct'), 500);
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+    fb.className = 'feedback wrong-fb';
+    document.getElementById('feedback-title').textContent = '❌ 不正解…';
+    document.getElementById('feedback-body').textContent = q.explanation;
+    document.getElementById('feedback-exp').textContent = '正解は「' + ['A','B','C','D'][q.correct] + '」でした';
+    hp--;
+    wrongList.push({ q: q.q, correct: q.choices[q.correct] });
+    updateHP();
+    document.getElementById('battle-scene').classList.add('shake');
+    setTimeout(() => document.getElementById('battle-scene').classList.remove('shake'), 400);
+  }
+
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function updateHP() {
+  const pct = (hp / maxHp) * 100;
+  const bar = document.getElementById('hp-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 60 ? '#10b981' : pct > 30 ? '#f59e0b' : '#ef4444';
+  document.getElementById('hp-text').textContent = hp + '/' + maxHp;
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length || hp <= 0) {
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const correct = 10 - wrongList.length;
+  document.getElementById('result-score-num').textContent = correct;
+
+  let rank, rankClass, msg;
+  if (correct === 10) {
+    rank = 'S ランク'; rankClass = 'rank-s';
+    msg = '完璧です！全問正解！\n「交通と情報」マスター達成！\n中学受験本番でも絶対に解けるぞ！';
+  } else if (correct >= 8) {
+    rank = 'A ランク'; rankClass = 'rank-a';
+    msg = 'すばらしい！あと少しで完璧だ！\n交通と情報のエキスパートに近い！';
+  } else if (correct >= 6) {
+    rank = 'B ランク'; rankClass = 'rank-b';
+    msg = 'よくがんばった！\nまちがえた問題のストーリーをもう一度確認しよう。';
+  } else {
+    rank = 'C ランク'; rankClass = 'rank-c';
+    msg = 'もう一度ストーリーを読んで、チャレンジしよう！\nカンチャンのアドバイスを思い出して！';
+  }
+
+  document.getElementById('result-rank').textContent = rank;
+  document.getElementById('result-rank').className = 'result-rank ' + rankClass;
+  document.getElementById('result-msg').textContent = msg;
+
+  setTimeout(() => {
+    document.getElementById('exp-fill').style.width = (exp / 100 * 100) + '%';
+  }, 300);
+
+  if (correct >= 8) {
+    document.getElementById('levelup-area').innerHTML = '<div class="levelup-badge">🌟 LEVEL UP！交通情報マスター</div>';
+  }
+
+  if (wrongList.length > 0) {
+    let html = '<div style="font-weight:700;margin-bottom:8px;color:#ffd700;">📝 まちがえた問題</div>';
+    wrongList.forEach(w => {
+      html += `<div class="wrong-item"><div class="wrong-q">${w.q.substring(0,40)}...</div><div class="wrong-correct">✅ 正解：${w.correct}</div></div>`;
+    });
+    document.getElementById('wrong-review').innerHTML = html;
+  }
+
+  const nav = document.createElement('div');
+  nav.style.cssText = 'display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;';
+  nav.innerHTML = `
+    <a href="https://yama-sako.github.io/jukenjr/social_story_04.html" style="display:inline-block;padding:12px 20px;background:linear-gradient(135deg,#0a4a2a,#0a7a44);border:1.5px solid #0a9a54;border-radius:12px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;">📖 ストーリーを読む</a>
+    <a href="https://yama-sako.github.io/jukenjr/stamp_sheet.html" style="display:inline-block;padding:12px 20px;background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;">🏠 スタンプシートへ</a>
+  `;
+  document.getElementById('result-screen').appendChild(nav);
+}
+
+function restart() {
+  currentQ = 0; hp = 5; exp = 0; wrongList = [];
+  updateHP();
+  document.getElementById('exp-text').textContent = 0;
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('levelup-area').innerHTML = '';
+  document.getElementById('wrong-review').innerHTML = '';
+  const lastNav = document.getElementById('result-screen').lastElementChild;
+  if (lastNav && lastNav.tagName === 'DIV') lastNav.remove();
+  document.getElementById('game-screen').style.display = 'block';
+  loadQuestion();
+}
+</script>
+</body>
+</html>

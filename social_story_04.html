@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サクトと交通・情報の冒険</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1220;--panel:#111828;--border:#1e3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--red:#ff6b6b;
+  --orange:#ff9f43;--purple:#a29bfe;
+  --text:#e8f4fd;--muted:#7aaec8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(14,122,186,.1) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(255,159,67,.06) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+.title-screen{text-align:center;padding:40px 20px 30px;border-bottom:2px solid #2a5080;margin-bottom:30px;}
+.story-tag{display:inline-block;background:#1a6bbf;color:#fff;font-size:11px;font-weight:700;
+  letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(22px,5vw,36px);
+  font-weight:900;line-height:1.3;color:#ffd166;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 30px rgba(255,209,102,.4);margin-bottom:10px;}
+
+.chapter{margin-bottom:36px;}
+.chapter-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;
+  background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));
+  border-radius:10px;border-left:4px solid #5bc8f5;
+  box-shadow:inset 0 1px 0 rgba(91,200,245,.2);}
+.chapter-header.jiji{background:linear-gradient(90deg,#5a1a2a,rgba(239,71,111,.15));border-left-color:#ef476f;}
+.chapter-num{font-size:11px;font-weight:900;letter-spacing:2px;color:#90d8ff;text-shadow:0 1px 3px rgba(0,0,0,.6);}
+.chapter-header.jiji .chapter-num{color:#ff9aaa;}
+.chapter-title{font-size:18px;font-weight:900;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.chapter-icon{font-size:24px;}
+
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+
+.dialogue{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;border:2px solid;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;}
+.avatar.sakuto{background:rgba(91,200,245,.15);border-color:var(--sky);}
+.avatar.ousuke{background:rgba(6,214,160,.15);border-color:var(--green);}
+.avatar.kanchan{background:rgba(255,209,102,.15);border-color:var(--gold);}
+.avatar.papa{background:rgba(162,155,254,.15);border-color:var(--purple);}
+.avatar.kpapa{background:rgba(52,211,153,.15);border-color:#34d399;}
+.av-svg{width:60px;height:60px;}
+
+.bubble-wrap{flex:1;}
+.bubble-name{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.bubble-name.sakuto{color:var(--sky);}
+.bubble-name.ousuke{color:var(--green);}
+.bubble-name.kanchan{color:var(--gold);}
+.bubble-name.papa{color:var(--purple);}
+.bubble-name.kpapa{color:#34d399;}
+.bubble{background:#1a2640;border-radius:0 14px 14px 14px;
+  padding:12px 16px;font-size:14px;line-height:1.7;border:1px solid #2a4060;color:#e8f4fd;}
+.bubble.sakuto{border-left:3px solid var(--sky);}
+.bubble.ousuke{border-left:3px solid var(--green);}
+.bubble.kanchan{border-left:3px solid var(--gold);}
+.bubble.papa{border-left:3px solid var(--purple);}
+.bubble.kpapa{border-left:3px solid #34d399;}
+
+.marker{background:rgba(255,220,50,.25);border-radius:3px;padding:1px 4px;
+  border-bottom:2px solid #ffd700;font-weight:700;color:#fff;}
+
+.knowledge{background:#0d2a44;border:1px solid rgba(91,200,245,.4);border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.knowledge-title{font-size:12px;font-weight:900;color:var(--sky);letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.knowledge ul{padding-left:16px;}
+.knowledge li{margin-bottom:5px;line-height:1.6;}
+.knowledge b{color:#fff;}
+
+.memo{background:#2a2000;border:1px solid rgba(255,209,102,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.memo-title{font-size:12px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+
+.danger{background:#2a0a12;border:1px solid rgba(239,71,111,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.danger-title{font-size:12px;font-weight:900;color:var(--coral);margin-bottom:6px;}
+
+.jiji-box{background:#2a0810;border:2px solid rgba(239,71,111,.5);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.jiji-title{font-size:13px;font-weight:900;color:var(--coral);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+
+/* 長所・短所カード */
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+@media(max-width:500px){.pros-cons{grid-template-columns:1fr;}}
+.pc-card{border-radius:12px;padding:14px;font-size:13px;line-height:1.7;}
+.pc-good{background:#0a1f10;border:1.5px solid rgba(6,214,160,.5);color:var(--text);}
+.pc-bad{background:#1f0a10;border:1.5px solid rgba(239,71,111,.5);color:var(--text);}
+.pc-title{font-weight:900;font-size:13px;margin-bottom:8px;}
+.pc-good .pc-title{color:#06d6a0;}
+.pc-bad .pc-title{color:#ef476f;}
+
+/* 輸送手段比較グリッド */
+.transport-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+@media(max-width:500px){.transport-grid{grid-template-columns:1fr;}}
+.t-card{background:#0a1828;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text);}
+.t-card .tc-title{font-weight:900;font-size:13px;margin-bottom:6px;}
+
+.map-wrap{background:rgba(5,15,35,.9);border:1px solid rgba(91,200,245,.25);border-radius:14px;padding:12px;margin:14px 0;overflow:hidden;}
+.map-title{font-size:12px;font-weight:700;color:var(--sky);letter-spacing:1px;margin-bottom:8px;text-align:center;}
+.map-wrap svg{width:100%;display:block;margin:0 auto;}
+
+.bar-section{padding:8px 4px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-label{width:80px;flex-shrink:0;font-size:12px;color:#ccc;text-align:right;line-height:1.3;}
+.bar-outer{flex:1;display:flex;align-items:center;gap:8px;}
+.bar-bg{flex:1;height:26px;background:#0e1a2e;border-radius:5px;overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:5px;}
+.bar-val{font-size:12px;font-weight:700;white-space:nowrap;min-width:48px;color:var(--sky);}
+
+.narrative{font-size:14px;color:#bcd8f0;font-style:italic;padding:10px 0;line-height:1.8;}
+
+/* 情報手段比較表 */
+.info-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+.info-table th{background:#1a3a6e;color:#5bc8f5;padding:8px 10px;font-size:12px;font-weight:700;text-align:left;}
+.info-table td{padding:8px 10px;border-bottom:1px solid #1e3050;color:var(--text);vertical-align:top;line-height:1.6;}
+.info-table tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+.good-col{color:#6ee7b7;}
+.bad-col{color:#fca5a5;}
+
+/* 記述対策ボックス */
+.jukugo-box{background:#1a0a28;border:2px solid rgba(162,155,254,.5);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.jukugo-title{font-size:13px;font-weight:900;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+
+.summary-box{background:#0d2a1e;border:2px solid rgba(6,214,160,.5);border-radius:16px;padding:20px;margin-top:30px;}
+.summary-title{font-size:16px;font-weight:900;color:#06d6a0;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sum-item{background:#0a1f16;border:1px solid #1a4a32;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.8;color:#d0f0e0;}
+.sum-item strong{color:#ffd166;display:block;margin-bottom:6px;font-size:13px;}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr;}}
+
+em{color:var(--gold);font-style:normal;font-weight:700;}
+.footer{text-align:center;padding:30px;color:var(--border);font-size:11px;letter-spacing:1px;}
+
+/* nav */
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 0 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+</style>
+
+<!-- PASSWORD GATE -->
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">&#x1F683;</span>
+<div class="pg-title">&#x4E2D;&#x5B66;&#x53D7;&#x9A13;&#x3078;&#x306E;&#x9053;</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">&#x1F511; &#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x306D;</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">&#x25B6;</button>
+</div>
+<div class="pg-err" id="pg-err">&#x30D1;&#x30B9;&#x30EF;&#x30FC;&#x30C9;&#x304C;&#x3061;&#x304C;&#x3046;&#x3088;&#xFF01;</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="container">
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <!-- SAKUTO（黄色Tシャツ・トゲ髪） -->
+  <symbol id="av-sakuto" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- OUSUKE（濃いグレーTシャツ・前髪おろし） -->
+  <symbol id="av-ousuke" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- KANCHAN（赤いキャップ・丸い大きな目で差別化） -->
+  <symbol id="av-kanchan" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#c0200a"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M10,18 Q10,8 30,8 Q50,8 50,18 Q50,22 30,22 Q10,22 10,18Z" fill="#cc2200"/>
+    <path d="M8,18 Q30,14 52,18 Q48,22 30,20 Q12,22 8,18Z" fill="#aa1a00"/>
+    <line x1="10" y1="20" x2="50" y2="20" stroke="#881400" stroke-width="1"/>
+    <path d="M30,8 L30,22" stroke="#aa1a00" stroke-width="1" opacity=".6"/>
+    <circle cx="23" cy="27" r="4.5" fill="#fff" stroke="#1a1008" stroke-width="1.5"/>
+    <circle cx="37" cy="27" r="4.5" fill="#fff" stroke="#1a1008" stroke-width="1.5"/>
+    <circle cx="23" cy="27" r="2.5" fill="#1a1008"/>
+    <circle cx="37" cy="27" r="2.5" fill="#1a1008"/>
+    <circle cx="22" cy="26" r="1" fill="#fff"/>
+    <circle cx="36" cy="26" r="1" fill="#fff"/>
+    <path d="M18,22 Q23,19 28,22" fill="none" stroke="#1a1008" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M32,22 Q37,19 42,22" fill="none" stroke="#1a1008" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="31" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M21,36 Q30,44 39,36" fill="none" stroke="#c07040" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="19" cy="33" rx="4" ry="2.5" fill="#ffaaaa" opacity=".5"/>
+    <ellipse cx="41" cy="33" rx="4" ry="2.5" fill="#ffaaaa" opacity=".5"/>
+    <ellipse cx="12" cy="27" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="27" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- お父さん（大人版・ネイビーシャツ・眼鏡なし） -->
+  <symbol id="av-papa" viewBox="0 0 60 60">
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#1e3a6e"/>
+    <path d="M22,42 L30,52 L38,42" fill="none" stroke="#a0c0e8" stroke-width="1.5"/>
+    <rect x="24" y="35" width="12" height="11" rx="5" fill="#f0c898"/>
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,17 Q20,9 30,9 Q40,9 46,17 Q40,13 30,14 Q20,13 14,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M27,24 Q29,23 29,25" fill="none" stroke="#c07040" stroke-width=".8" opacity=".5"/>
+    <path d="M41,24 Q43,23 43,25" fill="none" stroke="#c07040" stroke-width=".8" opacity=".5"/>
+    <path d="M18,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="30" cy="29" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,33 Q30,38 36,33" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="31" rx="4" ry="2.5" fill="#ffaaaa" opacity=".3"/>
+    <ellipse cx="41" cy="31" rx="4" ry="2.5" fill="#ffaaaa" opacity=".3"/>
+    <ellipse cx="12" cy="25" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="25" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+
+  <!-- チャンパパ（濃いひげ・白髪交じり・アウトドア系） -->
+  <symbol id="av-kpapa" viewBox="0 0 60 60">
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#1a4a20"/>
+    <rect x="24" y="35" width="12" height="11" rx="5" fill="#e8b878"/>
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#dda060"/>
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#4a4a4a"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#4a4a4a"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#4a4a4a"/>
+    <path d="M14,17 Q20,9 30,9 Q40,9 46,17 Q40,13 30,14 Q20,13 14,17Z" fill="#4a4a4a"/>
+    <path d="M18,12 Q22,9 26,11" fill="none" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+    <path d="M34,11 Q38,9 42,12" fill="none" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+    <ellipse cx="23" cy="25" rx="3.2" ry="3" fill="#2a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3" fill="#2a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".75"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".75"/>
+    <path d="M18,21 Q23,18 27,21" fill="none" stroke="#2a1008" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#2a1008" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="30" cy="29" rx="2.5" ry="2" fill="#b07830" opacity=".6"/>
+    <path d="M24,33 Q27,31 30,32 Q33,31 36,33" fill="rgba(40,20,0,0.7)" stroke="none"/>
+    <ellipse cx="26" cy="36" rx="2.5" ry="1.2" fill="rgba(40,20,0,0.4)"/>
+    <ellipse cx="30" cy="37" rx="2.5" ry="1.2" fill="rgba(40,20,0,0.4)"/>
+    <ellipse cx="34" cy="36" rx="2.5" ry="1.2" fill="rgba(40,20,0,0.4)"/>
+    <path d="M24,33 Q30,38 36,33" fill="none" stroke="#904828" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="31" rx="4" ry="2.5" fill="#e08040" opacity=".35"/>
+    <ellipse cx="41" cy="31" rx="4" ry="2.5" fill="#e08040" opacity=".35"/>
+    <ellipse cx="12" cy="25" rx="4" ry="5" fill="#dda060"/>
+    <ellipse cx="48" cy="25" rx="4" ry="5" fill="#dda060"/>
+  </symbol>
+</defs>
+</svg>
+
+<!-- TITLE -->
+<div class="title-screen">
+  <div class="story-tag">社会 小５上 第４回</div>
+  <div class="story-title">🚄 サクトと交通・情報の冒険</div>
+
+</div>
+
+<!-- ===================== CHAPTER 1 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🚃</span>
+    <div>
+      <div class="chapter-num">CHAPTER 1</div>
+      <div class="chapter-title">日本の交通〜輸送の主役はこう変わった！</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">夏休み。サクトは友達のチャンカンと電車でキャンプに出かけた。サクトのお父さんと、チャンパパも一緒だ。</p>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">サクト！この電車、東海道新幹線と同じN700系の改良型だよ！最高時速285km！知ってた？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">詳しすぎ（笑）。でも確かに、昔は鉄道が輸送の中心だったって社会で習ったけど、今は自動車のほうが多いんだよね？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">そう！明治時代に鉄道が開通してから長い間、旅客も貨物も鉄道が中心だったんだ。でも戦後の経済成長で自動車が普及して、今は旅客・貨物ともに<em>自動車が輸送の中心</em>になっちゃったんだ。</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- 輸送割合変化グラフ（SVG横棒） -->
+  <div class="map-wrap">
+    <div class="map-title">旅客輸送の割合の変化（鉄道 vs 自動車）</div>
+    <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg">
+      <rect width="560" height="180" fill="#060f1e"/>
+      <!-- 軸ラベル -->
+      <text x="80" y="30" fill="#7aaec8" font-size="13" font-family="sans-serif" font-weight="bold">1965年度</text>
+      <text x="80" y="100" fill="#7aaec8" font-size="13" font-family="sans-serif" font-weight="bold">2020年度</text>
+
+      <!-- 1965：鉄道66.8→自動車31.6→その他 -->
+      <!-- 鉄道 -->
+      <rect x="160" y="16" width="268" height="26" rx="4" fill="#0e7aba"/>
+      <text x="294" y="33" text-anchor="middle" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">鉄道 66.8%</text>
+      <!-- 自動車 -->
+      <rect x="430" y="16" width="126" height="26" rx="4" fill="#fd9644"/>
+      <text x="493" y="33" text-anchor="middle" fill="#fff" font-size="12" font-family="sans-serif">自動車 31.6%</text>
+
+      <!-- 2020：自動車72.2→鉄道24.7→その他 -->
+      <!-- 自動車 -->
+      <rect x="160" y="86" width="289" height="26" rx="4" fill="#fd9644"/>
+      <text x="304" y="103" text-anchor="middle" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">自動車 72.2%</text>
+      <!-- 鉄道 -->
+      <rect x="451" y="86" width="99" height="26" rx="4" fill="#0e7aba"/>
+      <text x="500" y="103" text-anchor="middle" fill="#fff" font-size="12" font-family="sans-serif">鉄道 24.7%</text>
+
+      <!-- 凡例 -->
+      <rect x="160" y="140" width="16" height="14" rx="3" fill="#0e7aba"/>
+      <text x="182" y="152" fill="#e8f4fd" font-size="12" font-family="sans-serif">鉄道</text>
+      <rect x="230" y="140" width="16" height="14" rx="3" fill="#fd9644"/>
+      <text x="252" y="152" fill="#e8f4fd" font-size="12" font-family="sans-serif">自動車</text>
+      <text x="160" y="172" fill="#7aaec8" font-size="11" font-family="sans-serif">（出典：2023年版「日本のすがた」など）</text>
+    </svg>
+  </div>
+
+  <div class="dialogue">
+    <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+    <div class="bubble-wrap">
+      <div class="bubble-name sakuto">サクト</div>
+      <div class="bubble sakuto">自動車ってそんなに増えたんだ。でも鉄道のほうが速くて便利じゃない？</div>
+    </div>
+  </div>
+  <div class="dialogue">
+    <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+    <div class="bubble-wrap">
+      <div class="bubble-name kanchan">チャンカン</div>
+      <div class="bubble kanchan">それぞれに長所と短所があるんだよ。鉄道は渋滞がなくて時間通りに走れる。でも目的地まで直接行けない。自動車は好きな場所に行けるけど、渋滞や排気ガスの問題がある。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHAPTER 2 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🚢✈️</span>
+    <div>
+      <div class="chapter-num">CHAPTER 2</div>
+      <div class="chapter-title">4つの輸送手段〜長所・短所を整理しよう</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">鉄道や自動車だけじゃなくて、船とか飛行機もあるよね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kpapa"><svg class="av-svg"><use href="#av-kpapa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kpapa">チャンパパ</div>
+        <div class="bubble kpapa">そうだね。4つの輸送手段を、ここでいったん整理してみようか。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="transport-grid">
+    <div class="t-card">
+      <div class="tc-title" style="color:#5bc8f5;">🚃 鉄道</div>
+      時間通り。CO₂排出最小で空気もあまり汚さないが、目的地まで直接行けない。
+    </div>
+    <div class="t-card">
+      <div class="tc-title" style="color:#fd9644;">🚗 自動車</div>
+      目的地まで直接行け便利。宅配便もドアからドアへ。だが、渋滞で時間かかり排気ガスは環境に悪い。
+    </div>
+    <div class="t-card">
+      <div class="tc-title" style="color:#06d6a0;">🚢 船</div>
+      多くの荷物を運べる。大型貨物に向くが、運ぶのに時間がかかるのが難点。
+    </div>
+    <div class="t-card">
+      <div class="tc-title" style="color:#a29bfe;">✈️ 航空機</div>
+      最も高速で長距離移動に有利だが、輸送費は高く大量の荷物は運べない。
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar kpapa"><svg class="av-svg"><use href="#av-kpapa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kpapa">チャンパパ</div>
+        <div class="bubble kpapa">モーダルシフトは習ったかな？環境に配慮して、長距離の貨物輸送をトラックから船や鉄道に切り替えることなんだ。長距離ドライバー不足が問題になっているけど、その対策にもなっているよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CO₂排出量横棒グラフ -->
+  <div class="map-wrap">
+    <div class="map-title">旅客輸送のCO₂排出量（鉄道を100とした指数）</div>
+    <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="520" height="200" fill="#060f1e"/>
+      <line x1="110" y1="20" x2="110" y2="170" stroke="#2a4a6a" stroke-width="1.5"/>
+      <line x1="110" y1="170" x2="500" y2="170" stroke="#2a4a6a" stroke-width="1.5"/>
+      <text x="105" y="174" text-anchor="end" fill="#7aaec8" font-size="11" font-family="sans-serif">0</text>
+      <line x1="176" y1="168" x2="176" y2="172" stroke="#2a4a6a" stroke-width="1"/>
+      <text x="176" y="183" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">100</text>
+      <line x1="310" y1="168" x2="310" y2="172" stroke="#2a4a6a" stroke-width="1"/>
+      <text x="310" y="183" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">300</text>
+      <line x1="444" y1="168" x2="444" y2="172" stroke="#2a4a6a" stroke-width="1"/>
+      <text x="444" y="183" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">500</text>
+      <!-- 鉄道：100 -->
+      <rect x="112" y="28" width="67" height="24" rx="4" fill="#06d6a0"/>
+      <text x="88" y="44" text-anchor="end" fill="#e8f4fd" font-size="13" font-family="sans-serif">鉄道</text>
+      <text x="185" y="44" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">100</text>
+      <!-- バス：360 -->
+      <rect x="112" y="62" width="241" height="24" rx="4" fill="#5bc8f5"/>
+      <text x="88" y="78" text-anchor="end" fill="#e8f4fd" font-size="13" font-family="sans-serif">バス</text>
+      <text x="359" y="78" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">360</text>
+      <!-- 航空機：496 -->
+      <rect x="112" y="96" width="332" height="24" rx="4" fill="#fd9644"/>
+      <text x="88" y="112" text-anchor="end" fill="#e8f4fd" font-size="13" font-family="sans-serif">航空機</text>
+      <text x="450" y="112" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">496</text>
+      <!-- 乗用車：528 -->
+      <rect x="112" y="130" width="354" height="24" rx="4" fill="#ef476f"/>
+      <text x="88" y="146" text-anchor="end" fill="#e8f4fd" font-size="13" font-family="sans-serif">乗用車</text>
+      <text x="472" y="146" fill="#fff" font-size="13" font-family="sans-serif" font-weight="bold">528</text>
+      <text x="300" y="197" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">（実際のCO₂排出量：鉄道25g、バス90g、航空124g、乗用車132g　単位：g・CO₂/人キロ）</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ===================== CHAPTER 3 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🚄</span>
+    <div>
+      <div class="chapter-num">CHAPTER 3</div>
+      <div class="chapter-title">鉄道の発達〜新幹線と高速道路の歴史</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">日本初の鉄道は1872年（明治5年）、新橋〜横浜間なんだよ！蒸気機関車はイギリスから輸入された。当時の人たちは鉄道に乗り方がわからなくて、家に上がる感覚ではきものを脱いで乗ってたって話があるよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">え！そんなことあったの。で、新幹線はいつ？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan"><em>1964年</em>に東海道新幹線が東京〜新大阪間で開業！東京オリンピックの年だよ。当時は4時間かかってたのが、今は2時間30分になってるんだ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jiji-box">
+    <div class="jiji-title">🗞️ 時事：リニア中央新幹線をめぐる問題</div>
+    品川（東京都）〜名古屋（愛知県）を最速40分で結ぶリニア中央新幹線は2027年以降の開業をめざしていたが、静岡県が<em>「大井川の水資源への影響」</em>を懸念して着工を認めず、工事が遅れた。2026年3月に静岡県とJR東海がようやく合意、最短で36年の開業が視野に入る。地域の環境問題と国家プロジェクトが対立する難しいテーマだ。
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">前にサクトとオウスケの秋田の家に遊びにいったとき、こまちに乗っていったよ！</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">来てくれたよね、覚えてるよ。秋田新幹線、乗り心地はどうだった？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">盛岡から先は景色がすごくいいんだ。また乗りたいよ！</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">おれも新幹線たくさん乗りたい！京都はいとこがいるから、たまに行くんだよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🗾 全国の主な新幹線</div>
+    <ul>
+      <li>東海道・山陽新幹線：東京〜博多（のぞみ・ひかり・こだま）</li>
+      <li>東北・北海道新幹線：東京〜新函館北斗（はやぶさ・はやて・やまびこ）</li>
+      <li>北陸新幹線：東京〜敦賀（かがやき・はくたか）</li>
+      <li>秋田新幹線：東京〜秋田（こまち）</li>
+      <li>山形新幹線：東京〜新庄（つばさ）</li>
+      <li>九州新幹線：博多〜鹿児島中央（みずほ・さくら・つばめ）</li>
+      <li>建設中：北海道新幹線（〜札幌・2031年開業予定）</li>
+    </ul>
+  </div>
+
+  <div class="memo">
+    <div class="memo-title">✏️ 高速道路の歴史もチェック！</div>
+    ・1963年：<em>名神高速道路</em>（愛知県〜兵庫県）が部分開通 ← 日本初の高速道路<br>
+    ・1969年：東名高速道路（東京〜小牧）が全通<br>
+    ・現在は全国に高速道路網が整備され、宅配便などのサービスが発展
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">高速道路はうちもよく使うよね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">うん、中央道とか東名高速とかね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">おれたち飛行機も乗ったことあるよね。秋田に行ったときだっけ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">０歳のときね（笑）。あとは九州に旅行したときLCCを使ったんじゃないかな。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">LCCって何？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">LCCは格安航空会社。機内食などのサービスを簡単にして、運航コストを下げることで<em>低価格</em>を実現してるんだ。飛行機を利用する人が増える原因にもなってるんだよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jukugo-box">
+    <div class="jukugo-title">✍️ 武蔵・芝レベルの記述対策</div>
+    <strong>Q：日本の輸送の中心が鉄道から自動車に変わった理由を説明しなさい。</strong><br><br>
+    → 戦後の経済成長によって国民の生活が豊かになり、<span class="marker">①自家用車を持てるようになって自動車が普及した</span>こと、<span class="marker">②高速道路の整備が進んだ</span>こと、の2点が主な理由。これにより旅客・貨物ともに自動車が輸送の中心となった。
+  </div>
+</div>
+
+<!-- ===================== CHAPTER 4 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">📻</span>
+    <div>
+      <div class="chapter-num">CHAPTER 4</div>
+      <div class="chapter-title">情報手段の移り変わり〜江戸時代から現代へ</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">昔の人たちって、どうやって情報を手に入れてたんだろ。テレビもスマホもないじゃん。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">江戸時代は「飛脚」って人が手紙や荷物を走って届けてたらしいよ。あと「かわら版」っていう今でいう新聞みたいなものもあって。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">うん、新聞は明治時代になって普及したんだ。前島密という人がつくった郵便制度がカギになったんだよ。明治は郵便、大正はラジオ、昭和はテレビ、平成がインターネットで、今がAIだな。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 情報手段の変遷タイムライン -->
+  <div class="map-wrap">
+    <div class="map-title">情報手段の変遷タイムライン</div>
+    <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="560" height="200" fill="#060f1e"/>
+      <!-- 中心線 -->
+      <line x1="40" y1="100" x2="520" y2="100" stroke="#1e3050" stroke-width="3"/>
+
+      <!-- 江戸時代 -->
+      <circle cx="70" cy="100" r="10" fill="#5bc8f5"/>
+      <text x="70" y="74" text-anchor="middle" fill="#5bc8f5" font-size="12" font-family="sans-serif" font-weight="bold">江戸時代</text>
+      <text x="70" y="88" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">飛脚・</text>
+      <text x="70" y="100" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">かわら版</text>
+
+      <!-- 1871 郵便 -->
+      <circle cx="170" cy="100" r="10" fill="#06d6a0"/>
+      <text x="170" y="130" text-anchor="middle" fill="#06d6a0" font-size="12" font-family="sans-serif" font-weight="bold">1871年</text>
+      <text x="170" y="144" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">郵便制度</text>
+      <text x="170" y="158" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">（前島密）</text>
+
+      <!-- 1925 ラジオ -->
+      <circle cx="290" cy="100" r="10" fill="#ffd166"/>
+      <text x="290" y="74" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif" font-weight="bold">1925年</text>
+      <text x="290" y="88" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">ラジオ放送</text>
+      <text x="290" y="100" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">（大正末期）</text>
+
+      <!-- 1953 テレビ -->
+      <circle cx="390" cy="100" r="10" fill="#fd9644"/>
+      <text x="390" y="130" text-anchor="middle" fill="#fd9644" font-size="12" font-family="sans-serif" font-weight="bold">1953年</text>
+      <text x="390" y="144" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">テレビ放送</text>
+      <text x="390" y="158" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">（昭和時代）</text>
+
+      <!-- 現代 インターネット -->
+      <circle cx="490" cy="100" r="10" fill="#a29bfe"/>
+      <text x="490" y="74" text-anchor="middle" fill="#a29bfe" font-size="12" font-family="sans-serif" font-weight="bold">現代</text>
+      <text x="490" y="88" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">インター</text>
+      <text x="490" y="100" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">ネット</text>
+    </svg>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">📡 現代の情報手段の特徴</div>
+    <ul>
+      <li><b>新聞</b>：わかりやすい一覧性・くわしい内容・しっかり確認し報じる信頼性</li>
+      <li><b>テレビ</b>：伝わりやすい映像・リアルタイム性。一方で「テレビばなれ」も</li>
+      <li><b>インターネット</b>：自由にアクセス・多くの意見・動画も見られる。一方で誤情報も</li>
+      <li>日本の新聞の発行部数は<b>世界有数</b>（家庭への宅配システムがあるため）</li>
+      <li>携帯電話・スマートフォンのけいやく数が<b>固定電話を上回った</b></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== CHAPTER 5 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">📱</span>
+    <div>
+      <div class="chapter-num">CHAPTER 5</div>
+      <div class="chapter-title">情報化社会と注意点〜メディアリテラシーを身につけよう</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">インターネットって便利だけど、SNSでデマが広まったり個人情報が流出したりって聞くよ。どうすればいいんだろ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">ウソ多いよね。メディア何とかが大事なんだよね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">「メディアリテラシー」だよね。情報が正しいかどうか判断して、必要な情報を選ぶ能力のことだと社会で習ったよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 各情報手段の長所・短所表 -->
+  <div style="margin:14px 0;">
+    <div style="background:#0e1828;border:1px solid #1e3050;border-radius:12px;overflow:hidden;">
+      <!-- ヘッダー行 -->
+      <div style="display:grid;grid-template-columns:90px 1fr 1fr;background:#1a3a6e;">
+        <div style="padding:10px 12px;font-size:13px;font-weight:900;color:#5bc8f5;text-align:center;">手段</div>
+        <div style="padding:10px 12px;font-size:13px;font-weight:900;color:#06d6a0;border-left:1px solid #1e3050;">長　所</div>
+        <div style="padding:10px 12px;font-size:13px;font-weight:900;color:#ef476f;border-left:1px solid #1e3050;">短　所</div>
+      </div>
+      <!-- 新聞 -->
+      <div style="display:grid;grid-template-columns:90px 1fr 1fr;border-top:1px solid #1e3050;">
+        <div style="padding:12px;background:#0d2a44;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#5bc8f5;text-align:center;">新<br>聞</div>
+        <div style="padding:12px;font-size:13px;color:#a0e8c8;line-height:1.7;border-left:1px solid #1e3050;">一覧性・くわしい内容<br>しっかり確認し報じる信頼性</div>
+        <div style="padding:12px;font-size:13px;color:#f8a0b0;line-height:1.7;border-left:1px solid #1e3050;">リアルタイムに得られない<br>文字中心でわかりにくい場合も</div>
+      </div>
+      <!-- テレビ -->
+      <div style="display:grid;grid-template-columns:90px 1fr 1fr;border-top:1px solid #1e3050;">
+        <div style="padding:12px;background:#1a2a40;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#ffd166;text-align:center;">テレビ</div>
+        <div style="padding:12px;font-size:13px;color:#a0e8c8;line-height:1.7;border-left:1px solid #1e3050;">映像でわかりやすい<br>リアルタイム性</div>
+        <div style="padding:12px;font-size:13px;color:#f8a0b0;line-height:1.7;border-left:1px solid #1e3050;">放送時間で情報量が制限される<br>「テレビばなれ」が進む</div>
+      </div>
+      <!-- インターネット -->
+      <div style="display:grid;grid-template-columns:90px 1fr 1fr;border-top:1px solid #1e3050;">
+        <div style="padding:12px;background:#160d2a;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#a29bfe;text-align:center;">ネット</div>
+        <div style="padding:12px;font-size:13px;color:#a0e8c8;line-height:1.7;border-left:1px solid #1e3050;">好きな時にアクセス<br>多くの意見・動画も見られる</div>
+        <div style="padding:12px;font-size:13px;color:#f8a0b0;line-height:1.7;border-left:1px solid #1e3050;">誤情報が広まるおそれ<br>かたよった情報だけ入る場合も</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="memo">
+    <div class="memo-title">✏️ ネットで注意すべきは「著作権・肖像権」</div>
+    ・本・雑誌・写真・動画などには<em>著作権</em>がある<br>
+    ・他人の文章をそのまま写したり、写真を使ったりして出版すると著作権法違反になる<br>
+    ・人物の写真には<em>肖像権</em>があり、同様の注意が必要<br>
+    ・コピーライトマーク：©・(c)・Copyright
+  </div>
+
+  <div class="jiji-box">
+    <div class="jiji-title">🗞️ 時事：フェイクニュースとメディアリテラシー</div>
+    SNSの普及により、根拠のない情報（フェイクニュース）が瞬時に広まる時代になった。2024年の能登半島地震の際も「孤立集落に支援が届かない」という誤情報がSNSで拡散された例がある。<em>情報を見きわめる力（メディアリテラシー）</em>が現代社会でますます重要になっている。
+  </div>
+</div>
+
+<!-- ===================== CHAPTER 6 ===================== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🏅</span>
+    <div>
+      <div class="chapter-num">CHAPTER 6</div>
+      <div class="chapter-title">交通・情報の「日本初」を制覇しよう！</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar kanchan"><svg class="av-svg"><use href="#av-kanchan"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name kanchan">チャンカン</div>
+        <div class="bubble kanchan">入試には「日本初」がよく出るよ！ぼくの得意分野だ！鉄道の日本初は1872年の新橋〜横浜だって最初に言ったよね。他にも覚えてほしいのがあって……</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">チャンカンの鉄道愛、ここで発揮されてるじゃん（笑）。全部まとめて教えて！</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🏅 交通・情報「日本初」まとめ</div>
+    <ul>
+      <li><b>鉄道</b>：1872年　新橋〜横浜間。蒸気機関車はイギリスから輸入。</li>
+      <li><b>新幹線</b>：1964年　東海道新幹線（東京〜新大阪）。東京オリンピックの年。</li>
+      <li><b>高速道路</b>：1963年　名神高速道路（愛知県〜兵庫県）。</li>
+      <li><b>電話サービス</b>：1890年　東京〜横浜間でサービス開始。</li>
+      <li><b>郵便制度</b>：1871年。「日本近代郵便の父」<em>前島密</em>が制度を作る（1円切手の図案）。</li>
+    </ul>
+  </div>
+
+  <div class="jukugo-box">
+    <div class="jukugo-title">✍️ 武蔵・芝レベルの記述対策</div>
+    <strong>Q：インターネットが普及することで生じる問題点を2つ挙げなさい。</strong><br><br>
+    → <span class="marker">①誤った情報が広い範囲に素早く伝わるおそれがある</span>こと、<span class="marker">②利用者によっては自分の好む情報だけしか手に入らない（情報の偏り）</span>こと。加えて、個人情報の漏えいやコンピュータウイルスの感染リスクなども重要。
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary-box">
+    <div class="summary-title">📝 まとめ　ふたりが学んだこと</div>
+    <div class="summary-grid">
+      <div class="sum-item">
+        <strong>🚃 輸送の変化</strong>
+        明治〜戦前は鉄道中心 → 戦後の経済成長・自動車普及・高速道路整備で自動車が中心へ。現在は旅客・貨物ともに自動車が首位。
+      </div>
+      <div class="sum-item">
+        <strong>✈️ 4つの輸送手段</strong>
+        鉄道（環境◎・直接行けない）、自動車（戸口まで○・CO₂多い）、船（大量○・遅い）、航空（速い○・高価）。用途で使い分ける。
+      </div>
+      <div class="sum-item">
+        <strong>📻 情報手段の歴史</strong>
+        飛脚・かわら版 → 郵便（1871）→ ラジオ（1925）→ テレビ（1953）→ インターネット（現代）。前島密が郵便制度を作った。
+      </div>
+      <div class="sum-item">
+        <strong>📱 情報化社会の注意</strong>
+        メディアリテラシーが重要。個人情報を書かない・誤情報を拡散しない・著作権・肖像権への配慮。
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/social_quiz_04.html">⚔️ クイズに挑戦！</a>
+  </div>
+</div>
+
+</div><!-- /container -->
+</body>
+</html>

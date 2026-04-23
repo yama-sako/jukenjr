@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科クイズ第1回 空気や水の温度による変化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Press+Start+2P&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;--panel:#0d1a2e;--border:#1a3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+  --purple:#a29bfe;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.7;padding-bottom:60px;min-height:100vh;}
+
+/* PASSWORD */
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+
+/* TITLE */
+.quiz-header{text-align:center;padding:28px 16px 18px;border-bottom:2px solid var(--border);background:linear-gradient(135deg,#0a1a3a,#061528);}
+.pixel-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(18px,5vw,26px);font-weight:900;color:var(--green);text-shadow:0 0 20px rgba(6,214,160,.4);line-height:1.3;}
+.title-sub{font-size:12px;color:var(--muted);letter-spacing:1px;margin-top:6px;}
+
+/* STATUS BAR */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.hp-display{display:flex;align-items:center;gap:4px;}
+.hp-heart{font-size:18px;}
+.xp-bar-wrap{flex:1;min-width:120px;}
+.xp-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.xp-bar{height:8px;background:#1a3050;border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--sky));border-radius:4px;transition:width .5s;}
+.q-counter{font-size:13px;color:var(--sky);font-weight:700;}
+
+/* QUIZ AREA */
+.quiz-wrap{max-width:680px;margin:0 auto;padding:16px 12px;}
+.q-card{background:var(--panel);border:1.5px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;transition:border-color .3s;}
+.q-number{font-size:11px;color:var(--sky);letter-spacing:2px;font-weight:700;margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:14px;}
+.q-visual{margin:12px 0;}
+.hint-btn{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.35);border-radius:8px;color:var(--gold);font-size:12px;padding:6px 14px;cursor:pointer;margin-bottom:10px;}
+.hint-box{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);border-radius:8px;padding:10px 12px;font-size:13px;color:#e8d080;margin-bottom:10px;display:none;}
+.hint-box.show{display:block;}
+
+/* CHOICES */
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.choices{grid-template-columns:1fr;}}
+.choice-btn{background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;padding:12px 10px;cursor:pointer;text-align:left;transition:all .2s;line-height:1.5;}
+.choice-btn:hover{border-color:var(--sky);background:rgba(91,200,245,.08);}
+.choice-btn.correct{background:rgba(6,214,160,.2);border-color:var(--green);color:#fff;}
+.choice-btn.wrong{background:rgba(239,71,111,.15);border-color:var(--coral);color:#ffaaaa;}
+.choice-btn:disabled{cursor:default;}
+.choice-label{font-size:11px;color:var(--muted);font-weight:700;margin-right:6px;}
+
+/* FEEDBACK */
+.feedback{border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.35);color:var(--green);}
+.feedback.ng{background:rgba(239,71,111,.12);border:1px solid rgba(239,71,111,.35);color:#ff8080;}
+
+/* RESULT */
+.result-screen{display:none;max-width:500px;margin:0 auto;padding:20px 16px;text-align:center;}
+.result-screen.show{display:block;}
+.rank-badge{font-size:64px;margin:10px 0;animation:rankPop .5s ease;}
+@keyframes rankPop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.rank-label{font-family:'M PLUS Rounded 1c',sans-serif;font-size:40px;font-weight:900;margin-bottom:8px;}
+.rank-S{color:#ffd166;text-shadow:0 0 30px rgba(255,209,102,.6);}
+.rank-A{color:#06d6a0;text-shadow:0 0 30px rgba(6,214,160,.5);}
+.rank-B{color:#5bc8f5;text-shadow:0 0 20px rgba(91,200,245,.4);}
+.rank-C{color:#7aaec8;}
+.result-msg{font-size:15px;line-height:1.8;margin:12px 0;white-space:pre-line;}
+.score-table{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:14px 0;text-align:left;}
+.score-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.score-row:last-child{border-bottom:none;font-weight:700;}
+.nav-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.story{background:linear-gradient(135deg,#0a4a2a,#0a7a44);border-color:#0a9a54;box-shadow:0 4px 0 #052a14;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">⚗️</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<!-- HEADER -->
+<div class="quiz-header">
+  <div class="pixel-title">🎯 理科クエスト<br>【空気と水の変化】</div>
+  <div class="title-sub">中学受験　理科小５上　第１回</div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="hp-display" id="hp-display">
+    <span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span><span class="hp-heart">❤️</span>
+  </div>
+  <div class="xp-bar-wrap">
+    <div class="xp-label">経験値 <span id="xp-val">0</span> XP</div>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="q-counter" id="q-counter">Q 1 / 10</div>
+</div>
+
+<!-- QUIZ AREA -->
+<div class="quiz-wrap" id="quiz-area"></div>
+<div class="result-screen" id="result-screen"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "空気を入れた注射器を湯の中に入れると、ピストンはどのように動くか。",
+    choices: ["A. 上がる", "B. 下がる", "C. 変わらない", "D. いったん上がって下がる"],
+    ans: 0,
+    hint: "温度が上がると空気の体積はどうなる？",
+    explain: "あたためられた空気はぼう張（体積増）するため、ピストンは上がります。逆に冷やすと収縮してピストンは下がります。"
+  },
+  {
+    q: "空気の温度が1℃変化するごとに、体積は0℃のときの体積のどれだけ変化するか。",
+    choices: ["A. 1/100", "B. 1/273", "C. 1/300", "D. 1/373"],
+    ans: 1,
+    hint: "0℃のときの体積が273cm³なら、1℃上がるごとに何cm³ずつ増える？",
+    explain: "空気は温度が1℃変化するごとに、0℃のときの体積の1/273ずつ変化します。これはすべての気体に共通のルールです。"
+  },
+  {
+    q: "0℃のとき体積が273cm³の空気を100℃にした。体積は何cm³になるか。",
+    choices: ["A. 273cm³", "B. 300cm³", "C. 373cm³", "D. 473cm³"],
+    ans: 2,
+    hint: "1℃ごとに1cm³増えるとすると、100℃では何cm³増える？",
+    explain: "273 + 100 = 373cm³。1℃ごとに1cm³（=273の1/273）増えるので、100℃では100cm³増えて373cm³になります。"
+  },
+  {
+    q: "水の体積が最も小さくなる（密度が最も大きくなる）温度はどれか。",
+    choices: ["A. 0℃", "B. 2℃", "C. 4℃", "D. 10℃"],
+    ans: 2,
+    hint: "冬の池の底に集まる水の温度は？",
+    explain: "水は4℃のとき体積が最も小さく、密度（重さ）が最も大きくなります。0℃〜4℃の間は温度が上がっても体積が減るという他の液体と逆の特徴があります。"
+  },
+  {
+    q: "次のうち、誤っているものはどれか。",
+    choices: [
+      "A. 空気は気体なので液体の水より温度による体積変化が大きい",
+      "B. 水のグラフは空気のグラフと同様に直線になる",
+      "C. 水は4℃のとき1cm³あたりの重さが最も重くなる",
+      "D. 温度が高くなると体積が増えることをぼう張という"
+    ],
+    ans: 1,
+    hint: "空気のグラフは直線。では水のグラフは？",
+    explain: "水の体積変化グラフは曲線になります（不規則な変化）。空気など気体のグラフは直線になります（規則正しい変化）。"
+  },
+  {
+    q: "固体・液体・気体について、温度変化による体積変化が最も大きいものはどれか。",
+    choices: ["A. 固体", "B. 液体", "C. 気体", "D. すべて同じ"],
+    ans: 2,
+    explain: "体積変化の大きさは「気体＞液体＞固体」の順です。水（液体）と空気（気体）を比べると、空気のほうが温度による体積変化がはるかに大きくなります。"
+  },
+  {
+    q: "次の文のうち正しいものの組み合わせはどれか。\n①ふっとう中、水の温度はずっと100℃のまま変わらない\n②蒸発は水の温度が100℃にならないと起こらない\n③水蒸気は目に見えない",
+    choices: ["A. ①のみ", "B. ①と③", "C. ②と③", "D. ①②③すべて"],
+    ans: 1,
+    explain: "①正：ふっとう中は熱が状態変化に使われるため温度は100℃のまま。③正：水蒸気は目に見えず、白い湯気は小さな水てきの集まり。②誤：蒸発は100℃未満でも水面から起こります。"
+  },
+  {
+    q: "水10gが完全に水蒸気になったとき、体積はもとの水の約何倍になるか。",
+    choices: ["A. 約1.1倍", "B. 約10倍", "C. 約100倍", "D. 約1700倍"],
+    ans: 3,
+    explain: "水（10cm³）が水蒸気になると体積は約17000cm³になります。これはもとの体積の約1700倍です。逆に水が氷になると約1.1倍になります。"
+  },
+  {
+    q: "冬の朝、窓ガラスの内側に水てきがつく現象の名前と、その原因として正しい組み合わせはどれか。",
+    choices: [
+      "A. 結露　―　部屋の水蒸気が冷たいガラスで冷やされて水になった",
+      "B. 朝露　―　外の空気が窓ガラスを通して冷やされた",
+      "C. 蒸発　―　ガラスの表面の水が水蒸気になった",
+      "D. 融解　―　ガラスが温度変化でとけた"
+    ],
+    ans: 0,
+    explain: "これは結露です。部屋のあたたかい空気にふくまれる水蒸気が、冷たい窓ガラスによって冷やされ水てきに変わる現象です。朝露は地面付近の水蒸気が夜間に冷やされてできます。"
+  },
+  {
+    q: "固体の二酸化炭素（ドライアイス）をあたためると、液体にならずに直接気体になる。この変化の名前はどれか。",
+    choices: ["A. 融解", "B. 蒸発", "C. 昇華", "D. 凝縮"],
+    ans: 2,
+    explain: "固体から直接気体に変化することを昇華といいます。ドライアイスはその代表例です。逆に気体から直接固体に変化することは凝華といいます。"
+  }
+];
+
+let currentQ = 0;
+let hp = 5;
+let xp = 0;
+let wrongQs = [];
+let answered = false;
+
+function renderHP(){
+  const d = document.getElementById('hp-display');
+  d.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const s = document.createElement('span');
+    s.className='hp-heart';
+    s.textContent = i < hp ? '❤️' : '🖤';
+    d.appendChild(s);
+  }
+}
+
+function renderXP(){
+  document.getElementById('xp-val').textContent = xp;
+  document.getElementById('xp-fill').style.width = (xp/100*100) + '%';
+}
+
+function renderQuestion(){
+  if(currentQ >= QUESTIONS.length){ showResult(); return; }
+  answered = false;
+  const q = QUESTIONS[currentQ];
+  document.getElementById('q-counter').textContent = `Q ${currentQ+1} / ${QUESTIONS.length}`;
+  const area = document.getElementById('quiz-area');
+  const hasHint = currentQ < 4;
+
+  let choicesHTML = q.choices.map((c,i)=>{
+    const labels = ['A','B','C','D'];
+    return `<button class="choice-btn" onclick="answer(${i})" id="choice-${i}"><span class="choice-label">${labels[i]}.</span>${c.replace(/^[A-D]\. /,'')}</button>`;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="q-card" id="q-card">
+      <div class="q-number">QUESTION ${currentQ+1}</div>
+      <div class="q-text">${q.q.replace(/\n/g,'<br>')}</div>
+      ${hasHint ? `<button class="hint-btn" onclick="showHint()">💡 ヒントを見る</button><div class="hint-box" id="hint-box">${q.hint}</div>` : ''}
+      <div class="choices">${choicesHTML}</div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button id="next-btn" onclick="nextQ()" style="display:none;background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:700;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 #0e2060;">次の問題へ ▶</button>
+    </div>
+  `;
+}
+
+function showHint(){
+  document.getElementById('hint-box').classList.add('show');
+}
+
+function answer(idx){
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[currentQ];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b=>b.disabled=true);
+
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show');
+
+  if(idx === q.ans){
+    btns[idx].classList.add('correct');
+    fb.classList.add('ok');
+    fb.innerHTML = '✅ 正解！<br><small>' + q.explain + '</small>';
+    xp += 10;
+    renderXP();
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.classList.add('ng');
+    fb.innerHTML = '❌ 不正解…<br><small>' + q.explain + '</small>';
+    hp--;
+    wrongQs.push(currentQ+1);
+    renderHP();
+  }
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQ(){
+  currentQ++;
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+
+  const correct = 10 - wrongQs.length;
+  let rank, rankClass, emoji, msg;
+  if(correct === 10){
+    rank='S'; rankClass='rank-S'; emoji='🏆';
+    msg='完璧です！全問正解！\n「空気と水の温度変化」マスター達成！\n中学受験本番でも絶対に解けるぞ！';
+  } else if(correct >= 8){
+    rank='A'; rankClass='rank-A'; emoji='⭐';
+    msg='すばらしい！ほぼ完璧！\nもう少しで理科マスターだ！';
+  } else if(correct >= 6){
+    rank='B'; rankClass='rank-B'; emoji='👍';
+    msg='よくがんばった！\nまちがえた問題をストーリーで確認しよう。';
+  } else {
+    rank='C'; rankClass='rank-C'; emoji='💪';
+    msg='もう一度ストーリーを読んで、チャレンジしよう！';
+  }
+
+  const wrongStr = wrongQs.length > 0 ? wrongQs.join('・') + '番' : 'なし';
+
+  rs.innerHTML = `
+    <div style="font-size:48px;margin:10px 0">${emoji}</div>
+    <div class="rank-label ${rankClass}">RANK ${rank}</div>
+    <div class="result-msg">${msg}</div>
+    <div class="score-table">
+      <div class="score-row"><span>正解数</span><span>${correct} / 10</span></div>
+      <div class="score-row"><span>獲得XP</span><span>${xp} XP</span></div>
+      <div class="score-row"><span>まちがえた問題</span><span>${wrongStr}</span></div>
+      <div class="score-row"><span>HP残り</span><span>${hp > 0 ? '❤️'.repeat(hp) : '力尽きた…'}</span></div>
+    </div>
+    <div class="nav-btns">
+      <a class="nav-btn story" href="https://yama-sako.github.io/jukenjr/science_story_01.html">📖 ストーリーを読む</a>
+      <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    </div>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  renderHP();
+  renderXP();
+  renderQuestion();
+});
+</script>
+</body>
+</html>

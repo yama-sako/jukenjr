@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科第1回 空気や水の温度による変化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;--panel:#0d1a2e;--border:#1a3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+  --purple:#a29bfe;--orange:#fd9644;--pink:#fd79a8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8;padding-bottom:60px;}
+
+/* ===== PASSWORD GATE ===== */
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+
+/* ===== HEADER ===== */
+.story-header{background:linear-gradient(135deg,#0a1a3a 0%,#0e2a50 50%,#061528 100%);padding:32px 16px 24px;text-align:center;border-bottom:2px solid var(--border);position:relative;overflow:hidden;}
+.story-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(91,200,245,.07) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(6,214,160,.05) 0%,transparent 50%);}
+.subject-badge{display:inline-block;background:linear-gradient(135deg,#064a2a,#0a7a44);border:1.5px solid var(--green);border-radius:20px;padding:4px 16px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:2px;margin-bottom:10px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(20px,5vw,30px);font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.8);line-height:1.3;margin-bottom:6px;}
+.story-subtitle{display:none;}
+
+/* ===== CHAPTER ===== */
+.chapter{margin:0 auto;max-width:720px;padding:0 12px;}
+.chapter-header{background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));border-left:4px solid var(--ocean);border-radius:0 10px 10px 0;padding:12px 16px;margin:28px 0 16px;}
+.chapter-num{font-size:11px;color:var(--sky);letter-spacing:2px;font-weight:700;}
+.chapter-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(16px,4vw,20px);font-weight:900;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+
+/* ===== SCENE CARDS ===== */
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.scene-label{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase;}
+
+/* ===== AVATAR + DIALOGUE ===== */
+.dialogue-block{display:flex;gap:12px;align-items:flex-start;margin:10px 0;}
+.dialogue-block.reverse{flex-direction:row-reverse;}
+.av-wrap{flex-shrink:0;}
+.av-wrap svg{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--panel);}
+.bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;flex:1;font-size:14px;line-height:1.7;position:relative;}
+.bubble::before{content:'';position:absolute;top:16px;width:8px;height:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);}
+.dialogue-block:not(.reverse) .bubble::before{left:-5px;clip-path:polygon(100% 0,100% 100%,0 50%);}
+.dialogue-block.reverse .bubble::before{right:-5px;clip-path:polygon(0 0,0 100%,100% 50%);}
+.speaker{font-size:11px;font-weight:700;margin-bottom:4px;}
+.sp-sakuto{color:var(--sky);}
+.sp-ousuke{color:#6eb5ff;}
+.sp-adult{color:var(--gold);}
+.sp-sensei{color:var(--green);}
+
+/* ===== KNOWLEDGE BOXES ===== */
+.knowledge,.memo,.danger,.jiji-box,.point-box{border-radius:12px;padding:14px 16px;margin:14px 0;color:#e8f4fd;}
+.knowledge{background:#0d2a44;border:1.5px solid rgba(91,200,245,.5);}
+.knowledge::before{content:'📘 ';font-size:15px;}
+.memo{background:#2a2000;border:1.5px solid rgba(255,209,102,.6);}
+.memo::before{content:'✏️ ';}
+.danger{background:#2a0a12;border:1.5px solid rgba(239,71,111,.6);}
+.danger::before{content:'⚠️ ';}
+.point-box{background:#0a2218;border:1.5px solid rgba(6,214,160,.5);}
+.box-title{font-weight:700;font-size:13px;margin-bottom:6px;color:#e8f4fd;}
+.marker{background:linear-gradient(transparent 55%,rgba(255,209,102,.55) 55%);padding:0 2px;color:#e8f4fd;}
+
+/* ===== SVG VISUAL PANELS ===== */
+.visual-panel{background:rgba(5,15,35,.6);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;text-align:center;}
+.visual-panel svg{max-width:100%;height:auto;}
+.visual-caption{font-size:12px;color:var(--muted);margin-top:8px;text-align:center;}
+
+/* ===== STATE CHANGE DIAGRAM ===== */
+.state-diagram{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;}
+.state-box{background:rgba(14,122,186,.2);border:2px solid var(--ocean);border-radius:10px;padding:8px 16px;font-weight:700;font-size:14px;text-align:center;}
+.state-box.solid{border-color:var(--sky);background:rgba(91,200,245,.15);}
+.state-box.liquid{border-color:var(--ocean);background:rgba(14,122,186,.2);}
+.state-box.gas{border-color:var(--purple);background:rgba(162,155,254,.15);}
+.state-arrow{font-size:11px;color:var(--muted);text-align:center;}
+
+/* ===== SUMMARY ===== */
+.summary-box{background:#0a1f14;border:2px solid rgba(6,214,160,.45);border-radius:16px;padding:20px;margin:20px 0;}
+.summary-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:16px;font-weight:900;color:var(--green);margin-bottom:14px;text-align:center;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+.summary-card{background:#0d2218;border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px;color:#e8f4fd;}
+.summary-card-title{font-size:12px;color:var(--green);font-weight:700;margin-bottom:6px;}
+
+/* ===== NAV ===== */
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 12px 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 0 #0e2060;}
+.nav-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+.nav-btn.quiz:active{box-shadow:0 2px 0 #600020;}
+
+/* ===== PARTICLE VISUAL ===== */
+.particle-demo{display:flex;justify-content:space-around;align-items:flex-end;gap:8px;padding:8px 0;}
+.p-box{text-align:center;flex:1;}
+.p-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.p-title{font-size:13px;font-weight:700;margin-top:6px;}
+
+/* ===== EXPERIMENT BOX ===== */
+.experiment-box{background:#251500;border:1.5px solid rgba(253,150,68,.55);border-radius:12px;padding:14px 16px;margin:14px 0;color:#e8f4fd;}
+.experiment-box::before{content:'🔬 実験 ';}
+.experiment-box .box-title{color:#ffb060;}
+
+/* ===== GRAPH ===== */
+.graph-wrap{background:rgba(5,15,30,.8);border-radius:12px;padding:12px;margin:10px 0;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🔬</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="av-sakuto" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<symbol id="av-ousuke" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<!-- 先生キャラ：白衣の女性（メガネなし） -->
+<symbol id="av-sensei" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#e8e8f0"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#3a2010"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <path d="M13,16 Q30,8 47,16 Q40,12 30,13 Q20,12 13,16Z" fill="#3a2010"/>
+  <path d="M13,16 Q10,24 14,28 Q12,20 13,16Z" fill="#3a2010"/>
+  <path d="M47,16 Q50,24 46,28 Q48,20 47,16Z" fill="#3a2010"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <line x1="26" y1="42" x2="24" y2="58" stroke="#ccc" stroke-width="1"/>
+  <line x1="34" y1="42" x2="36" y2="58" stroke="#ccc" stroke-width="1"/>
+</symbol>
+</defs>
+</svg>
+
+<!-- HEADER -->
+<div class="story-header">
+  <div class="subject-badge">⚗️ 理科小５上　第１回</div>
+  <div class="story-title">空気や水の温度による変化</div>
+</div>
+
+<!-- ===================== CHAPTER 1 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 1</div>
+  <div class="chapter-title">🫧 空気はあたためると？</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    ねえオウスケ、ペットボトルのふたをしたまま冷蔵庫に入れたら、ペチャってなってたんだけど……なんで？
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    あ、それ知ってる！空気が冷えると体積が<strong>縮む</strong>んだよ。でも、どのくらい縮むのかまではわかんないな……
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生（理科担当）</div>
+    ふたりともいい着眼点！じゃあ今日は「温度と体積の変化」を実験で確かめていきましょう。まずは空気から！
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">ぼう張と収縮とは？</div>
+  いっぱんに、物質は<span class="marker">温度が高くなると体積が増え（ぼう張）</span>、<span class="marker">温度が低くなると体積が減る（収縮）</span>。これはすべての物質（固体・液体・気体）に共通するルール！
+</div>
+
+<!-- SVG: 注射器実験 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 340 400" xmlns="http://www.w3.org/2000/svg" style="max-width:380px;width:100%">
+    <rect width="340" height="400" fill="#060f1e" rx="10"/>
+    <text x="170" y="26" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">注射器で確かめる！空気のぼう張・収縮</text>
+
+    <!-- ===== 左：冷やす（空気収縮・ピストン下がる）===== -->
+    <!-- ❄️ラベルは左上 -->
+    <text x="14" y="52" fill="#5bc8f5" font-size="13" font-family="sans-serif">❄️ 冷やす（氷水）</text>
+
+    <!-- シリンダー本体（y=68〜y=218） -->
+    <rect x="52" y="68" width="66" height="150" rx="5" fill="none" stroke="#5bc8f5" stroke-width="2"/>
+    <!-- シリンダー底 -->
+    <rect x="54" y="213" width="62" height="7" rx="2" fill="#3a7aaa" opacity="0.8"/>
+
+    <!-- 空気（収縮・薄い）：底のすぐ上 -->
+    <rect x="54" y="185" width="62" height="26" rx="2" fill="rgba(91,200,245,0.35)"/>
+    <text x="85" y="201" text-anchor="middle" fill="#5bc8f5" font-size="12" font-weight="bold" font-family="sans-serif">空気（減る）</text>
+
+    <!-- ピストン板：空気のすぐ上（y=171〜185） -->
+    <rect x="54" y="171" width="62" height="14" rx="4" fill="#3a7aaa"/>
+    <text x="85" y="181" text-anchor="middle" fill="#fff" font-size="10" font-family="sans-serif">ピストン</text>
+
+    <!-- ピストン棒：ピストン板から上に伸びる（y=90〜171） -->
+    <rect x="79" y="90" width="12" height="81" rx="3" fill="#3a7aaa"/>
+
+    <!-- 矢印：下向き（ピストン棒の上端から下に向かう矢印） -->
+    <line x1="85" y1="68" x2="85" y2="86" stroke="#ef476f" stroke-width="3"/>
+    <polygon points="85,94 79,84 91,84" fill="#ef476f"/>
+    <!-- ▼下がる テキスト：シリンダー右横 -->
+    <text x="130" y="84" fill="#ef476f" font-size="13" font-weight="bold" font-family="sans-serif">▼ 下がる</text>
+
+    <!-- 氷水容器 -->
+    <rect x="36" y="232" width="98" height="38" rx="7" fill="rgba(91,200,245,0.15)" stroke="#5bc8f5" stroke-width="1.5"/>
+    <text x="85" y="248" text-anchor="middle" fill="#5bc8f5" font-size="13" font-family="sans-serif">氷　水</text>
+    <text x="85" y="264" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">（冷たい）</text>
+
+    <!-- ===== 右：あたためる（空気ぼう張・ピストン上がる）===== -->
+    <text x="255" y="52" text-anchor="middle" fill="#ffd166" font-size="13" font-family="sans-serif">🔥 あたためる（湯）</text>
+
+    <!-- シリンダー本体（y=68〜y=218） -->
+    <rect x="222" y="68" width="66" height="150" rx="5" fill="none" stroke="#ffd166" stroke-width="2"/>
+    <!-- シリンダー底 -->
+    <rect x="224" y="213" width="62" height="7" rx="2" fill="#aa8030" opacity="0.8"/>
+
+    <!-- 空気（ぼう張・大きい）：底から広い層 -->
+    <rect x="224" y="146" width="62" height="65" rx="2" fill="rgba(255,209,102,0.3)"/>
+    <text x="255" y="176" text-anchor="middle" fill="#ffd166" font-size="12" font-weight="bold" font-family="sans-serif">空気（増える）</text>
+
+    <!-- ピストン板：空気のすぐ上（y=132〜146） -->
+    <rect x="224" y="132" width="62" height="14" rx="4" fill="#aa8030"/>
+    <text x="255" y="142" text-anchor="middle" fill="#fff" font-size="10" font-family="sans-serif">ピストン</text>
+
+    <!-- ピストン棒：ピストン板から上に長く伸びる（y=62〜132） -->
+    <rect x="249" y="62" width="12" height="70" rx="3" fill="#aa8030"/>
+
+    <!-- 矢印：上向き（ピストン棒の上端から上へ） -->
+    <line x1="255" y1="62" x2="255" y2="44" stroke="#ffd166" stroke-width="3"/>
+    <polygon points="255,36 249,46 261,46" fill="#ffd166"/>
+    <text x="255" y="32" text-anchor="middle" fill="#ffd166" font-size="13" font-weight="bold" font-family="sans-serif">▲ 上がる</text>
+
+    <!-- 湯容器 -->
+    <rect x="206" y="232" width="98" height="38" rx="7" fill="rgba(255,100,50,0.15)" stroke="#ff7040" stroke-width="1.5"/>
+    <text x="255" y="248" text-anchor="middle" fill="#ff9060" font-size="13" font-family="sans-serif">湯（60〜70℃）</text>
+    <text x="255" y="264" text-anchor="middle" fill="#ffd166" font-size="11" font-family="sans-serif">（あたたかい）</text>
+
+    <!-- ===== まとめ ===== -->
+    <rect x="30" y="290" width="280" height="96" rx="10" fill="rgba(14,122,186,0.15)" stroke="#0e7aba" stroke-width="1.5"/>
+    <text x="170" y="312" text-anchor="middle" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">まとめ</text>
+    <line x1="40" y1="318" x2="300" y2="318" stroke="#1a4a7a" stroke-width="1"/>
+    <text x="170" y="338" text-anchor="middle" fill="#e8f4fd" font-size="13" font-family="sans-serif">あたためる → 空気ぼう張 → ピストン上がる</text>
+    <text x="170" y="360" text-anchor="middle" fill="#e8f4fd" font-size="13" font-family="sans-serif">冷やす　　 → 空気収縮　 → ピストン下がる</text>
+    <text x="170" y="380" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">空気はシリンダーの底（ピストンの下）に封入</text>
+  </svg>
+  <div class="visual-caption">空気はシリンダー底（ピストンの下）に封入。あたためると空気がぼう張しピストンを押し上げる</div>
+</div>
+
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    あ！湯に入れるとピストンが上がるってことは、空気が膨らんでるってこと？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    そのとおり！これが<strong>ぼう張</strong>。逆に氷水で冷やすとピストンが下がるでしょ？それが<strong>収縮</strong>。空気はあたためるとぼう張し、冷やすと収縮する、これが大原則だよ。
+  </div>
+</div>
+
+<div class="memo">
+  <div class="box-title">身近な例でおさえる！</div>
+  ① へこんだピンポン玉を<span class="marker">湯につけると中の空気がぼう張してもとにもどる</span><br>
+  ② 空のガラスびんの口に10円玉をのせて両手で温めると、空気がぼう張して<span class="marker">10円玉がおし上げられて動く</span>
+</div>
+</div>
+
+<!-- ===================== CHAPTER 2 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 2</div>
+  <div class="chapter-title">📊 空気の体積変化は規則正しい</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    温度が上がるほど体積が増えるのはわかった。でも、どのくらい増えるの？バラバラなの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    すごくいい質問！実はぴったり<strong>規則正しく</strong>変化するんだ。温度が1℃上がるごとに、0℃のときの体積の「273分の1」ずつ増えるんだよ。
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">空気の体積変化の法則</div>
+  温度が1℃変化するごとに、<span class="marker">0℃のときの体積の1/273ずつ変化</span>する。<br>
+  → グラフにすると<strong>直線（規則正しい変化）</strong>になる！
+</div>
+
+<!-- SVG: 体積変化グラフ（空気） -->
+<div class="visual-panel">
+  <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;width:100%">
+    <rect width="420" height="300" fill="#060f1e" rx="10"/>
+    <text x="210" y="26" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">空気の温度と体積の関係</text>
+
+    <!-- 軸 -->
+    <line x1="80" y1="40" x2="80" y2="230" stroke="#4a7aaa" stroke-width="2"/>
+    <line x1="80" y1="230" x2="380" y2="230" stroke="#4a7aaa" stroke-width="2"/>
+
+    <!-- Y軸ラベル -->
+    <text x="14" y="145" fill="#7aaec8" font-size="12" font-family="sans-serif" transform="rotate(-90 14 145)">空気の体積(cm³)</text>
+    <!-- X軸ラベル -->
+    <text x="230" y="270" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">温度（℃）</text>
+
+    <!-- Y目盛：273(y=210), 373(y=140), 473(y=70) -->
+    <!-- 273 -->
+    <line x1="76" y1="210" x2="380" y2="210" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="76" y1="210" x2="84" y2="210" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="70" y="214" text-anchor="end" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">273</text>
+    <!-- 373 -->
+    <line x1="76" y1="140" x2="380" y2="140" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="76" y1="140" x2="84" y2="140" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="70" y="144" text-anchor="end" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">373</text>
+    <!-- 473 -->
+    <line x1="76" y1="70" x2="380" y2="70" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="76" y1="70" x2="84" y2="70" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="70" y="74" text-anchor="end" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">473</text>
+
+    <!-- X目盛：0(x=130), 100(x=230), 200(x=330) -->
+    <!-- 0 -->
+    <line x1="130" y1="80" x2="130" y2="230" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="130" y1="228" x2="130" y2="236" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="130" y="252" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">0</text>
+    <!-- 100 -->
+    <line x1="230" y1="80" x2="230" y2="230" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="230" y1="228" x2="230" y2="236" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="230" y="252" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">100</text>
+    <!-- 200 -->
+    <line x1="330" y1="80" x2="330" y2="230" stroke="#2a4a6a" stroke-width="1.2" stroke-dasharray="5,5"/>
+    <line x1="330" y1="228" x2="330" y2="236" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="330" y="252" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">200</text>
+
+    <!-- 交点に丸マーク（グリッド線の交差点） -->
+    <circle cx="130" cy="210" r="7" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="230" cy="140" r="7" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="330" cy="70" r="7" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+
+    <!-- 直線グラフ -->
+    <line x1="130" y1="210" x2="330" y2="70" stroke="#ffd166" stroke-width="3"/>
+
+    <!-- 交点ラベル -->
+    <text x="148" y="206" fill="#ffd166" font-size="12" font-weight="bold" font-family="sans-serif">273cm³</text>
+    <text x="248" y="136" fill="#ffd166" font-size="12" font-weight="bold" font-family="sans-serif">373cm³</text>
+    <text x="344" y="66" fill="#ffd166" font-size="12" font-weight="bold" font-family="sans-serif">473cm³</text>
+
+    <!-- 直線注釈 -->
+    <rect x="100" y="82" width="120" height="40" rx="6" fill="rgba(6,214,160,0.12)" stroke="rgba(6,214,160,0.4)" stroke-width="1.2"/>
+    <text x="160" y="99" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">グラフは直線！</text>
+    <text x="160" y="116" text-anchor="middle" fill="#06d6a0" font-size="12" font-family="sans-serif">規則正しい変化</text>
+  </svg>
+  <div class="visual-caption">縦軸・横軸のグリッド線がしっかり交わる点（●）が各温度での体積</div>
+</div>
+
+<div class="memo">
+  <div class="box-title">⭐ 芝・武蔵をめざすなら重要ポイント！　1/273の意味をかみ砕くと？</div>
+  0℃のとき体積が273cm³の空気があったとする。<br>
+  → 1℃上がるごとに<strong>1cm³ずつ</strong>増えていく。<br>
+  → 100℃では 273 + 100 = <span class="marker">373cm³</span><br>
+  → 200℃では 273 + 200 = <span class="marker">473cm³</span>
+</div>
+
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    じゃあ空気だけじゃなくて、どんな気体でも1/273ずつ変化するの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    正解！<strong>どんな種類の気体でも</strong>、温度による体積変化は1/273ずつ。これは気体全体に共通するルールなんだよ。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    おならも…？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    下品なことは禁止です。
+  </div>
+</div>
+</div>
+
+<!-- ===================== CHAPTER 3 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 3</div>
+  <div class="chapter-title">💧 水の体積変化には「ひみつ」がある</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    水も空気と同じように、あたためると体積が増えるの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    惜しい！水はちょっとだけ特別なんだ。<strong>4℃のときに体積が最も小さくなる</strong>という不思議な性質があるんだよ。
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">水の体積変化の特徴</div>
+  ・<span class="marker">0℃〜4℃：温度が上がっても体積が減っていく</span>（他の液体と逆！）<br>
+  ・<span class="marker">4℃以上：温度が上がると体積が増えていく</span>（一般的な変化）<br>
+  ・<strong>4℃のとき体積が最も小さく、密度（重さ）が最も大きい</strong><br>
+  ・4℃の水1cm³の重さは<strong>1g</strong>（これが水の基準）<br>
+  ・グラフが<strong>曲線</strong>になる（空気と違い不規則な変化）
+</div>
+
+<!-- SVG: 水の体積グラフ（4℃の谷型） -->
+<div class="visual-panel">
+  <svg viewBox="0 0 440 250" xmlns="http://www.w3.org/2000/svg" style="max-width:440px;width:100%">
+    <rect width="440" height="250" fill="#060f1e" rx="10"/>
+    <text x="220" y="22" text-anchor="middle" fill="#5bc8f5" font-size="13" font-weight="bold" font-family="sans-serif">水の体積と温度（水1g）</text>
+
+    <!-- 軸 -->
+    <line x1="80" y1="30" x2="80" y2="210" stroke="#2a4a6a" stroke-width="1.5"/>
+    <line x1="80" y1="210" x2="400" y2="210" stroke="#2a4a6a" stroke-width="1.5"/>
+
+    <!-- Y軸ラベル -->
+    <text x="40" y="130" fill="#7aaec8" font-size="10" font-family="sans-serif" transform="rotate(-90 40 130)">水の体積(cm³)</text>
+    <!-- X軸 -->
+    <text x="240" y="235" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">温度（℃）</text>
+
+    <!-- Y軸目盛 -->
+    <text x="72" y="185" text-anchor="end" fill="#7aaec8" font-size="9" font-family="sans-serif">1.0000</text>
+    <text x="72" y="120" text-anchor="end" fill="#7aaec8" font-size="9" font-family="sans-serif">1.0002</text>
+    <text x="72" y="55" text-anchor="end" fill="#7aaec8" font-size="9" font-family="sans-serif">1.0004</text>
+    <line x1="78" y1="182" x2="400" y2="182" stroke="#1a3050" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="78" y1="118" x2="400" y2="118" stroke="#1a3050" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- X軸目盛 (0〜10) -->
+    <text x="120" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">0</text>
+    <text x="152" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">2</text>
+    <text x="184" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">4</text>
+    <text x="216" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">6</text>
+    <text x="248" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">8</text>
+    <text x="280" y="224" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">10</text>
+
+    <!-- 曲線（4℃で最小・谷型） -->
+    <!-- 点: (0℃)→(120,60), (2℃)→(152,40), (4℃)→(184,182), (6℃)→(216,90), (8℃)→(248,70), (10℃)→(280,55) -->
+    <!-- 実際の形：0℃→高め、4℃→最低、そこから上昇 -->
+    <path d="M120,75 C130,60 145,50 152,45 C160,40 170,40 184,182 C198,40 210,60 216,70 C232,85 248,90 280,100 C310,108 350,120 390,140"
+      fill="none" stroke="#ef476f" stroke-width="2.5"/>
+
+    <!-- 4℃の最低点マーク -->
+    <circle cx="184" cy="182" r="6" fill="#ffd166" stroke="#ff9900" stroke-width="1.5"/>
+    <line x1="184" y1="182" x2="184" y2="210" stroke="#ffd166" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="184" y="224" text-anchor="middle" fill="#ffd166" font-size="10" font-family="sans-serif">4</text>
+
+    <!-- ラベル -->
+    <rect x="200" y="148" width="136" height="34" rx="6" fill="rgba(255,209,102,0.12)" stroke="rgba(255,209,102,0.4)" stroke-width="1"/>
+    <text x="268" y="163" text-anchor="middle" fill="#ffd166" font-size="11" font-weight="bold" font-family="sans-serif">4℃のとき体積が</text>
+    <text x="268" y="177" text-anchor="middle" fill="#ffd166" font-size="11" font-weight="bold" font-family="sans-serif">最も小さい！</text>
+
+    <!-- 曲線注釈 -->
+    <text x="370" y="168" fill="#ef476f" font-size="12" font-weight="bold" font-family="sans-serif">曲線！</text>
+    <text x="355" y="182" fill="#ef476f" font-size="10" font-family="sans-serif">不規則な変化</text>
+  </svg>
+  <div class="visual-caption">水は4℃のとき体積が最も小さく、それより低くても高くても体積が増える</div>
+</div>
+
+<div class="memo">
+  <div class="box-title">冬の池・湖のふしぎ</div>
+  冬、池の表面が凍るとき、底には<span class="marker">最も重い4℃の水がたまる</span>。だから水中の生き物は底のほうに集まって寒い冬を過ごせる。水のこの性質が命を守っているんだ！
+</div>
+
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    4℃で一番重くなるから、底にたまるってこと？ということは空気よりも水のほうが体積変化が少ないの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    大正解！同じ温度変化でも<strong>体積変化が大きい順は「気体 ＞ 液体 ＞ 固体」</strong>。水と空気を比べたら、断然<span class="marker">空気のほうが体積変化が大きい</span>んだよ。
+  </div>
+</div>
+</div>
+
+<!-- ===================== CHAPTER 4 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 4</div>
+  <div class="chapter-title">🧊 物の3つのすがたと粒子</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    水って氷にもなるし、水蒸気にもなるよな。あれって何が変わってるの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    物質は<strong>固体・液体・気体</strong>の3つのすがたを持ちます。目には見えないけど、すべての物質は小さな<strong>粒子（つぶ）</strong>でできていて、温度によって粒子の動き方が変わるんだよ。
+  </div>
+</div>
+</div>
+
+<!-- SVG: 粒子モデル図 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 560" xmlns="http://www.w3.org/2000/svg" style="max-width:380px;width:100%">
+    <rect width="320" height="560" fill="#060f1e" rx="10"/>
+    <text x="160" y="28" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">粒子（つぶ）のようすの変化</text>
+
+    <!-- ===== 固体 ===== -->
+    <rect x="20" y="42" width="280" height="140" rx="12" fill="rgba(91,200,245,0.08)" stroke="#5bc8f5" stroke-width="2"/>
+    <text x="160" y="64" text-anchor="middle" fill="#5bc8f5" font-size="16" font-weight="bold" font-family="sans-serif">固 体</text>
+    <!-- 3×3の粒子 -->
+    <circle cx="80" cy="98" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <circle cx="120" cy="98" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <circle cx="160" cy="98" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <circle cx="80" cy="130" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <circle cx="120" cy="130" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <circle cx="160" cy="130" r="14" fill="rgba(91,200,245,0.55)" stroke="#5bc8f5" stroke-width="2"/>
+    <text x="220" y="100" fill="#7aaec8" font-size="13" font-family="sans-serif">規則正しく</text>
+    <text x="220" y="118" fill="#7aaec8" font-size="13" font-family="sans-serif">並んでいる</text>
+    <text x="220" y="140" fill="#7aaec8" font-size="13" font-family="sans-serif">ほぼ動かない</text>
+
+    <!-- 固→液 矢印 -->
+    <line x1="160" y1="182" x2="160" y2="208" stroke="#ffd166" stroke-width="2.5" stroke-dasharray="5,3"/>
+    <polygon points="160,218 153,208 167,208" fill="#ffd166"/>
+    <text x="100" y="200" fill="#ffd166" font-size="13" font-weight="bold" font-family="sans-serif">あたためる ▼</text>
+    <line x1="160" y1="218" x2="160" y2="192" stroke="#5bc8f5" stroke-width="2.5" stroke-dasharray="5,3" transform="translate(60,0)"/>
+    <text x="168" y="200" fill="#5bc8f5" font-size="13" font-weight="bold" font-family="sans-serif">▲ 冷やす</text>
+
+    <!-- ===== 液体 ===== -->
+    <rect x="20" y="222" width="280" height="140" rx="12" fill="rgba(14,122,186,0.12)" stroke="#0e7aba" stroke-width="2"/>
+    <text x="160" y="244" text-anchor="middle" fill="#0e7aba" font-size="16" font-weight="bold" font-family="sans-serif">液 体</text>
+    <!-- バラバラ気味の粒子 -->
+    <circle cx="72" cy="278" r="14" fill="rgba(14,122,186,0.55)" stroke="#0e7aba" stroke-width="2"/>
+    <circle cx="116" cy="270" r="14" fill="rgba(14,122,186,0.55)" stroke="#0e7aba" stroke-width="2"/>
+    <circle cx="155" cy="282" r="14" fill="rgba(14,122,186,0.55)" stroke="#0e7aba" stroke-width="2"/>
+    <circle cx="88" cy="312" r="14" fill="rgba(14,122,186,0.55)" stroke="#0e7aba" stroke-width="2"/>
+    <circle cx="136" cy="320" r="14" fill="rgba(14,122,186,0.55)" stroke="#0e7aba" stroke-width="2"/>
+    <!-- 動きの矢印 -->
+    <path d="M116,268 L124,258" stroke="#ffd166" stroke-width="2" marker-end="url(#smA)"/>
+    <path d="M90,312 L80,322" stroke="#ffd166" stroke-width="2" marker-end="url(#smA)"/>
+    <text x="196" y="282" fill="#7aaec8" font-size="13" font-family="sans-serif">並びがくずれ</text>
+    <text x="196" y="300" fill="#7aaec8" font-size="13" font-family="sans-serif">ぶつかりながら</text>
+    <text x="196" y="318" fill="#7aaec8" font-size="13" font-family="sans-serif">自由に動く</text>
+
+    <!-- 液→気 矢印 -->
+    <line x1="160" y1="362" x2="160" y2="388" stroke="#ffd166" stroke-width="2.5" stroke-dasharray="5,3"/>
+    <polygon points="160,398 153,388 167,388" fill="#ffd166"/>
+    <text x="100" y="380" fill="#ffd166" font-size="13" font-weight="bold" font-family="sans-serif">あたためる ▼</text>
+    <text x="168" y="380" fill="#5bc8f5" font-size="13" font-weight="bold" font-family="sans-serif">▲ 冷やす</text>
+
+    <!-- ===== 気体 ===== -->
+    <rect x="20" y="402" width="280" height="140" rx="12" fill="rgba(162,155,254,0.08)" stroke="#a29bfe" stroke-width="2"/>
+    <text x="160" y="424" text-anchor="middle" fill="#a29bfe" font-size="16" font-weight="bold" font-family="sans-serif">気 体</text>
+    <!-- バラバラ飛び回る粒子 -->
+    <circle cx="62" cy="458" r="11" fill="rgba(162,155,254,0.5)" stroke="#a29bfe" stroke-width="2"/>
+    <circle cx="155" cy="448" r="11" fill="rgba(162,155,254,0.5)" stroke="#a29bfe" stroke-width="2"/>
+    <circle cx="100" cy="490" r="11" fill="rgba(162,155,254,0.5)" stroke="#a29bfe" stroke-width="2"/>
+    <circle cx="200" cy="480" r="11" fill="rgba(162,155,254,0.5)" stroke="#a29bfe" stroke-width="2"/>
+    <circle cx="70" cy="508" r="11" fill="rgba(162,155,254,0.5)" stroke="#a29bfe" stroke-width="2"/>
+    <!-- 飛び回る矢印 -->
+    <path d="M68,454 L56,442" stroke="#ffd166" stroke-width="2" marker-end="url(#smA)"/>
+    <path d="M104,488 L114,476" stroke="#ffd166" stroke-width="2" marker-end="url(#smA)"/>
+    <path d="M196,482 L208,494" stroke="#ffd166" stroke-width="2" marker-end="url(#smA)"/>
+    <text x="196" y="462" fill="#7aaec8" font-size="13" font-family="sans-serif">バラバラで</text>
+    <text x="196" y="480" fill="#7aaec8" font-size="13" font-family="sans-serif">高速で</text>
+    <text x="196" y="498" fill="#7aaec8" font-size="13" font-family="sans-serif">飛び回る</text>
+    <text x="196" y="516" fill="#a29bfe" font-size="12" font-family="sans-serif">（間かく広い）</text>
+
+    <defs>
+      <marker id="smA" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6Z" fill="#ffd166"/>
+      </marker>
+    </defs>
+  </svg>
+  <div class="visual-caption">温度が上がるほど粒子の動きが活発になり、固体→液体→気体へと変化する</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">固体・液体・気体の特徴まとめ</div>
+  <strong>固体</strong>：形と体積が決まっている。例：氷・金属・砂糖・食塩<br>
+  <strong>液体</strong>：一定の体積はあるが、形は決まっていない。例：水・アルコール・水銀<br>
+  <strong>気体</strong>：一定の体積も形もない。例：水蒸気・空気・二酸化炭素・水素
+</div>
+</div>
+
+<!-- ===================== CHAPTER 5 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 5</div>
+  <div class="chapter-title">🌡️ 水のすがたの変化（状態変化）</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    氷を溶かしていくときって、水と氷が混じっていてもずっと同じくらい冷たいのが続くよね。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    知ってる。それずっと0℃のまんまなんだよね。でもなんで溶けていくのに温度が変わらないんだろう？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    それはね、加えた熱が<strong>氷を水に変えるためだけに使われる</strong>から。すべての氷が溶け終わるまで、温度は上がらない。これが状態変化の重要なポイント！
+  </div>
+</div>
+</div>
+
+<!-- SVG: 水を冷やしたときの温度変化グラフ -->
+<div class="visual-panel">
+  <svg viewBox="0 0 440 260" xmlns="http://www.w3.org/2000/svg" style="max-width:460px;width:100%">
+    <rect width="440" height="260" fill="#060f1e" rx="10"/>
+    <text x="220" y="26" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">水を冷やしたときの温度変化</text>
+
+    <!-- 軸 -->
+    <line x1="70" y1="34" x2="70" y2="210" stroke="#4a7aaa" stroke-width="2"/>
+    <line x1="70" y1="210" x2="410" y2="210" stroke="#4a7aaa" stroke-width="2"/>
+    <!-- 0℃ライン -->
+    <line x1="70" y1="170" x2="410" y2="170" stroke="#3a6a3a" stroke-width="1.2" stroke-dasharray="5,5"/>
+
+    <!-- Y軸ラベル -->
+    <text x="22" y="125" fill="#7aaec8" font-size="12" font-family="sans-serif" transform="rotate(-90 22 125)">温度（℃）</text>
+    <!-- Y軸目盛 -->
+    <line x1="66" y1="50" x2="74" y2="50" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="60" y="54" text-anchor="end" fill="#7aaec8" font-size="13" font-family="sans-serif">10</text>
+    <line x1="66" y1="100" x2="74" y2="100" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="60" y="104" text-anchor="end" fill="#7aaec8" font-size="13" font-family="sans-serif">5</text>
+    <line x1="66" y1="170" x2="74" y2="170" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="60" y="174" text-anchor="end" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">0</text>
+    <line x1="66" y1="204" x2="74" y2="204" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="60" y="208" text-anchor="end" fill="#7aaec8" font-size="13" font-family="sans-serif">-2</text>
+
+    <!-- X軸 -->
+    <text x="240" y="238" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">時間（分）</text>
+    <line x1="116" y1="208" x2="116" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="116" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">2</text>
+    <line x1="162" y1="208" x2="162" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="162" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">4</text>
+    <line x1="208" y1="208" x2="208" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="208" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">6</text>
+    <line x1="254" y1="208" x2="254" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="254" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">8</text>
+    <line x1="300" y1="208" x2="300" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="300" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">10</text>
+    <line x1="346" y1="208" x2="346" y2="214" stroke="#4a7aaa" stroke-width="2"/>
+    <text x="346" y="228" text-anchor="middle" fill="#7aaec8" font-size="13" font-family="sans-serif">12</text>
+
+    <!-- グラフ本体 -->
+    <!-- 水ゾーン：右下がり -->
+    <path d="M78,58 C92,70 108,96 126,124 C140,146 152,160 162,170" fill="none" stroke="#5bc8f5" stroke-width="3"/>
+    <!-- 0℃水平ゾーン（水と氷が混じってる） -->
+    <path d="M162,170 L300,170" fill="none" stroke="#06d6a0" stroke-width="3"/>
+    <!-- 氷ゾーン：さらに下降 -->
+    <path d="M300,170 C316,176 330,184 354,192 C372,198 386,202 406,206" fill="none" stroke="#a29bfe" stroke-width="3"/>
+
+    <!-- ゾーンラベル（グラフ線の上） -->
+    <text x="86" y="52" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">水</text>
+    <!-- 水と氷が混じってる → グラフ線の上に -->
+    <text x="195" y="162" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">水と氷が混じってる</text>
+    <text x="390" y="188" fill="#a29bfe" font-size="14" font-weight="bold" font-family="sans-serif">氷</text>
+
+    <!-- 注釈：氷のでき始め -->
+    <line x1="162" y1="170" x2="162" y2="186" stroke="#ffd166" stroke-width="1.5"/>
+    <text x="100" y="200" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">氷のでき始め</text>
+
+    <!-- 注釈：全部氷になる -->
+    <line x1="300" y1="170" x2="300" y2="186" stroke="#a29bfe" stroke-width="1.5"/>
+    <text x="300" y="200" text-anchor="middle" fill="#a29bfe" font-size="12" font-family="sans-serif">全部氷になる</text>
+  </svg>
+  <div class="visual-caption">水が凍るとき、0℃のまま温度が変わらない時間がある（熱がすべて状態変化に使われるため）</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">水の状態変化まとめ</div>
+  <strong>ふっとう（100℃）</strong>：水の内部から水蒸気が出てくる変化<br>
+  ・ふっとう中は温度がずっと<span class="marker">100℃のまま変わらない</span>（熱が状態変化に使われるため）<br><br>
+  <strong>蒸発</strong>：100℃にならなくても、<span class="marker">水面から水が水蒸気になって出ていく</span>変化<br><br>
+  <strong>結露</strong>：水蒸気が冷やされて水になる現象<br>
+  例：冷たいコップの外側に水滴、冬の窓ガラス、はいた息が白く見える、朝露
+</div>
+
+<div class="experiment-box">
+  <div class="box-title">ふっとうの観察ポイント</div>
+  ❶ 丸底フラスコの外側がくもる（アルコールの水蒸気が冷えて水滴に）<br>
+  ❷ フラスコの底・壁面から<strong>小さいあわ</strong>が出る（←水にとけていた空気）<br>
+  ❸ 水面から湯気が出る（水蒸気→水てきに変化）<br>
+  ❹ フラスコの底から<span class="marker">大きいあわ</span>がたくさん出る ＝ これがふっとう！<br>
+  ※水蒸気は<strong>目に見えない</strong>。白い湯気は小さな水てきの集まり。
+</div>
+
+<!-- SVG: 体積変化の比較（氷→水→水蒸気） -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg" style="max-width:380px;width:100%">
+    <rect width="320" height="380" fill="#060f1e" rx="10"/>
+    <text x="160" y="28" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">水のすがたが変わると体積はどう変わる？</text>
+    <text x="160" y="46" text-anchor="middle" fill="#ffd166" font-size="13" font-family="sans-serif">（重さは変わらない！）</text>
+
+    <!-- 氷 -->
+    <rect x="20" y="68" width="64" height="120" rx="6" fill="rgba(91,200,245,0.25)" stroke="#5bc8f5" stroke-width="2"/>
+    <text x="52" y="116" text-anchor="middle" fill="#5bc8f5" font-size="15" font-weight="bold" font-family="sans-serif">氷</text>
+    <text x="52" y="138" text-anchor="middle" fill="#5bc8f5" font-size="13" font-family="sans-serif">10g</text>
+    <text x="52" y="206" text-anchor="middle" fill="#5bc8f5" font-size="14" font-weight="bold" font-family="sans-serif">約11cm³</text>
+
+    <!-- 矢印 氷→水 -->
+    <line x1="90" y1="128" x2="116" y2="128" stroke="#ffd166" stroke-width="2.5"/>
+    <polygon points="124,128 114,122 114,134" fill="#ffd166"/>
+    <text x="103" y="118" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">とかす</text>
+
+    <!-- 水 -->
+    <rect x="128" y="78" width="56" height="110" rx="6" fill="rgba(14,122,186,0.3)" stroke="#0e7aba" stroke-width="2"/>
+    <text x="156" y="126" text-anchor="middle" fill="#0e7aba" font-size="15" font-weight="bold" font-family="sans-serif">水</text>
+    <text x="156" y="148" text-anchor="middle" fill="#0e7aba" font-size="13" font-family="sans-serif">10g</text>
+    <text x="156" y="206" text-anchor="middle" fill="#0e7aba" font-size="14" font-weight="bold" font-family="sans-serif">10cm³</text>
+
+    <!-- 矢印 水→水蒸気 -->
+    <line x1="190" y1="128" x2="216" y2="128" stroke="#ffd166" stroke-width="2.5"/>
+    <polygon points="224,128 214,122 214,134" fill="#ffd166"/>
+    <text x="207" y="118" text-anchor="middle" fill="#ffd166" font-size="12" font-family="sans-serif">加熱</text>
+
+    <!-- 水蒸気（大きい枠） -->
+    <rect x="228" y="58" width="76" height="130" rx="6" fill="rgba(162,155,254,0.12)" stroke="#a29bfe" stroke-width="2" stroke-dasharray="5,3"/>
+    <text x="266" y="110" text-anchor="middle" fill="#a29bfe" font-size="14" font-weight="bold" font-family="sans-serif">水蒸気</text>
+    <text x="266" y="130" text-anchor="middle" fill="#a29bfe" font-size="13" font-family="sans-serif">10g</text>
+    <text x="266" y="206" text-anchor="middle" fill="#a29bfe" font-size="13" font-weight="bold" font-family="sans-serif">約17000cm³</text>
+
+    <!-- 比較説明 -->
+    <rect x="20" y="226" width="280" height="58" rx="8" fill="rgba(14,122,186,0.1)" stroke="#1a4070" stroke-width="1.2"/>
+    <text x="160" y="248" text-anchor="middle" fill="#e8f4fd" font-size="13" font-family="sans-serif">氷 → 水：体積は約 <tspan font-weight="bold" fill="#5bc8f5">1.1倍</tspan></text>
+    <text x="160" y="270" text-anchor="middle" fill="#e8f4fd" font-size="13" font-family="sans-serif">水 → 水蒸気：体積は約 <tspan font-weight="bold" fill="#a29bfe">1700倍！</tspan></text>
+
+    <!-- 大きさの順 -->
+    <rect x="20" y="300" width="280" height="62" rx="8" fill="rgba(255,209,102,0.1)" stroke="rgba(255,209,102,0.3)" stroke-width="1.2"/>
+    <text x="160" y="322" text-anchor="middle" fill="#ffd166" font-size="13" font-weight="bold" font-family="sans-serif">同じ重さで体積が大きい順</text>
+    <text x="160" y="348" text-anchor="middle" fill="#e8f4fd" font-size="14" font-family="sans-serif">水蒸気 ＞ 氷 ＞ 水</text>
+  </svg>
+  <div class="visual-caption">水が水蒸気になると体積は約1700倍！でも重さ（質量）は変わらない</div>
+</div>
+
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    ところで、水は氷になると体積は増えると思う？減ると思う？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    おれ知ってる！増えるよ。だって、よくお父さんが冷凍庫で瓶ビールを冷やして、うっかり忘れて割っちゃってるもん。
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    あらあら、もったいない。でも正解！物質はふつう固体になると体積は減るんだけど、水は例外なんだよ。
+  </div>
+</div>
+
+<div class="danger">
+  <div class="box-title">水は特別！固体になると体積が増える</div>
+  ほとんどの物質は固体になると体積が<strong>減る</strong>が、水は例外！<br>
+  水→氷になると体積は<span class="marker">約1.1倍に増える</span>。だから缶・びんに「凍らせないでください」と書いてある！
+</div>
+</div>
+
+<!-- ===================== CHAPTER 6 ===================== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 6</div>
+  <div class="chapter-title">🌤️ 発展：状態変化の名前と雲のでき方</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    「蒸発」「結露」以外にも状態変化の名前ってあるの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    全部で6つあるよ！覚えておくと理科の記述問題でしっかり使えるからおさえておこう。
+  </div>
+</div>
+</div>
+
+<!-- 状態変化：6つの名前カード -->
+<div class="knowledge">
+  <div class="box-title">状態変化の6つの名前</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+    <div style="background:#2a2000;border:1.5px solid rgba(255,209,102,0.6);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#ffd166;">①　融解</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">固体 → 液体</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">あたためると起こる</div>
+    </div>
+    <div style="background:#0d2a44;border:1.5px solid rgba(91,200,245,0.55);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#5bc8f5;">②　凝固</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">液体 → 固体</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">冷やすと起こる</div>
+    </div>
+    <div style="background:#2a2000;border:1.5px solid rgba(255,209,102,0.6);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#ffd166;">③　蒸発（気化）</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">液体 → 気体</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">あたためると起こる</div>
+    </div>
+    <div style="background:#0d2a44;border:1.5px solid rgba(91,200,245,0.55);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#5bc8f5;">④　凝縮（液化）</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">気体 → 液体</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">冷やすと起こる</div>
+    </div>
+    <div style="background:#251500;border:1.5px solid rgba(253,150,68,0.6);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#fd9644;">⑤　昇華</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">固体 → 気体（直接！）</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">例：ドライアイス</div>
+    </div>
+    <div style="background:#2a0818;border:1.5px solid rgba(253,121,168,0.6);border-radius:10px;padding:11px 13px;color:#e8f4fd;">
+      <div style="font-size:15px;font-weight:900;color:#fd79a8;">⑥　凝華</div>
+      <div style="font-size:13px;color:#e8f4fd;margin-top:4px;">気体 → 固体（直接！）</div>
+      <div style="font-size:12px;color:#7aaec8;margin-top:2px;">液体を経由しない</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding-top:10px;border-top:1px solid #1a3050;font-size:13px;color:#7aaec8;">
+    ⑤⑥は液体を経由しない特別な変化。ドライアイス（固体の二酸化炭素）はあたためても液体にならず直接気体になる（⑤昇華）。
+  </div>
+</div>
+
+<div class="memo">
+  <div class="box-title">標高が高いと、ふっ点が下がる！</div>
+  空気が薄い山の上では、空気が邪魔をしないので水が<span class="marker">100℃より低い温度でふっとう</span>する。<br>
+  エベレスト山頂（8848m）：約<strong>70℃</strong>でふっとう！<br>
+  富士山山頂（3776m）：約<strong>87℃</strong>でふっとう！
+</div>
+
+<!-- SVG: 雲のでき方 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" style="max-width:400px;width:100%">
+    <rect width="400" height="250" fill="#060f1e" rx="10"/>
+    <text x="200" y="22" text-anchor="middle" fill="#5bc8f5" font-size="13" font-weight="bold" font-family="sans-serif">☁️ 雲のでき方</text>
+
+    <!-- 空のグラデーション背景 -->
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a3a6e" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#0a1a3a" stop-opacity="0.2"/>
+      </linearGradient>
+    </defs>
+    <rect x="30" y="30" width="340" height="200" rx="8" fill="url(#skyGrad)"/>
+
+    <!-- 地面 -->
+    <rect x="30" y="210" width="340" height="22" rx="4" fill="rgba(80,60,20,0.6)" stroke="rgba(120,90,30,0.5)" stroke-width="1"/>
+    <text x="200" y="224" text-anchor="middle" fill="#aa8040" font-size="10" font-family="sans-serif">地 面</text>
+
+    <!-- 上昇矢印 -->
+    <path d="M105,205 L105,55" stroke="#ffd166" stroke-width="2.5" stroke-dasharray="6,4"/>
+    <polygon points="105,44 100,56 110,56" fill="#ffd166"/>
+    <text x="80" y="130" fill="#ffd166" font-size="10" font-family="sans-serif" transform="rotate(-90 80 130)">空気が上昇</text>
+
+    <!-- 温度ラベル（左側） -->
+    <text x="42" y="58" fill="#7aaec8" font-size="10" font-family="sans-serif">低い</text>
+    <text x="42" y="210" fill="#7aaec8" font-size="10" font-family="sans-serif">高い</text>
+    <text x="36" y="134" fill="#7aaec8" font-size="10" font-family="sans-serif" transform="rotate(-90 36 134)">温度</text>
+
+    <!-- 露点ライン -->
+    <line x1="130" y1="130" x2="370" y2="130" stroke="#5bc8f5" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <text x="320" y="125" fill="#5bc8f5" font-size="11" font-weight="bold" font-family="sans-serif">露 点</text>
+
+    <!-- 水蒸気ゾーン（下） -->
+    <text x="230" y="185" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">水蒸気をふくむ空気のかたまり</text>
+    <text x="230" y="200" text-anchor="middle" fill="#7aaec8" font-size="10" font-family="sans-serif">↑上昇すると体積が大きくなり温度が下がる</text>
+
+    <!-- 雲（上） -->
+    <ellipse cx="240" cy="90" rx="55" ry="25" fill="rgba(200,230,255,0.3)" stroke="rgba(200,230,255,0.5)" stroke-width="1.5"/>
+    <ellipse cx="220" cy="95" rx="35" ry="20" fill="rgba(200,230,255,0.25)"/>
+    <ellipse cx="265" cy="95" rx="35" ry="20" fill="rgba(200,230,255,0.25)"/>
+    <text x="240" y="93" text-anchor="middle" fill="#e8f4fd" font-size="12" font-weight="bold" font-family="sans-serif">雲（水てき・氷のつぶ）</text>
+
+    <!-- 説明 -->
+    <text x="245" y="115" text-anchor="middle" fill="#5bc8f5" font-size="10" font-family="sans-serif">露点まで下がると水蒸気が水てきに！</text>
+
+    <!-- さらに上の氷 -->
+    <text x="240" y="52" text-anchor="middle" fill="#a29bfe" font-size="10" font-family="sans-serif">さらに上昇→0℃以下→氷のつぶも</text>
+  </svg>
+  <div class="visual-caption">空気が上昇して露点まで冷えると水蒸気が水てきに変わり雲ができる</div>
+</div>
+</div>
+
+<!-- ===================== SUMMARY ===================== -->
+<div class="chapter">
+<div class="summary-box">
+  <div class="summary-title">📝 まとめ　サクトが学んだこと</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-card-title">🫧 空気の変化</div>
+      あたためる→ぼう張（体積増）、冷やす→収縮（体積減）。温度1℃ごとに0℃の体積の1/273変化。グラフは直線。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">💧 水の変化</div>
+      4℃で体積最小・密度最大。グラフは曲線（不規則）。空気より体積変化が小さい。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🧊 物の3つのすがた</div>
+      固体・液体・気体。粒子の動きが温度で変化。体積変化の大きさ：気体＞液体＞固体。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🌡️ 状態変化</div>
+      融解・凝固・蒸発・凝縮・昇華・凝華の6種。変化中は温度が変わらない！水だけ固体で体積増（約1.1倍）。
+    </div>
+  </div>
+</div>
+
+<!-- ナビ -->
+<div class="nav-bar">
+  <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+  <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/science_quiz_01.html">⚔️ クイズに挑戦！</a>
+</div>
+</div>
+
+</body>
+</html>
