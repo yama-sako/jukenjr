@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科第5回 まとめと実験思考法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;--panel:#0d1a2e;--border:#1a3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+  --purple:#a29bfe;--orange:#fd9644;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.8;padding-bottom:60px;}
+.story-header{background:linear-gradient(135deg,#0a1a3a 0%,#1a0a3a 50%,#061528 100%);padding:32px 16px 24px;text-align:center;border-bottom:2px solid var(--border);position:relative;overflow:hidden;}
+.story-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(162,155,254,.1) 0%,transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(255,209,102,.06) 0%,transparent 50%);}
+.boss-badge{display:inline-block;background:linear-gradient(135deg,#4a0a4a,#8a1a8a);border:1.5px solid #c060c0;border-radius:20px;padding:4px 16px;font-size:11px;font-weight:700;color:#f0a0f0;letter-spacing:2px;margin-bottom:8px;}
+.subject-badge{display:inline-block;background:linear-gradient(135deg,#064a2a,#0a7a44);border:1.5px solid var(--green);border-radius:20px;padding:4px 16px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:2px;margin-bottom:10px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(20px,5vw,28px);font-weight:900;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.8);line-height:1.3;margin-bottom:6px;}
+.chapter{margin:0 auto;max-width:720px;padding:0 12px;}
+.chapter-header{background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));border-left:4px solid var(--ocean);border-radius:0 10px 10px 0;padding:12px 16px;margin:28px 0 16px;}
+.chapter-header.boss{background:linear-gradient(90deg,#4a0a4a,rgba(162,155,254,.15));border-left-color:#a29bfe;}
+.chapter-num{font-size:11px;color:var(--sky);letter-spacing:2px;font-weight:700;}
+.chapter-header.boss .chapter-num{color:#d0a0ff;}
+.chapter-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(16px,4vw,20px);font-weight:900;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.dialogue-block{display:flex;gap:12px;align-items:flex-start;margin:10px 0;}
+.dialogue-block.reverse{flex-direction:row-reverse;}
+.av-wrap{flex-shrink:0;}
+.av-wrap svg{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--panel);}
+.bubble{background:#1a2640;border:1px solid #2a4060;border-radius:14px;padding:10px 14px;flex:1;font-size:14px;line-height:1.7;color:#e8f4fd;position:relative;}
+.bubble::before{content:'';position:absolute;top:16px;width:8px;height:8px;background:#1a2640;border:1px solid #2a4060;}
+.dialogue-block:not(.reverse) .bubble::before{left:-5px;clip-path:polygon(100% 0,100% 100%,0 50%);}
+.dialogue-block.reverse .bubble::before{right:-5px;clip-path:polygon(0 0,0 100%,100% 50%);}
+.speaker{font-size:11px;font-weight:700;margin-bottom:4px;}
+.sp-sakuto{color:var(--sky);}
+.sp-ousuke{color:#6eb5ff;}
+.sp-sensei{color:var(--green);}
+.sp-boss{color:#e080e0;}
+.knowledge{background:#0d2a44;border:1.5px solid rgba(91,200,245,.5);border-radius:12px;padding:14px 16px;margin:14px 0;color:var(--text);}
+.knowledge::before{content:'📘 ';font-size:15px;}
+.memo{background:#2a2000;border:1.5px solid rgba(255,209,102,.6);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--text);}
+.danger{background:#2a0a12;border:1.5px solid rgba(239,71,111,.6);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--text);}
+.danger::before{content:'⚠️ ';}
+.box-title{font-weight:700;font-size:13px;margin-bottom:6px;color:#e8f4fd;}
+.marker{background:linear-gradient(transparent 55%,rgba(255,209,102,.55) 55%);padding:0 2px;color:#e8f4fd;}
+.boss-box{background:#1a0a28;border:2px solid rgba(192,96,192,.6);border-radius:14px;padding:16px;margin:14px 0;color:var(--text);}
+.boss-title{font-size:14px;font-weight:900;color:#e080e0;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.crossover-box{background:#0a1a28;border:2px solid rgba(91,200,245,.4);border-radius:14px;padding:16px;margin:14px 0;color:var(--text);}
+.crossover-title{font-size:14px;font-weight:900;color:var(--sky);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.jiji-box{border-radius:12px;padding:14px 16px;margin:14px 0;background:#2a0810;border:2px solid rgba(239,71,111,.65);color:#e8f4fd;}
+.visual-panel{background:rgba(5,15,35,.6);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;text-align:center;}
+.visual-panel svg{max-width:100%;height:auto;}
+.visual-caption{font-size:13px;color:var(--muted);margin-top:8px;text-align:center;}
+.summary-box{background:#0a1f14;border:2px solid rgba(6,214,160,.45);border-radius:16px;padding:20px;margin:20px 0;}
+.summary-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:16px;font-weight:900;color:var(--green);margin-bottom:14px;text-align:center;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.summary-grid{grid-template-columns:1fr;}}
+.summary-card{background:#0d2218;border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px;color:#e8f4fd;}
+.summary-card-title{font-size:12px;color:var(--green);font-weight:700;margin-bottom:6px;}
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 12px 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+</style>
+</head>
+<body>
+
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🔬</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<symbol id="av-ousuke" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<symbol id="av-sakuto" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+  <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+<symbol id="av-sensei" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#e8e8f0"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#3a2010"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <path d="M13,16 Q30,8 47,16 Q40,12 30,13 Q20,12 13,16Z" fill="#3a2010"/>
+  <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+  <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <line x1="26" y1="42" x2="24" y2="58" stroke="#ccc" stroke-width="1"/>
+  <line x1="34" y1="42" x2="36" y2="58" stroke="#ccc" stroke-width="1"/>
+</symbol>
+<!-- ミズキ先生ボス形態 -->
+<symbol id="av-boss" viewBox="0 0 60 60">
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#4a0a6a"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+  <ellipse cx="30" cy="13" rx="17" ry="9" fill="#3a2010"/>
+  <ellipse cx="13" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <ellipse cx="47" cy="20" rx="5" ry="8" fill="#3a2010"/>
+  <path d="M13,16 Q30,8 47,16 Q40,12 30,13 Q20,12 13,16Z" fill="#3a2010"/>
+  <!-- 眼鏡（ボス形態） -->
+  <rect x="17" y="22" width="11" height="8" rx="3" fill="none" stroke="#c060c0" stroke-width="1.8"/>
+  <rect x="32" y="22" width="11" height="8" rx="3" fill="none" stroke="#c060c0" stroke-width="1.8"/>
+  <line x1="28" y1="26" x2="32" y2="26" stroke="#c060c0" stroke-width="1.5"/>
+  <ellipse cx="22.5" cy="26" rx="2.8" ry="2.8" fill="#1a1008"/>
+  <ellipse cx="37.5" cy="26" rx="2.8" ry="2.8" fill="#1a1008"/>
+  <circle cx="23.5" cy="25" r=".9" fill="#fff" opacity=".75"/>
+  <circle cx="38.5" cy="25" r=".9" fill="#fff" opacity=".75"/>
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+  <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  <line x1="26" y1="42" x2="24" y2="58" stroke="#9060b0" stroke-width="1"/>
+  <line x1="34" y1="42" x2="36" y2="58" stroke="#9060b0" stroke-width="1"/>
+</symbol>
+</defs>
+</svg>
+
+<!-- HEADER -->
+<div class="story-header">
+  <div class="boss-badge">👑 小ボス戦・まとめ回</div>
+  <div class="subject-badge">⚗️ 理科小５上　第５回</div>
+  <div class="story-title">実験思考法と理科のクロスオーバー</div>
+</div>
+
+<!-- ===== CHAPTER 1 ===== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 1</div>
+  <div class="chapter-title">🔬 実験の基本「条件制御」を理解する</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    ミズキ先生、実験するとき「一つの条件だけ変える」ってよく言うけど、なんでそうしないといけないの？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    いい質問！それが<strong>条件制御</strong>の考え方。複数の条件を同時に変えたら、どの条件が結果に影響したかわからなくなるでしょ？だから調べたい条件以外はすべて同じにするの。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    第4回の酸素発生の実験がまさにそれだよね。「過酸化水素水の量」「こさ」「二酸化マンガンの量」をそれぞれ1つずつ変えて実験したから、何が発生量を決めるかわかった。
+  </div>
+</div>
+</div>
+
+<div class="knowledge">
+  <div class="box-title">実験の基本原則：条件制御と対照実験</div>
+  <strong>条件制御：</strong><span class="marker">調べたい条件（変える条件）は1つだけ</span>。それ以外の条件はすべて同じにする。<br><br>
+  <strong>対照実験：</strong>条件を変えた実験と、<span class="marker">何も変えていない実験（対照・コントロール）</span>を比べることで、条件の影響を明確にする。<br><br>
+  <strong>第3回・第4回での実例：</strong><br>
+  ・酸素発生：過酸化水素水の量／こさ／二酸化マンガンの量をそれぞれ1つだけ変えて比較した<br>
+  ・第4回発展：短日植物の開花実験（A〜E）→明期・暗期の長さを1条件ずつ変えた対照実験
+</div>
+
+<div class="boss-box">
+  <div class="boss-title">✍️ 武蔵・芝の記述対策①「実験の条件を説明する」</div>
+  <strong>Q：「酸素の発生量は過酸化水素水の量で決まる」ことを確かめる実験を設計しなさい。</strong><br><br>
+  → 二酸化マンガンの量・種類・温度など<span class="marker">過酸化水素水の量以外の条件をすべて同じにして</span>、過酸化水素水の量だけを変えた実験を複数行う。それぞれの酸素の発生量を比較する。
+</div>
+</div>
+
+<!-- ===== CHAPTER 2 ===== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 2</div>
+  <div class="chapter-title">🌡️ 熱×気体×季節　理科クロスオーバー</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    第2回の熱の話で「温められると体積が増える」って習ったけど、これって気体の話にもつながってる？
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    まさにそこ！第1回・第2回・第3回・第4回の知識は全部つながっているんだよ。「熱と物質の変化」という大きな流れで見てみましょう。
+  </div>
+</div>
+</div>
+
+<div class="crossover-box">
+  <div class="crossover-title">🔗 第1〜4回クロスオーバー：熱と物質</div>
+  <strong>第1回（空気・水の変化）</strong>→ あたためると体積が増える。気体＞液体＞固体の順に変化が大きい<br>
+  　　　　↓ つながり<br>
+  <strong>第2回（熱の伝わり方）</strong>→ 対流は「あたためられた液体・気体が<strong>軽くなって上昇</strong>する」現象＝第1回の体積増加の応用！<br>
+  　　　　↓ つながり<br>
+  <strong>第3回（気体の性質）</strong>→ 気体は温度・圧力で体積が大きく変化。CO₂をドライアイスにするには「大きな圧力＋冷却」＝第1・2回の逆の操作<br>
+  　　　　↓ つながり<br>
+  <strong>第4回（季節と植物）</strong>→ 対流が気候をつくる（夏に暖かい空気が上昇→積乱雲→夕立）。光合成で植物がCO₂を吸収
+</div>
+
+<!-- クロスオーバー図 -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="220" fill="#060f1e" rx="10"/>
+    <text x="160" y="22" text-anchor="middle" fill="#ffd166" font-size="14" font-weight="bold" font-family="sans-serif">「熱と物質」のつながり</text>
+    <!-- 中心：熱エネルギー -->
+    <circle cx="160" cy="110" r="32" fill="rgba(239,71,111,0.2)" stroke="#ef476f" stroke-width="2"/>
+    <text x="160" y="106" text-anchor="middle" fill="#ef476f" font-size="13" font-weight="bold" font-family="sans-serif">熱</text>
+    <text x="160" y="122" text-anchor="middle" fill="#ef476f" font-size="13" font-weight="bold" font-family="sans-serif">エネルギー</text>
+    <!-- 第1回 -->
+    <circle cx="60" cy="60" r="26" fill="rgba(91,200,245,0.15)" stroke="#5bc8f5" stroke-width="1.5"/>
+    <text x="60" y="56" text-anchor="middle" fill="#5bc8f5" font-size="12" font-weight="bold" font-family="sans-serif">第1回</text>
+    <text x="60" y="72" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">体積変化</text>
+    <line x1="84" y1="78" x2="132" y2="95" stroke="#5bc8f5" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <!-- 第2回 -->
+    <circle cx="260" cy="60" r="26" fill="rgba(253,150,68,0.15)" stroke="#fd9644" stroke-width="1.5"/>
+    <text x="260" y="56" text-anchor="middle" fill="#fd9644" font-size="12" font-weight="bold" font-family="sans-serif">第2回</text>
+    <text x="260" y="72" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">熱の伝わり</text>
+    <line x1="236" y1="78" x2="188" y2="95" stroke="#fd9644" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <!-- 第3回 -->
+    <circle cx="60" cy="170" r="26" fill="rgba(6,214,160,0.15)" stroke="#06d6a0" stroke-width="1.5"/>
+    <text x="60" y="166" text-anchor="middle" fill="#06d6a0" font-size="12" font-weight="bold" font-family="sans-serif">第3回</text>
+    <text x="60" y="182" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">気体の性質</text>
+    <line x1="84" y1="152" x2="132" y2="127" stroke="#06d6a0" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <!-- 第4回 -->
+    <circle cx="260" cy="170" r="26" fill="rgba(162,155,254,0.15)" stroke="#a29bfe" stroke-width="1.5"/>
+    <text x="260" y="166" text-anchor="middle" fill="#a29bfe" font-size="12" font-weight="bold" font-family="sans-serif">第4回</text>
+    <text x="260" y="182" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">季節・生物</text>
+    <line x1="236" y1="152" x2="188" y2="127" stroke="#a29bfe" stroke-width="1.5" stroke-dasharray="4,2"/>
+  </svg>
+  <div class="visual-caption">4回分の理科はすべて「熱エネルギー」を中心につながっている</div>
+</div>
+
+<div class="boss-box">
+  <div class="boss-title">✍️ 武蔵・芝の記述対策②「理由を2つ以上つなげて説明」</div>
+  <strong>Q：温められた空気が上昇するのはなぜか、2つの理由を含めて説明しなさい。</strong><br><br>
+  → 空気は温められると<span class="marker">体積が増える（第1回）</span>。体積が増えると同じ重さの空気がより広い体積を占めるため<span class="marker">密度が小さくなり（軽くなり）</span>、まわりの冷たい空気より軽くなって<span class="marker">上昇する（第2回の対流）</span>。これが対流の仕組みである。
+</div>
+</div>
+
+<!-- ===== CHAPTER 3 ===== -->
+<div class="chapter">
+<div class="chapter-header boss">
+  <div class="chapter-num">CHAPTER 3</div>
+  <div class="chapter-title">👑 小ボス戦！ミズキ先生ボス形態の難問</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-boss"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-boss">ミズキ先生（ボス形態）</div>
+    今日は本気を出すわよ。第1〜4回の知識をすべて組み合わせないと解けない問題を用意したから。まず第一問——「なぜ魔法びんの中身の温度が長時間保てるのか」、第2回のすべての熱の伝わり方を使って説明しなさい！
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    えーと、第2回で熱の伝わり方は3つあって…、伝導と対流と…
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    放射だ。魔法びんは二重構造で間が真空なんだよね。真空だと、伝導も対流も起きない！
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    内側が銀メッキで、放射熱を反射する。だから3つ全部防いでる！
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-boss"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-boss">ミズキ先生（ボス形態）</div>
+    完璧！では第二問——二酸化炭素と植物と季節の関係を説明しなさい（第3回×第4回クロス）。
+  </div>
+</div>
+<div class="dialogue-block reverse">
+  <div class="av-wrap"><svg><use href="#av-sakuto"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sakuto">サクト</div>
+    植物は光合成で二酸化炭素を吸収して酸素を出す。だから植物が多い春〜夏は大気中のCO₂が減るよね。
+  </div>
+</div>
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-ousuke"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-ousuke">オウスケ</div>
+    秋〜冬は植物が枯れてCO₂を吸収しなくなるから、増えるのか。なるほど、それで季節でCO₂濃度が変化するんだ！
+  </div>
+</div>
+</div>
+
+<div class="boss-box">
+  <div class="boss-title">✍️ 武蔵・芝の記述対策③ 魔法びんの仕組み（第2回応用）</div>
+  <strong>Q：魔法びんの内側の温度が長時間保たれる理由を、熱の3つの伝わり方を使って説明しなさい。</strong><br><br>
+  → ①<span class="marker">伝導を防ぐ</span>：二重構造の間が真空のため、固体・液体・気体を通じた熱の伝わりが起きない。<br>
+  ②<span class="marker">対流を防ぐ</span>：真空中では液体・気体が存在しないため対流が起きない。<br>
+  ③<span class="marker">放射を防ぐ</span>：内側の壁が銀メッキされており、放射熱を反射して外に逃がさない。この3つの仕組みによって熱の移動が極めて少なくなる。
+</div>
+
+<div class="knowledge">
+  <div class="box-title">入試頻出！CO₂と生物のつながり（第3・4回クロス）</div>
+  ・植物の<strong>光合成</strong>：<span class="marker">二酸化炭素＋水→酸素＋デンプン</span>（光エネルギー使用）<br>
+  ・植物の<strong>呼吸</strong>：酸素＋デンプン→二酸化炭素＋水（動物と同じ）<br>
+  ・春〜夏（植物が活発）→光合成盛ん→CO₂吸収増加<br>
+  ・秋〜冬（落葉・枯れる）→光合成減少→CO₂吸収減少<br>
+  ・<span class="marker">CO₂増加→地球温暖化→気候変動→植物・動物の季節行動に影響</span>（環境問題）
+</div>
+
+<div class="jiji-box">
+  <div class="box-title">🗞️ 時事：CO₂削減と生物多様性</div>
+  地球温暖化によるCO₂濃度の上昇が問題になっている。日本でも桜の開花（第4回・春の植物）が早まり、一部地域では梅の開花と桜の開花が重なるほど温暖化が進んでいる。わたり鳥（第4回）の渡りのタイミングも変化しており、食物連鎖のバランスが崩れる恐れがある。理科で学んだ知識が現代の環境問題と直結している。
+</div>
+</div>
+
+<!-- ===== CHAPTER 4 ===== -->
+<div class="chapter">
+<div class="chapter-header">
+  <div class="chapter-num">CHAPTER 4</div>
+  <div class="chapter-title">📊 グラフの読み方と計算問題のコツ</div>
+</div>
+
+<div class="scene">
+<div class="dialogue-block">
+  <div class="av-wrap"><svg><use href="#av-sensei"/></svg></div>
+  <div class="bubble">
+    <div class="speaker sp-sensei">ミズキ先生</div>
+    最後に、第2回で苦手な人が多い「グラフを使った計算問題」の解き方を整理しましょう。グラフは「傾き」「交点」「変化のなくなる点」の3つに注目すれば必ず読めます。
+  </div>
+</div>
+</div>
+
+<!-- グラフ読み取りSVG -->
+<div class="visual-panel">
+  <svg viewBox="0 0 320 310" xmlns="http://www.w3.org/2000/svg" style="max-width:360px;width:100%">
+    <rect width="320" height="310" fill="#060f1e" rx="10"/>
+    <text x="160" y="22" text-anchor="middle" fill="#ffd166" font-size="14" font-weight="bold" font-family="sans-serif">グラフを読む3つのポイント</text>
+    <!-- 軸 -->
+    <line x1="60" y1="200" x2="290" y2="200" stroke="#2a4a6a" stroke-width="2"/>
+    <line x1="60" y1="44" x2="60" y2="200" stroke="#2a4a6a" stroke-width="2"/>
+    <text x="175" y="222" text-anchor="middle" fill="#7aaec8" font-size="12" font-family="sans-serif">過酸化水素水の量</text>
+    <text x="22" y="124" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif" transform="rotate(-90,22,124)">酸素の発生量</text>
+    <!-- グラフ：増加→水平 -->
+    <line x1="60" y1="200" x2="165" y2="90" stroke="#06d6a0" stroke-width="2.5"/>
+    <line x1="165" y1="90" x2="280" y2="90" stroke="#06d6a0" stroke-width="2.5" stroke-dasharray="5,3"/>
+
+    <!-- ポイント③ 変化点（グラフのkink点） -->
+    <circle cx="165" cy="90" r="7" fill="#ef476f" stroke="#fff" stroke-width="2"/>
+    <!-- ③ラベルを右上に引き出し -->
+    <line x1="172" y1="84" x2="200" y2="58" stroke="#ef476f" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="200" y="40" width="110" height="36" rx="6" fill="rgba(239,71,111,0.15)" stroke="#ef476f" stroke-width="1"/>
+    <text x="255" y="57" text-anchor="middle" fill="#ef476f" font-size="12" font-weight="bold" font-family="sans-serif">③ 変化点</text>
+    <text x="255" y="71" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">反応が完了する点</text>
+
+    <!-- ポイント① 傾き（斜線部分に配置） -->
+    <rect x="62" y="148" width="88" height="36" rx="6" fill="rgba(91,200,245,0.15)" stroke="#5bc8f5" stroke-width="1"/>
+    <text x="106" y="165" text-anchor="middle" fill="#5bc8f5" font-size="12" font-weight="bold" font-family="sans-serif">① 傾き</text>
+    <text x="106" y="179" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">比例関係を示す</text>
+
+    <!-- ポイント② 水平部分 -->
+    <rect x="168" y="100" width="106" height="36" rx="6" fill="rgba(255,209,102,0.15)" stroke="#ffd166" stroke-width="1"/>
+    <text x="221" y="117" text-anchor="middle" fill="#ffd166" font-size="12" font-weight="bold" font-family="sans-serif">② 水平部分</text>
+    <text x="221" y="131" text-anchor="middle" fill="#7aaec8" font-size="11" font-family="sans-serif">変化がなくなった</text>
+
+    <!-- まとめ説明 -->
+    <rect x="14" y="240" width="292" height="58" rx="8" fill="rgba(6,214,160,0.08)" stroke="rgba(6,214,160,0.3)" stroke-width="1"/>
+    <text x="160" y="260" text-anchor="middle" fill="#06d6a0" font-size="12" font-weight="bold" font-family="sans-serif">グラフの読み取り方</text>
+    <text x="160" y="278" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">① 傾き → 比例（量に比例して発生量も増える）</text>
+    <text x="160" y="294" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">③ 水平になる点 → それ以上加えても変化なし（限界値）</text>
+  </svg>
+  <div class="visual-caption">傾きで比例関係を読み、水平部分で「もう変化しない（反応完了）」を読む</div>
+</div>
+
+<div class="memo">
+  <div class="box-title">✏️ 熱量計算の鉄則（第2回復習）</div>
+  <strong>基本公式：</strong><span class="marker">熱量（cal）＝ 水の重さ（g）× 温度変化（℃）</span><br><br>
+  <strong>混合問題の手順：</strong><br>
+  ① 各容器の熱量を「重さ×温度（0℃基準）」で計算<br>
+  ② 熱量の合計を求める<br>
+  ③ 水の合計重さで割る → 混合後の温度<br><br>
+  <strong>氷が入る場合：</strong><br>
+  ① 全体の熱量を計算<br>
+  ② 氷を溶かすのに使う熱量（重さ×80）を引く<br>
+  ③ 残りの熱量 ÷ 合計水の重さ
+</div>
+
+<!-- まとめ -->
+<div class="summary-box">
+  <div class="summary-title">📝 第1〜4回 理科総まとめ</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-card-title">🔬 実験思考法</div>
+      条件制御：調べる条件は1つだけ変える。対照実験：何も変えない実験と比較。グラフの傾き・水平部分・変化点を読む。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🌡️ 熱のクロスオーバー</div>
+      温める→体積増（第1回）→軽くなる→対流（第2回）→気体の変化（第3回）→季節・気候変動（第4回）。すべてつながっている。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">⚗️ 魔法びんの仕組み</div>
+      真空→伝導・対流を防ぐ。銀メッキ→放射を反射。3つの熱の伝わり方をすべて防ぐ。入試頻出の記述問題。
+    </div>
+    <div class="summary-card">
+      <div class="summary-card-title">🌱 CO₂と生物</div>
+      光合成でCO₂吸収→酸素を出す。季節による植物の活動変化→CO₂濃度の変動。地球温暖化との関係。
+    </div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+  <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/science_quiz_05.html">⚔️ 小ボスクイズへ！</a>
+</div>
+</div>
+
+</body>
+</html>

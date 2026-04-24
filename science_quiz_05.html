@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科クイズ第5回 小ボス戦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08101e;--panel:#0d1a2e;--border:#1a3050;--sky:#5bc8f5;--gold:#ffd166;--green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.7;padding-bottom:60px;min-height:100vh;}
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+.quiz-header{text-align:center;padding:28px 16px 18px;border-bottom:2px solid var(--border);background:linear-gradient(135deg,#0a1a3a,#1a0a3a);}
+.boss-badge{display:inline-block;background:linear-gradient(135deg,#4a0a4a,#8a1a8a);border:1.5px solid #c060c0;border-radius:16px;padding:3px 14px;font-size:11px;font-weight:700;color:#f0a0f0;letter-spacing:2px;margin-bottom:8px;}
+.pixel-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(18px,5vw,26px);font-weight:900;color:var(--gold);text-shadow:0 0 20px rgba(255,209,102,.4);line-height:1.3;}
+.title-sub{font-size:12px;color:var(--muted);letter-spacing:1px;margin-top:6px;}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.hp-display{display:flex;align-items:center;gap:4px;}
+.hp-heart{font-size:18px;}
+.xp-bar-wrap{flex:1;min-width:120px;}
+.xp-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.xp-bar{height:8px;background:#1a3050;border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,#c030c0,var(--gold));border-radius:4px;transition:width .5s;}
+.q-counter{font-size:13px;color:var(--sky);font-weight:700;}
+.quiz-wrap{max-width:680px;margin:0 auto;padding:16px 12px;}
+.q-card{background:var(--panel);border:1.5px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.q-number{font-size:11px;color:#d0a0ff;letter-spacing:2px;font-weight:700;margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:14px;}
+.hint-btn{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.35);border-radius:8px;color:var(--gold);font-size:12px;padding:6px 14px;cursor:pointer;margin-bottom:10px;}
+.hint-box{background:#2a2000;border:1px solid rgba(255,209,102,.4);border-radius:8px;padding:10px 12px;font-size:13px;color:#e8d080;margin-bottom:10px;display:none;}
+.hint-box.show{display:block;}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.choices{grid-template-columns:1fr;}}
+.choice-btn{background:#1a2640;border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;padding:12px 10px;cursor:pointer;text-align:left;transition:all .2s;line-height:1.5;}
+.choice-btn:hover{border-color:#c060c0;background:rgba(192,96,192,.08);}
+.choice-btn.correct{background:rgba(6,214,160,.2);border-color:var(--green);color:#fff;}
+.choice-btn.wrong{background:rgba(239,71,111,.15);border-color:var(--coral);color:#ffaaaa;}
+.choice-btn:disabled{cursor:default;}
+.choice-label{font-size:11px;color:var(--muted);font-weight:700;margin-right:6px;}
+.feedback{border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.35);color:var(--green);}
+.feedback.ng{background:rgba(239,71,111,.12);border:1px solid rgba(239,71,111,.35);color:#ff8080;}
+.result-screen{display:none;max-width:500px;margin:0 auto;padding:20px 16px;text-align:center;}
+.result-screen.show{display:block;}
+.rank-label{font-family:'M PLUS Rounded 1c',sans-serif;font-size:40px;font-weight:900;margin-bottom:8px;}
+.rank-S{color:#ffd166;text-shadow:0 0 30px rgba(255,209,102,.6);}
+.rank-A{color:#06d6a0;}
+.rank-B{color:#5bc8f5;}
+.rank-C{color:#7aaec8;}
+.result-msg{font-size:15px;line-height:1.8;margin:12px 0;white-space:pre-line;}
+.score-table{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:14px 0;text-align:left;}
+.score-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.score-row:last-child{border-bottom:none;font-weight:700;}
+.nav-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.story{background:linear-gradient(135deg,#4a0a4a,#8a1a8a);border-color:#c060c0;box-shadow:0 4px 0 #2a0a2a;}
+</style>
+</head>
+<body>
+
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">👑</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="quiz-header">
+  <div class="boss-badge">👑 小ボス戦</div>
+  <div class="pixel-title">🔬 理科クエスト<br>【まとめ・クロスオーバー】</div>
+  <div class="title-sub">理科小５上　第５回まとめ</div>
+</div>
+<div class="status-bar">
+  <div class="hp-display" id="hp-display"></div>
+  <div class="xp-bar-wrap">
+    <div class="xp-label">経験値 <span id="xp-val">0</span> XP</div>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="q-counter" id="q-counter">Q 1 / 10</div>
+</div>
+<div class="quiz-wrap" id="quiz-area"></div>
+<div class="result-screen" id="result-screen"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    q:"実験で「条件制御」が必要な理由として正しいものはどれか。",
+    choices:["A. 実験の回数を少なくするため","B. 複数の条件を同時に変えると、どの条件が結果に影響したかわからなくなるため","C. 実験を安全に行うため","D. 実験にかかるコストを下げるため"],
+    ans:1,hint:"「一つだけ変える」のはなぜ？結果の解釈の問題。",
+    explain:"条件制御は「調べたい条件以外をすべて同じにする」ことで、変化の原因を特定するための方法です。複数の条件を同時に変えると、どの条件が結果に影響したか判断できなくなります。"
+  },
+  {
+    q:"酸素の発生量を決めるものとして正しいものはどれか。（第3回×第5回）",
+    choices:["A. 二酸化マンガンの量","B. 過酸化水素水の量とこさ","C. 容器の大きさ","D. 加える速さ"],
+    ans:1,hint:"触媒は反応速度を変えるが発生量は変えない。",
+    explain:"酸素の発生量は過酸化水素水の量・こさで決まります。二酸化マンガン（触媒）は反応の速さを変えますが発生量は変わりません。これは条件制御の実験で一つずつ確かめた結果です。"
+  },
+  {
+    q:"水が温められて対流が起きるしくみとして正しい説明はどれか。（第1回×第2回クロス）",
+    choices:["A. 温められた水は重くなり底に沈むため流れが生まれる","B. 温められた水は体積が増えて軽くなり上昇するため流れが生まれる","C. 温められた水は蒸発して水蒸気になるため流れが生まれる","D. 冷たい水が膨張して上昇するため流れが生まれる"],
+    ans:1,hint:"第1回（温めると体積増加）＋第2回（対流の仕組み）をつなげよう。",
+    explain:"水は温められると体積が増えて密度が小さくなり（軽くなり）、まわりの冷たい水より軽くなって上昇します。これが対流の仕組みで、第1回の「温めると体積増加」と第2回の「対流」がつながっています。"
+  },
+  {
+    q:"魔法びんが保温・保冷できる理由として正しいものはどれか。",
+    choices:[
+      "A. 二重構造の間に断熱材が入っているため",
+      "B. 二重構造の間が真空で伝導・対流を防ぎ、内側の銀メッキが放射を反射するため",
+      "C. 外側が厚い金属製で熱を通しにくいため",
+      "D. 内部に化学物質が入っており熱を吸収するため"
+    ],
+    ans:1,hint:"熱の3つの伝わり方（伝導・対流・放射）すべてを防ぐ仕組みを思い出して。",
+    explain:"魔法びんは①真空の二重構造で伝導・対流を防ぎ、②内側の銀メッキで放射熱を反射します。第2回で学んだ熱の3つの伝わり方をすべて防ぐ構造になっています。"
+  },
+  {
+    q:"植物の光合成と二酸化炭素の関係として正しいものはどれか。（第3回×第4回クロス）",
+    choices:["A. 植物は光合成でCO₂を出し、酸素を吸収する","B. 植物は光合成でCO₂を吸収し、酸素を出す","C. 植物は光合成も呼吸も行わない","D. 植物は光合成で酸素を出し、呼吸は行わない"],
+    ans:1,hint:"第3回の気体の性質（酸素・CO₂）と第4回の季節と植物をつなごう。",
+    explain:"植物は光合成でCO₂を吸収して酸素を出します（第3回の酸素・CO₂の性質と関係）。また植物も呼吸は行い（酸素を吸収してCO₂を出す）、光合成は昼間のみ、呼吸は昼夜とも行います。"
+  },
+  {
+    q:"短日植物の開花に関係するのは何か。（第4回発展×実験思考法）",
+    choices:["A. 昼（明期）の長さ","B. 連続した夜（暗期）の長さ","C. 1日の気温の最高値","D. 土壌中の水分量"],
+    ans:1,hint:"第4回発展の実験A〜Eを思い出して。明期を途中で分割した実験の結果は？",
+    explain:"短日植物の開花に関係するのは「連続した暗期（夜）の長さ」です。明期を途中で分割しても暗期が連続していれば開花します。電照菊は夜中に光を当てて連続した暗期を短くし開花を遅らせます。"
+  },
+  {
+    q:"二酸化炭素・気体・季節のつながりとして正しいものはどれか。（第3・4回クロス）",
+    choices:[
+      "A. 春〜夏は植物が活発に光合成するためCO₂濃度が上がる",
+      "B. 春〜夏は植物が活発に光合成するためCO₂濃度が下がる",
+      "C. 秋〜冬は植物が落葉するためCO₂濃度が下がる",
+      "D. 季節によるCO₂濃度の変化はほとんどない"
+    ],
+    ans:1,hint:"光合成はCO₂を吸収する。植物が活発な季節は？",
+    explain:"春〜夏は植物が活発に光合成を行いCO₂を吸収するため、大気中のCO₂濃度がやや下がります。秋〜冬は植物の光合成が減少するためCO₂濃度がやや上がります。地球温暖化問題ともつながる重要な関係です。"
+  },
+  {
+    q:"下の計算問題。80℃の水100gを20℃の水300gに混ぜると何℃になるか。（第2回応用）",
+    choices:["A. 35℃","B. 40℃","C. 45℃","D. 50℃"],
+    ans:0,
+    explain:"80℃の水100gの熱量：100×80＝8000cal。20℃の水300gの熱量：300×20＝6000cal。合計：14000cal÷（100+300）g＝35℃。「熱量の合計÷水の合計重さ」の手順で解く。"
+  },
+  {
+    q:"次のうち「対照実験」の説明として正しいものはどれか。",
+    choices:[
+      "A. 条件を少しずつ変えながら繰り返す実験",
+      "B. 調べたい条件を変えた実験と、何も変えていない実験を比較すること",
+      "C. 2人以上で同じ実験を別々に行い結果を比較すること",
+      "D. 実験を3回以上繰り返して平均を取ること"
+    ],
+    ans:1,hint:"「対照」＝比べるためのもの。「何もしていない状態」との比較。",
+    explain:"対照実験とは、条件を変えた実験と「何も変えていない実験（対照群・コントロール）」を同時に行い比較することです。これにより条件の影響を明確に示すことができます。"
+  },
+  {
+    q:"【最終問題】第1〜4回のクロスオーバー。「太陽の光がものを温める仕組み」として正しいものはどれか。",
+    choices:[
+      "A. 太陽と地球の間に空気があり、その空気を通じた伝導で熱が届く",
+      "B. 太陽と地球の間の空気が対流を起こし、暖かい空気が地球まで運ばれる",
+      "C. 太陽からの放射熱（放射線）が真空の宇宙空間を通って地球に届く",
+      "D. 太陽が地球の大気を加熱し、その熱が降下して地表を温める"
+    ],
+    ans:2,hint:"宇宙空間には空気がない。第2回で学んだ熱の伝わり方のうち「真空でも伝わる」のは？",
+    explain:"太陽の熱は「放射」で届きます。放射は光と同じように真空の宇宙空間でも直進します（第2回）。伝導・対流は物質が必要ですが放射は不要です。これが第4回の「季節と植物」（日照と光合成）にもつながります。"
+  }
+];
+
+let currentQ=0, hp=5, xp=0, wrongQs=[], answered=false;
+
+function renderHP(){
+  const d=document.getElementById('hp-display');d.innerHTML='';
+  for(let i=0;i<5;i++){const s=document.createElement('span');s.className='hp-heart';s.textContent=i<hp?'❤️':'🖤';d.appendChild(s);}
+}
+function renderXP(){document.getElementById('xp-val').textContent=xp;document.getElementById('xp-fill').style.width=(xp)+'%';}
+function renderQuestion(){
+  if(currentQ>=QUESTIONS.length){showResult();return;}
+  answered=false;
+  const q=QUESTIONS[currentQ];
+  document.getElementById('q-counter').textContent=`Q ${currentQ+1} / ${QUESTIONS.length}`;
+  const area=document.getElementById('quiz-area');
+  const labels=['A','B','C','D'];
+  let choicesHTML=q.choices.map((c,i)=>`<button class="choice-btn" onclick="answer(${i})" id="choice-${i}"><span class="choice-label">${labels[i]}.</span>${c.replace(/^[A-D]\. /,'')}</button>`).join('');
+  area.innerHTML=`
+    <div class="q-card">
+      <div class="q-number">BOSS QUESTION ${currentQ+1}</div>
+      <div class="q-text">${q.q}</div>
+      <!-- 小ボス戦：ヒントなし -->
+      <div class="choices">${choicesHTML}</div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button id="next-btn" onclick="nextQ()" style="display:none;background:linear-gradient(135deg,#4a0a4a,#8a1a8a);border:1.5px solid #c060c0;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:14px;font-weight:700;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 #2a0a2a;">次の問題へ ▶</button>
+    </div>`;
+}
+function showHint(){document.getElementById('hint-box').classList.add('show');}
+function answer(idx){
+  if(answered)return;answered=true;
+  const q=QUESTIONS[currentQ];
+  const btns=document.querySelectorAll('.choice-btn');btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');fb.classList.add('show');
+  if(idx===q.ans){
+    btns[idx].classList.add('correct');fb.classList.add('ok');
+    fb.innerHTML='✅ 正解！<br><small>'+q.explain+'</small>';
+    xp+=10;renderXP();
+  }else{
+    btns[idx].classList.add('wrong');btns[q.ans].classList.add('correct');fb.classList.add('ng');
+    fb.innerHTML='❌ 不正解…<br><small>'+q.explain+'</small>';
+    hp--;wrongQs.push(currentQ+1);renderHP();
+  }
+  document.getElementById('next-btn').style.display='inline-block';
+}
+function nextQ(){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+function showResult(){
+  document.getElementById('quiz-area').style.display='none';
+  const rs=document.getElementById('result-screen');rs.classList.add('show');
+  const correct=10-wrongQs.length;
+  let rank,rankClass,emoji,msg;
+  if(correct===10){rank='S';rankClass='rank-S';emoji='👑';msg='完璧！小ボスを完全撃破！\n理科第1〜4回の知識をすべて使いこなした！';}
+  else if(correct>=8){rank='A';rankClass='rank-A';emoji='⭐';msg='すばらしい！クロスオーバー思考が身についてきた！';}
+  else if(correct>=6){rank='B';rankClass='rank-B';emoji='👍';msg='よくがんばった！ストーリーで復習しよう。';}
+  else{rank='C';rankClass='rank-C';emoji='💪';msg='第1〜4回のストーリーを読み返してチャレンジ！';}
+  const wrongStr=wrongQs.length>0?wrongQs.join('・')+'番':'なし';
+  rs.innerHTML=`
+    <div style="font-size:48px;margin:10px 0">${emoji}</div>
+    <div class="rank-label ${rankClass}">RANK ${rank}</div>
+    <div class="result-msg">${msg}</div>
+    <div class="score-table">
+      <div class="score-row"><span>正解数</span><span>${correct} / 10</span></div>
+      <div class="score-row"><span>獲得XP</span><span>${xp} XP</span></div>
+      <div class="score-row"><span>まちがえた問題</span><span>${wrongStr}</span></div>
+      <div class="score-row"><span>HP残り</span><span>${hp>0?'❤️'.repeat(hp):'力尽きた…'}</span></div>
+    </div>
+    <div class="nav-btns">
+      <a class="nav-btn story" href="https://yama-sako.github.io/jukenjr/science_story_05.html">📖 ストーリーを読む</a>
+      <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    </div>`;
+}
+document.addEventListener('DOMContentLoaded',function(){renderHP();renderXP();renderQuestion();});
+</script>
+</body>
+</html>

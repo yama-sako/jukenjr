@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会第5回 まとめと地理的思考</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1220;--panel:#111828;--border:#1e3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--red:#ff6b6b;
+  --orange:#ff9f43;--purple:#a29bfe;
+  --text:#e8f4fd;--muted:#7aaec8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(255,209,102,.08) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(239,71,111,.05) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+.title-screen{text-align:center;padding:40px 20px 30px;border-bottom:2px solid #2a5080;margin-bottom:30px;}
+.story-tag{display:inline-block;background:linear-gradient(135deg,#7a1a00,#c0340a);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+.boss-badge{display:inline-block;background:linear-gradient(135deg,#5a0a5a,#8a1a8a);border:2px solid #c060c0;color:#f0a0f0;font-size:12px;font-weight:900;padding:4px 18px;border-radius:20px;margin-bottom:14px;letter-spacing:2px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(22px,5vw,34px);font-weight:900;line-height:1.3;color:#ffd166;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 30px rgba(255,209,102,.4);margin-bottom:10px;}
+.chapter{margin-bottom:36px;}
+.chapter-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));border-radius:10px;border-left:4px solid #5bc8f5;box-shadow:inset 0 1px 0 rgba(91,200,245,.2);}
+.chapter-header.boss{background:linear-gradient(90deg,#4a0a4a,rgba(162,155,254,.15));border-left-color:#a29bfe;}
+.chapter-num{font-size:11px;font-weight:900;letter-spacing:2px;color:#90d8ff;}
+.chapter-header.boss .chapter-num{color:#d0a0ff;}
+.chapter-title{font-size:18px;font-weight:900;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.chapter-icon{font-size:24px;}
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.dialogue{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;border:2px solid;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.avatar.sakuto{background:rgba(91,200,245,.15);border-color:var(--sky);}
+.avatar.ousuke{background:rgba(6,214,160,.15);border-color:var(--green);}
+.avatar.kanchan{background:rgba(255,209,102,.15);border-color:var(--gold);}
+.avatar.papa{background:rgba(162,155,254,.15);border-color:var(--purple);}
+.avatar.boss{background:rgba(239,71,111,.2);border-color:var(--coral);}
+.av-svg{width:60px;height:60px;}
+.bubble-wrap{flex:1;}
+.bubble-name{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.bubble-name.sakuto{color:var(--sky);}
+.bubble-name.ousuke{color:var(--green);}
+.bubble-name.kanchan{color:var(--gold);}
+.bubble-name.papa{color:var(--purple);}
+.bubble-name.boss{color:var(--coral);}
+.bubble{background:#1a2640;border-radius:0 14px 14px 14px;padding:12px 16px;font-size:14px;line-height:1.7;border:1px solid #2a4060;color:#e8f4fd;}
+.bubble.sakuto{border-left:3px solid var(--sky);}
+.bubble.ousuke{border-left:3px solid var(--green);}
+.bubble.kanchan{border-left:3px solid var(--gold);}
+.bubble.papa{border-left:3px solid var(--purple);}
+.bubble.boss{border-left:3px solid var(--coral);}
+.marker{background:rgba(255,220,50,.25);border-radius:3px;padding:1px 4px;border-bottom:2px solid #ffd700;font-weight:700;color:#fff;}
+.knowledge{background:#0d2a44;border:1px solid rgba(91,200,245,.4);border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.knowledge-title{font-size:12px;font-weight:900;color:var(--sky);letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.memo{background:#2a2000;border:1px solid rgba(255,209,102,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.danger{background:#2a0a12;border:1px solid rgba(239,71,111,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+/* ボス記述対策ボックス */
+.boss-box{background:#1a0a28;border:2px solid rgba(192,96,192,.6);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.boss-title{font-size:14px;font-weight:900;color:#e080e0;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.jiji-box{background:#2a0810;border:2px solid rgba(239,71,111,.5);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.jiji-title{font-size:13px;font-weight:900;color:var(--coral);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.crossover-box{background:#0a1f28;border:2px solid rgba(91,200,245,.4);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.crossover-title{font-size:14px;font-weight:900;color:var(--sky);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.map-wrap{background:rgba(5,15,35,.9);border:1px solid rgba(91,200,245,.25);border-radius:14px;padding:12px;margin:14px 0;overflow:hidden;}
+.map-title{font-size:12px;font-weight:700;color:var(--sky);letter-spacing:1px;margin-bottom:8px;text-align:center;}
+.map-wrap svg{width:100%;display:block;}
+.narrative{font-size:14px;color:#bcd8f0;font-style:italic;padding:10px 0;line-height:1.8;}
+.summary-box{background:#0d2a1e;border:2px solid rgba(6,214,160,.5);border-radius:16px;padding:20px;margin-top:30px;}
+.summary-title{font-size:16px;font-weight:900;color:#06d6a0;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sum-item{background:#0a1f16;border:1px solid #1a4a32;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.8;color:#d0f0e0;}
+.sum-item strong{color:#ffd166;display:block;margin-bottom:6px;font-size:13px;}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr;}}
+em{color:var(--gold);font-style:normal;font-weight:700;}
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 0 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+/* 2列比較レイアウト */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+@media(max-width:500px){.compare-grid{grid-template-columns:1fr;}}
+.cmp-card{background:#0a1828;border:1px solid var(--border);border-radius:12px;padding:13px;font-size:13px;line-height:1.7;color:var(--text);}
+.cmp-card .cmp-title{font-weight:900;font-size:14px;margin-bottom:6px;}
+</style>
+
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">👑</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="container">
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <symbol id="av-sakuto" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <symbol id="av-ousuke" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <symbol id="av-papa" viewBox="0 0 60 60">
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#1e3a6e"/>
+    <path d="M22,42 L30,52 L38,42" fill="none" stroke="#a0c0e8" stroke-width="1.5"/>
+    <rect x="24" y="35" width="12" height="11" rx="5" fill="#f0c898"/>
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,17 Q20,9 30,9 Q40,9 46,17 Q40,13 30,14 Q20,13 14,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M18,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="30" cy="29" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,33 Q30,38 36,33" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="25" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="25" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <!-- 小ボス：ゴリオ先生（第1・2回キャラ） -->
+  <symbol id="av-boss" viewBox="0 0 60 60">
+    <rect x="6" y="40" width="48" height="20" rx="9" fill="#3a1a00"/>
+    <rect x="22" y="34" width="16" height="12" rx="5" fill="#c87840"/>
+    <ellipse cx="30" cy="22" rx="19" ry="20" fill="#c87840"/>
+    <ellipse cx="30" cy="10" rx="19" ry="10" fill="#2a1008"/>
+    <ellipse cx="10" cy="18" rx="6" ry="9" fill="#2a1008"/>
+    <ellipse cx="50" cy="18" rx="6" ry="9" fill="#2a1008"/>
+    <ellipse cx="23" cy="24" rx="3.5" ry="3.5" fill="#1a0808"/>
+    <ellipse cx="37" cy="24" rx="3.5" ry="3.5" fill="#1a0808"/>
+    <circle cx="24" cy="23" r="1" fill="#fff" opacity=".7"/>
+    <circle cx="38" cy="23" r="1" fill="#fff" opacity=".7"/>
+    <path d="M18,19 Q23,16 27,19" fill="none" stroke="#1a0808" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M33,19 Q37,16 41,19" fill="none" stroke="#1a0808" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="29" rx="3" ry="2" fill="#a06030" opacity=".7"/>
+    <!-- 口ひげ -->
+    <path d="M22,33 Q26,30 30,32 Q34,30 38,33" fill="rgba(30,10,0,0.8)" stroke="none"/>
+    <path d="M23,34 Q30,40 37,34" fill="none" stroke="#904820" stroke-width="2" stroke-linecap="round"/>
+    <ellipse cx="10" cy="24" rx="5" ry="6" fill="#c87840"/>
+    <ellipse cx="50" cy="24" rx="5" ry="6" fill="#c87840"/>
+  </symbol>
+</defs>
+</svg>
+
+<!-- TITLE -->
+<div class="title-screen">
+  <div class="boss-badge">👑 小ボス戦・まとめ回</div>
+  <div class="story-tag">社会 小５上 第５回</div>
+  <div class="story-title">🗾 日本の地理・産業・交通を<br>つなげて考えよう</div>
+  <p style="color:var(--muted);font-size:14px;margin-top:10px;">第1〜4回の知識をつなぎ、記述問題に立ち向かう！</p>
+</div>
+
+<!-- ===== CHAPTER 1 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🌊</span>
+    <div>
+      <div class="chapter-num">CHAPTER 1</div>
+      <div class="chapter-title">日本の地形と気候〜拾えなかった基礎知識</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">キャンプから帰ったサクトとオウスケ。お父さんが日本地図を広げていた。</p>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">キャンプで川を見ただろう？日本の川の特徴を知ってると、なんで災害が多いかもわかるんだよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">確かに川が急に増水して怖かった。日本の川ってそういう特徴があるの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">日本の川は、ヨーロッパの川と比べて<em>短くて急勾配</em>なんだ。山から海まで距離が短いから、雨が降ると一気に増水する。一方でそれを利用した<em>水力発電</em>も盛んなんだよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🗾 日本の地形・気候の基礎</div>
+    <strong>地形：</strong><br>
+    ・国土の約<span class="marker">4分の3が山地・丘陵地</span>。平野が少ない<br>
+    ・川の特徴：<span class="marker">短くて急勾配</span>→増水しやすい／水力発電に利用<br>
+    ・フォッサマグナ（大地溝帯）：本州を東西に分ける大断層→糸魚川〜静岡<br><br>
+    <strong>気候：</strong><br>
+    ・太平洋側：<span class="marker">夏に雨が多い</span>（南東の季節風）・冬は乾燥<br>
+    ・日本海側：<span class="marker">冬に雪が多い</span>（北西の季節風が山にぶつかる）<br>
+    ・内陸部：<span class="marker">気温差が大きい</span>（盆地・高地型）<br>
+    ・南西諸島：年中温暖、台風が多い
+  </div>
+
+  <!-- 気候区分と産業の関係SVG -->
+  <div class="map-wrap">
+    <div class="map-title">気候の違いと農業の関係</div>
+    <svg viewBox="0 0 540 140" xmlns="http://www.w3.org/2000/svg">
+      <rect width="540" height="140" fill="#060f1e"/>
+      <!-- 太平洋側 -->
+      <rect x="10" y="20" width="155" height="110" rx="8" fill="rgba(253,150,68,0.1)" stroke="#fd9644" stroke-width="1.5"/>
+      <text x="88" y="42" text-anchor="middle" fill="#fd9644" font-size="13" font-weight="bold" font-family="sans-serif">太平洋側</text>
+      <text x="88" y="60" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">夏：雨多い・温暖</text>
+      <text x="88" y="76" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">冬：晴れ・乾燥</text>
+      <text x="88" y="98" text-anchor="middle" fill="#fd9644" font-size="12" font-family="sans-serif">→ 温暖な気候を生かした</text>
+      <text x="88" y="114" text-anchor="middle" fill="#fd9644" font-size="12" font-family="sans-serif">野菜・果物の促成栽培</text>
+
+      <!-- 日本海側 -->
+      <rect x="193" y="20" width="155" height="110" rx="8" fill="rgba(91,200,245,0.1)" stroke="#5bc8f5" stroke-width="1.5"/>
+      <text x="270" y="42" text-anchor="middle" fill="#5bc8f5" font-size="13" font-weight="bold" font-family="sans-serif">日本海側</text>
+      <text x="270" y="60" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">冬：雪が多い</text>
+      <text x="270" y="76" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">夏：比較的晴れ</text>
+      <text x="270" y="98" text-anchor="middle" fill="#5bc8f5" font-size="12" font-family="sans-serif">→ 雪解け水を利用した</text>
+      <text x="270" y="114" text-anchor="middle" fill="#5bc8f5" font-size="12" font-family="sans-serif">稲作が盛ん</text>
+
+      <!-- 高原・内陸 -->
+      <rect x="376" y="20" width="155" height="110" rx="8" fill="rgba(6,214,160,0.1)" stroke="#06d6a0" stroke-width="1.5"/>
+      <text x="453" y="42" text-anchor="middle" fill="#06d6a0" font-size="13" font-weight="bold" font-family="sans-serif">高原・内陸</text>
+      <text x="453" y="60" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">夏：涼しい</text>
+      <text x="453" y="76" text-anchor="middle" fill="#e8f4fd" font-size="12" font-family="sans-serif">気温差が大きい</text>
+      <text x="453" y="98" text-anchor="middle" fill="#06d6a0" font-size="12" font-family="sans-serif">→ 高原野菜・</text>
+      <text x="453" y="114" text-anchor="middle" fill="#06d6a0" font-size="12" font-family="sans-serif">抑制栽培</text>
+    </svg>
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策①「理由を説明」の型</div>
+    <strong>Q：新潟県・秋田県など日本海側の県で稲作が盛んな理由を説明しなさい。</strong><br><br>
+    【答え方の型】　①原因（気候・地形）→ ②条件（水・土地）→ ③農業の特徴<br><br>
+    → <span class="marker">冬に雪が多く、春の雪解け水が豊富なため水が確保しやすい</span>こと、<span class="marker">夏は比較的晴れて日照時間が長く、気温も上がる</span>ことから、水稲栽培に適した環境が整っているため。
+  </div>
+</div>
+
+<!-- ===== CHAPTER 2 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🏭</span>
+    <div>
+      <div class="chapter-num">CHAPTER 2</div>
+      <div class="chapter-title">産業の立地〜「なぜそこに？」を考える</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">社会でいろんな産業を習ったけど、なんでその場所で栄えてるのか、理由まで考えたことなかった。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">それが大事なんだよ。産業の立地には必ず理由がある。「交通・原料・気候・歴史」の4つで考えるとほとんど説明できる。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 産業立地の4要素 -->
+  <div class="compare-grid">
+    <div class="cmp-card">
+      <div class="cmp-title" style="color:#5bc8f5;">🚃 交通（第4回）が理由</div>
+      <div style="margin:6px 0;font-weight:700;color:#e8f4fd;">なぜ阪神工業地帯が栄えた？</div>
+      <div style="color:#5bc8f5;margin-bottom:8px;">→ 大阪湾の港が近いから</div>
+      <div style="background:#0a1828;border:1px solid #1e3050;border-radius:8px;padding:10px;font-size:13px;">
+        ・鉄道・高速道路・港が近い<br>
+        ・原料を運びやすい<br>
+        ・製品を出荷しやすい
+      </div>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-title" style="color:#fd9644;">🌾 原料・資源（第1〜3回）が理由</div>
+      <div style="margin:6px 0;font-weight:700;color:#e8f4fd;">なぜ北海道で酪農が盛ん？</div>
+      <div style="color:#fd9644;margin-bottom:8px;">→ 土地が広大で気候が涼しいから</div>
+      <div style="background:#0a1828;border:1px solid #1e3050;border-radius:8px;padding:10px;font-size:13px;">
+        ・広大な土地で牧草を育てやすい<br>
+        ・涼しい気候が乳牛の飼育に向く<br>
+        ・大規模経営が可能
+      </div>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-title" style="color:#06d6a0;">🌡️ 気候（第1回）が理由</div>
+      <div style="margin:6px 0;font-weight:700;color:#e8f4fd;">なぜ愛媛や和歌山でみかんが盛ん？</div>
+      <div style="color:#06d6a0;margin-bottom:8px;">→ 温暖で水はけのよい斜面があるから</div>
+      <div style="background:#0a1828;border:1px solid #1e3050;border-radius:8px;padding:10px;font-size:13px;">
+        ・温暖な気候でみかんが育つ<br>
+        ・傾斜地は水はけがよく甘くなる<br>
+        ・日照時間も長い
+      </div>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-title" style="color:#a29bfe;">📜 歴史・技術が理由</div>
+      <div style="margin:6px 0;font-weight:700;color:#e8f4fd;">なぜ愛知県豊田市がトヨタの企業城下町に？</div>
+      <div style="color:#a29bfe;margin-bottom:8px;">→ 戦後の工業集積の歴史があるから</div>
+      <div style="background:#0a1828;border:1px solid #1e3050;border-radius:8px;padding:10px;font-size:13px;">
+        ・トヨタ本社・工場が集積<br>
+        ・関連部品メーカーが周囲に立地<br>
+        ・技術・人材が集まり続けた
+      </div>
+    </div>
+  </div>
+
+  <div class="crossover-box">
+    <div class="crossover-title">🔗 第1〜4回クロスオーバー：輸送×産業</div>
+    <strong>「自動車が輸送の中心になったこと（第4回）」と「産業の発展（第1〜3回）」はつながっている！</strong><br><br>
+    <span class="marker">①高速道路の整備</span>（1963年〜）→ トラックで全国どこへでも出荷可能に<br>
+    <span class="marker">②宅配便の普及</span> → 農産物の産地直送が可能に（産地と消費地が直接つながる）<br>
+    <span class="marker">③モーダルシフト</span> → 環境配慮型の物流へ転換（近年の動き）
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策②「変化の理由」の型</div>
+    <strong>Q：日本の農業で「産地直送」や「ネット通販」が増えている理由を説明しなさい。</strong><br><br>
+    → <span class="marker">高速道路の整備や宅配便の普及</span>により、農産物を産地から消費者の家庭まで直接届けられるようになったこと、<span class="marker">インターネットの普及（第4回）</span>により農家が直接注文を受けられるようになったことが理由。交通と情報の両方の進歩がもたらした変化。
+  </div>
+</div>
+
+<!-- ===== CHAPTER 3 ===== -->
+<div class="chapter">
+  <div class="chapter-header boss">
+    <span class="chapter-icon">👑</span>
+    <div>
+      <div class="chapter-num">CHAPTER 3</div>
+      <div class="chapter-title">小ボス戦！ゴリオ先生の難問に挑め</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">突然、見慣れない大男が現れた。ゴリオ先生だ！</p>
+    <div class="dialogue">
+      <div class="avatar boss"><svg class="av-svg"><use href="#av-boss"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name boss">ゴリオ先生</div>
+        <div class="bubble boss">よく来た！第1〜4回を本当に理解しているか、ワシが試してやろう。まず第一問——日本の工業地帯・工業地域について、「臨海型」と「内陸型」に分けて特徴を説明せよ！</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">臨海型は…港の近くにある工業地帯で、原料を海外から輸入しやすい場所。京浜・阪神・中京・北九州とかが臨海型？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">内陸型は高速道路の整備（第4回で習った！）で発展したんだよね。自動車工業とか電子部品とか、高速道路でトラック輸送できるものが多い。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar boss"><svg class="av-svg"><use href="#av-boss"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name boss">ゴリオ先生</div>
+        <div class="bubble boss">よし、正解！第4回の交通の知識を産業立地に結びつけた。それが本当の理解じゃ！では第二問——情報化（第4回）は農業にどう影響したか？</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🏭 日本の主な工業地帯・地域</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr style="background:#1a3a6e;">
+          <th style="padding:8px;color:#5bc8f5;text-align:left;">工業地帯・地域</th>
+          <th style="padding:8px;color:#5bc8f5;">特徴</th>
+          <th style="padding:8px;color:#5bc8f5;">主な工業</th>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3050;">
+          <td style="padding:8px;font-weight:700;color:#fd9644;">中京工業地帯</td>
+          <td style="padding:8px;text-align:center;">生産額最大</td>
+          <td style="padding:8px;">自動車・機械</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3050;background:rgba(255,255,255,.02);">
+          <td style="padding:8px;font-weight:700;color:#5bc8f5;">京浜工業地帯</td>
+          <td style="padding:8px;text-align:center;">東京湾岸</td>
+          <td style="padding:8px;">機械・印刷・化学</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3050;">
+          <td style="padding:8px;font-weight:700;color:#06d6a0;">阪神工業地帯</td>
+          <td style="padding:8px;text-align:center;">大阪湾岸</td>
+          <td style="padding:8px;">機械・化学・鉄鋼</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1e3050;background:rgba(255,255,255,.02);">
+          <td style="padding:8px;font-weight:700;color:#a29bfe;">北関東工業地域</td>
+          <td style="padding:8px;text-align:center;">内陸型</td>
+          <td style="padding:8px;">機械・自動車部品</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;font-weight:700;color:#ffd166;">瀬戸内工業地域</td>
+          <td style="padding:8px;text-align:center;">海岸沿い</td>
+          <td style="padding:8px;">石油化学・造船</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策③「比較して説明」の型</div>
+    <strong>Q：臨海型工業地帯と内陸型工業地域の違いを、それぞれが発展した理由を含めて説明しなさい。</strong><br><br>
+    → 臨海型は<span class="marker">原料を海外から輸入しやすい港湾の近く</span>に立地し、鉄鋼・石油化学など重工業が集まった。内陸型は<span class="marker">戦後の高速道路・自動車専用道路の整備</span>により、トラックで部品や製品を効率よく運べるようになったことで、自動車・電子部品などの組み立て工業が発展した。
+  </div>
+
+  <div class="jiji-box">
+    <div class="jiji-title">🗞️ 時事：半導体工場の国内回帰</div>
+    近年、台湾のTSMCが熊本県に大規模な半導体工場を建設し話題になった。半導体（パソコン・スマートフォンに不可欠）は特定の国・企業への依存が問題視されており、日本政府も国内生産を推進している。交通（第4回）・情報化（第4回）・産業立地（本回）の知識がすべてつながるテーマだ。
+  </div>
+</div>
+
+<!-- ===== CHAPTER 4 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">📝</span>
+    <div>
+      <div class="chapter-num">CHAPTER 4</div>
+      <div class="chapter-title">記述問題の答え方を完全マスター</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar boss"><svg class="av-svg"><use href="#av-boss"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name boss">ゴリオ先生</div>
+        <div class="bubble boss">最後じゃ。「なぜ〜か」「〜の理由を説明しなさい」という問題の答え方の型を覚えておけ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="memo">
+    <div style="font-weight:900;font-size:14px;color:var(--gold);margin-bottom:10px;">✏️ 記述問題の答え方　4つの型</div>
+    <strong>型①「〜なので、〜だから」（原因→結果）</strong><br>
+    「〜という条件があるので、〜が可能になったから」<br><br>
+    <strong>型②「〜だが、一方で〜」（比較・対比）</strong><br>
+    「AはXという特徴があるが、BはYという特徴がある」<br><br>
+    <strong>型③「〜の普及により、〜できるようになった」（変化の説明）</strong><br>
+    「〜が整備されたことにより、〜が可能になり、〜が発展した」<br><br>
+    <strong>型④「〜が多い／少ない　→　〜に適している」（資源・環境→産業）</strong><br>
+    「〜地域は〜が豊富なため、〜の産業に向いている」
+  </div>
+
+  <!-- まとめ -->
+  <div class="summary-box">
+    <div class="summary-title">📝 第1〜4回 総まとめ</div>
+    <div class="summary-grid">
+      <div class="sum-item">
+        <strong>🗾 地形・気候×産業</strong>
+        太平洋側（温暖）→促成栽培。日本海側（雪）→稲作。高原→抑制栽培。川が急→水力発電。
+      </div>
+      <div class="sum-item">
+        <strong>🏭 産業立地の4要素</strong>
+        交通（港・道路）・原料・気候・歴史。臨海型は輸入原料、内陸型は高速道路の整備後に発展。
+      </div>
+      <div class="sum-item">
+        <strong>🚄 交通×情報のクロス</strong>
+        高速道路整備→宅配便・産地直送。インターネット→農家が直接販売。輸送と情報の進歩は連動。
+      </div>
+      <div class="sum-item">
+        <strong>✍️ 記述の答え方</strong>
+        「〜なので〜」「〜が整備され〜が可能になった」「〜が多いため〜に向いている」の型を使う。
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/social_quiz_05.html">⚔️ 小ボスクイズへ！</a>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
