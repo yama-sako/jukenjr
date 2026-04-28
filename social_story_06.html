@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会第6回 工業の種類</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101e;--panel:#0d1a2e;--border:#1a3050;
+  --ocean:#0e7aba;--sky:#5bc8f5;--gold:#ffd166;
+  --green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;
+  --purple:#a29bfe;--orange:#fd9644;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(255,209,102,.06) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 70%,rgba(14,122,186,.05) 0%,transparent 50%);
+  pointer-events:none;z-index:0;}
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+.title-screen{text-align:center;padding:40px 20px 30px;border-bottom:2px solid #2a5080;margin-bottom:30px;}
+.story-tag{display:inline-block;background:linear-gradient(135deg,#1a3a6e,#2a5aaa);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+.story-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(22px,5vw,34px);font-weight:900;line-height:1.3;color:#ffd166;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 30px rgba(255,209,102,.4);margin-bottom:10px;}
+.chapter{margin-bottom:36px;}
+.chapter-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;background:linear-gradient(90deg,#1a3a6e,rgba(14,122,186,.15));border-radius:10px;border-left:4px solid #5bc8f5;box-shadow:inset 0 1px 0 rgba(91,200,245,.2);}
+.chapter-num{font-size:11px;font-weight:900;letter-spacing:2px;color:#90d8ff;}
+.chapter-title{font-size:18px;font-weight:900;color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,.8);}
+.chapter-icon{font-size:24px;}
+.scene{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.dialogue{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.dialogue.reverse{flex-direction:row-reverse;}
+.dialogue.reverse .bubble{border-radius:14px 0 14px 14px;}
+.avatar{width:60px;height:60px;border-radius:50%;flex-shrink:0;border:2px solid;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.avatar.sakuto{background:rgba(255,209,102,.15);border-color:var(--gold);}
+.avatar.ousuke{background:rgba(91,200,245,.15);border-color:var(--sky);}
+.avatar.papa{background:rgba(162,155,254,.15);border-color:var(--purple);}
+.avatar.mummy{background:rgba(212,96,122,.15);border-color:#d4607a;}
+.av-svg{width:60px;height:60px;}
+.bubble-wrap{flex:1;}
+.bubble-name{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.bubble-name.sakuto{color:var(--gold);}
+.bubble-name.ousuke{color:var(--sky);}
+.bubble-name.papa{color:var(--purple);}
+.bubble-name.mummy{color:#f08090;}
+.bubble{background:#1a2640;border-radius:0 14px 14px 14px;padding:12px 16px;font-size:14px;line-height:1.7;border:1px solid #2a4060;color:#e8f4fd;}
+.bubble.sakuto{border-left:3px solid var(--gold);}
+.bubble.ousuke{border-left:3px solid var(--sky);}
+.bubble.papa{border-left:3px solid var(--purple);}
+.bubble.mummy{border-left:3px solid #d4607a;}
+.marker{background:rgba(255,220,50,.25);border-radius:3px;padding:1px 4px;border-bottom:2px solid #ffd700;font-weight:700;color:#fff;}
+.knowledge{background:#0d2a44;border:1px solid rgba(91,200,245,.4);border-radius:12px;padding:14px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.knowledge-title{font-size:12px;font-weight:900;color:var(--sky);letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.memo{background:#2a2000;border:1px solid rgba(255,209,102,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.danger{background:#2a0a12;border:1px solid rgba(239,71,111,.4);border-radius:12px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--text);}
+.boss-box{background:#1a0a28;border:2px solid rgba(192,96,192,.6);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.boss-title{font-size:14px;font-weight:900;color:#e080e0;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.jiji-box{background:#2a0810;border:2px solid rgba(239,71,111,.5);border-radius:14px;padding:16px;margin:14px 0;font-size:13px;color:var(--text);}
+.jiji-title{font-size:13px;font-weight:900;color:var(--coral);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.summary-card{background:#0d2218;border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.8;color:#d0f0e0;}
+.summary-card strong{color:#ffd166;display:block;margin-bottom:6px;font-size:13px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr;}}
+.summary-box{background:#0d2a1e;border:2px solid rgba(6,214,160,.5);border-radius:16px;padding:20px;margin-top:30px;}
+.summary-title{font-size:16px;font-weight:900;color:#06d6a0;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+em{color:var(--gold);font-style:normal;font-weight:700;}
+.narrative{font-size:14px;color:#bcd8f0;font-style:italic;padding:10px 0;line-height:1.8;}
+.nav-bar{display:flex;justify-content:center;gap:12px;padding:24px 0 0;flex-wrap:wrap;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.quiz{background:linear-gradient(135deg,#7a1a3a,#c02a5a);border-color:#c04060;box-shadow:0 4px 0 #600020;}
+/* 比較グリッド */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+@media(max-width:500px){.compare-grid{grid-template-columns:1fr;}}
+.cmp-card{background:#0a1828;border:1px solid var(--border);border-radius:12px;padding:13px;font-size:13px;line-height:1.7;color:var(--text);}
+.cmp-card .cmp-title{font-weight:900;font-size:14px;margin-bottom:6px;}
+/* 工業分類カード */
+.industry-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;}
+@media(max-width:520px){.industry-row{grid-template-columns:1fr;}}
+.ind-card{background:#0a1828;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.8;text-align:center;}
+.ind-card .ind-name{font-size:13px;font-weight:900;margin-bottom:4px;}
+</style>
+
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;transition:border-color .2s;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+</style>
+
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🏭</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div class="container">
+
+<!-- SVG DEFS -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <symbol id="av-sakuto" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,21 Q23,18 27,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,21 Q37,18 41,21" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <symbol id="av-ousuke" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+    <path d="M19,22 Q23,20 27,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M33,22 Q37,20 41,22" fill="none" stroke="#1a1008" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <symbol id="av-papa" viewBox="0 0 60 60">
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#1e3a6e"/>
+    <path d="M22,42 L30,52 L38,42" fill="none" stroke="#a0c0e8" stroke-width="1.5"/>
+    <rect x="24" y="35" width="12" height="11" rx="5" fill="#f0c898"/>
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#f0c898"/>
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#1a1008"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#1a1008"/>
+    <path d="M14,17 Q20,9 30,9 Q40,9 46,17 Q40,13 30,14 Q20,13 14,17Z" fill="#1a1008"/>
+    <ellipse cx="23" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <!-- 目尻しわ -->
+    <path d="M17,27 Q15,25 14,23" fill="none" stroke="#c07040" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+    <path d="M43,27 Q45,25 46,23" fill="none" stroke="#c07040" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+    <ellipse cx="30" cy="29" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,33 Q30,38 36,33" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="25" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="25" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <!-- チャンカン：赤キャップ・大きな丸い目 -->
+  <symbol id="av-kanchan" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#c03020"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
+    <!-- 赤キャップ本体 -->
+    <ellipse cx="30" cy="13" rx="18" ry="9" fill="#cc2010"/>
+    <ellipse cx="13" cy="20" rx="5" ry="8" fill="#cc2010"/>
+    <ellipse cx="47" cy="20" rx="5" ry="8" fill="#cc2010"/>
+    <rect x="8" y="17" width="44" height="6" rx="3" fill="#aa1800"/>
+    <!-- つば -->
+    <ellipse cx="30" cy="22" rx="22" ry="4" fill="#aa1800"/>
+    <!-- 大きな丸い目 -->
+    <ellipse cx="23" cy="26" rx="4.5" ry="4.5" fill="#1a1008"/>
+    <ellipse cx="37" cy="26" rx="4.5" ry="4.5" fill="#1a1008"/>
+    <circle cx="24.5" cy="24.5" r="1.5" fill="#fff" opacity=".9"/>
+    <circle cx="38.5" cy="24.5" r="1.5" fill="#fff" opacity=".9"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M23,34 Q30,39 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <!-- チャンパパ：短い濃いひげ・白髪交じり短髪 -->
+  <symbol id="av-chanpapa" viewBox="0 0 60 60">
+    <rect x="8" y="42" width="44" height="18" rx="9" fill="#2a4a2a"/>
+    <rect x="24" y="35" width="12" height="11" rx="5" fill="#f0c898"/>
+    <ellipse cx="30" cy="24" rx="17" ry="18" fill="#f0c898"/>
+    <!-- 白髪交じり短髪（グレー系） -->
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#505050"/>
+    <ellipse cx="13" cy="19" rx="5" ry="8" fill="#505050"/>
+    <ellipse cx="47" cy="19" rx="5" ry="8" fill="#505050"/>
+    <path d="M14,17 Q20,9 30,9 Q40,9 46,17 Q40,13 30,14 Q20,13 14,17Z" fill="#505050"/>
+    <!-- 白髪ハイライト -->
+    <path d="M22,10 Q30,7 38,10" fill="none" stroke="#d0d0d0" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+    <ellipse cx="23" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <ellipse cx="37" cy="25" rx="3.2" ry="3.2" fill="#1a1008"/>
+    <circle cx="24" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <circle cx="38" cy="24" r=".9" fill="#fff" opacity=".8"/>
+    <!-- 短い濃いひげ -->
+    <rect x="24" y="31" width="12" height="4" rx="2" fill="#2a2a2a" opacity=".85"/>
+    <ellipse cx="30" cy="29" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+    <path d="M24,35 Q30,39 36,35" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="25" rx="4" ry="5" fill="#f0c898"/>
+    <ellipse cx="48" cy="25" rx="4" ry="5" fill="#f0c898"/>
+  </symbol>
+  <!-- マミー：ウェーブ茶髪・サーモンピンク服・ほっぺ -->
+  <symbol id="av-mummy" viewBox="0 0 60 60">
+    <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4607a"/>
+    <rect x="24" y="36" width="12" height="10" rx="4" fill="#f8d0b0"/>
+    <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f8d0b0"/>
+    <ellipse cx="30" cy="12" rx="17" ry="9" fill="#7a4010"/>
+    <ellipse cx="13" cy="19" rx="5" ry="9" fill="#7a4010"/>
+    <ellipse cx="47" cy="19" rx="5" ry="9" fill="#7a4010"/>
+    <path d="M13,17 Q17,10 22,14 Q26,9 30,13 Q34,9 38,14 Q43,10 47,17 Q40,14 30,15 Q20,14 13,17Z" fill="#7a4010"/>
+    <path d="M13,22 Q10,30 13,38" fill="none" stroke="#7a4010" stroke-width="4" stroke-linecap="round"/>
+    <path d="M47,22 Q50,30 47,38" fill="none" stroke="#7a4010" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="23" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+    <ellipse cx="37" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+    <circle cx="24" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+    <circle cx="38" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+    <path d="M20,22 Q22,20 25,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M35,22 Q37,20 40,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+    <ellipse cx="19" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+    <ellipse cx="41" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+    <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#e0a080" opacity=".6"/>
+    <path d="M24,35 Q30,41 36,35" fill="none" stroke="#c06040" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f8d0b0"/>
+    <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f8d0b0"/>
+  </symbol>
+</defs>
+</svg>
+
+<!-- TITLE -->
+<div class="title-screen">
+  <div class="story-tag">社会 小５上 第６回</div>
+  <div class="story-title">🏭 工業の種類</div>
+  <p style="color:var(--muted);font-size:14px;margin-top:10px;">重化学工業・軽工業・伝統的工芸品</p>
+</div>
+
+<!-- ===== CHAPTER 1 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🏷️</span>
+    <div>
+      <div class="chapter-num">CHAPTER 1</div>
+      <div class="chapter-title">「MADE IN CHINA」から始まる工業の話</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">家族４人で家でのんびりしている。サクトが服のタグを見ていた。</p>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">オウスケ、このTシャツのタグ見てみ。「MADE IN CHINA（中国製）」って書いてある。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">ほんとだ。このラブブも「MADE IN CHINA」だ。世界中のものが中国でつくられてるみたい。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">中国はお父さんが生まれた1970年代ごろまで経済発展が遅れていたんだけど、外国の工場を受け入れて技術を急激に発展させたんだ。その結果、2000年代以降は<span class="marker">「世界の工場」</span>と呼ばれるほどになったんだよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">世界の工場ってすごいな。服とかおもちゃ以外もつくってるの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">衣類だけでなく鉄鋼、パソコン、自動車まで世界一の生産量なんだよ。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">へー、日本の工業はどうなってるの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">よし、今日は日本の工業について勉強しよう。大きく<span class="marker">重化学工業</span>と<span class="marker">軽工業</span>に分かれるんだ。まずそこから整理だ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🏭 工業の2大分類</div>
+    <div class="compare-grid">
+      <div class="cmp-card">
+        <div class="cmp-title" style="color:var(--sky);">🔩 重化学工業<br><small style="font-weight:400;color:var(--muted);">（戦後に発展し現在の中心）</small></div>
+        <strong>金属・機械・化学</strong>など<br>
+        大きな工場で大量に製品を生産する工業<br><br>
+        <span style="color:var(--muted);">例：鉄鋼・自動車・石油化学</span>
+      </div>
+      <div class="cmp-card">
+        <div class="cmp-title" style="color:var(--gold);">🧵 軽工業<br><small style="font-weight:400;color:var(--muted);">（戦前は中心）</small></div>
+        <strong>食料品・せんい・製紙・印刷・よう業</strong>など<br>
+        主に日用品をつくる工業<br><br>
+        <span style="color:var(--muted);">例：衣類・食品・紙・陶磁器</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 2 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🔩</span>
+    <div>
+      <div class="chapter-num">CHAPTER 2</div>
+      <div class="chapter-title">重化学工業①　金属工業・鉄鋼業</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">重化学工業って具体的に何つくるの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">重化学工業は<span class="marker">金属工業、機械工業、化学工業</span>の大きく３つに分けられるんだ。キン・キ・カと覚えよう。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">覚え方、変じゃね？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">はは、いいのいいの。イメージとしては大きな工場でつくる重たいものだね。順番に見ていこう。まずは金属工業だ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">金属ってことは鉄とか？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">正解！金属工業は鉄や銅、アルミニウムをつくる工業だよ。この次に出てくる機械工業の原料や材料になるからとても重要なんだ。金属工業の中でも鉄をつくる鉄鋼業は日本の産業全体を支えてるんだよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▼ 金属工業ツリー図（「日本の産業全体を支えているんだよ」の直後） -->
+  <div class="knowledge">
+    <div class="knowledge-title">🔩 金属工業のまとめ（重化学工業の構造）</div>
+    <div style="font-size:13px;line-height:2.2;">
+      <div style="color:var(--sky);font-weight:900;margin-bottom:4px;">重化学工業</div>
+      <div style="margin-left:16px;border-left:2px solid #2a4060;padding-left:12px;">
+        <div><strong style="color:#e8f4fd;">金属工業</strong></div>
+        <div style="margin-left:16px;border-left:2px solid #1a3050;padding-left:12px;">
+          <div><strong>鉄鋼業（製鉄業）</strong><br>
+            <span style="color:var(--muted);font-size:12px;">鉄をつくる工業。日本の産業の基盤。<br>
+            原料は鉄鉱石・石炭・石灰石（石灰石以外は輸入）。<br>
+            製鉄所は輸入原料を運びやすい「太平洋ベルト」に立地。</span>
+          </div>
+          <div style="margin-top:8px;"><strong>アルミニウム</strong><br>
+            <span style="color:var(--muted);font-size:12px;">原料はボーキサイト（輸入）。電気を大量に使うため現在は地金を輸入して加工。</span>
+          </div>
+          <div style="margin-top:8px;"><strong>銅</strong><br>
+            <span style="color:var(--muted);font-size:12px;">電線に多く使われる。</span>
+          </div>
+          <div style="margin-top:8px;"><strong>レアメタル</strong>（ニッケル、コバルトなど）<br>
+            <span style="color:var(--muted);font-size:12px;">生産量は少ないが重要性は近年、非常に高まっている。</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;color:var(--muted);">機械工業　<span style="font-size:12px;">（→ チャプター3へ）</span></div>
+        <div style="color:var(--muted);">化学工業　<span style="font-size:12px;">（→ チャプター3へ）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">八幡製鉄所って小４社会で習ったよね。九州の。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">よく覚えてるね。明治日本の産業革命遺産で、今も北九州市にあるよ。ちなみに製鉄所は太平洋側の海沿いにたくさんあります。なぜかわかるかな？</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">海沿いにあるって、前に柏崎カリワさんに教えてもらったよね。あれは発電所か。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">冷やすのに海水が必要だから原子力発電所は海沿いにあるんだよね。あと火力発電所も海沿いだった。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">製鉄所が海沿いに多いのは火力発電所と同じ理由だよ。原料がどこから来るのか、がヒントです。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">わかった！輸入だ。火力発電所は石炭や石油を輸入しているから、運びやすい海の近くだったよね。鉄鋼業の原料も輸入なの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">大正解です。鉄鋼業の原料は<span class="marker">鉄鉱石・石炭・石灰石</span>。石灰石以外はほぼ輸入だから、大きな船が入れる港に近い太平洋側の海岸（臨海部）に工場を作ったんだ。この帯状の工業地帯を<span class="marker">太平洋ベルト</span>というよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">地図で見てみようか。どこに製鉄所が集まってるかわかるよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▼ 太平洋ベルト地図（北が上） -->
+  <div style="background:rgba(5,15,35,.6);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;text-align:center;">
+    <svg viewBox="0 0 500 300" width="500" height="300" style="max-width:100%;">
+      <rect width="500" height="300" rx="10" fill="#08152a"/>
+      <text x="250" y="18" text-anchor="middle" font-size="14" font-weight="700" fill="#5bc8f5">太平洋ベルトと主な製鉄所</text>
+      <!-- 北海道 -->
+      <path d="M310,30 Q340,24 365,28 Q382,34 378,52 Q372,66 352,68 Q332,68 316,56 Q304,46 310,30Z" fill="#1a3a1a"/>
+      <circle cx="340" cy="58" r="5" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="352" y="56" font-size="10" fill="#ffd166">室蘭</text>
+      <!-- 本州 -->
+      <path d="M80,80 Q100,68 140,62 Q180,56 220,62 Q260,68 295,80 Q325,90 342,108 Q356,126 352,148 Q346,168 326,174 Q305,180 282,174 Q258,168 235,165 Q210,162 188,168 Q165,174 145,180 Q118,186 98,178 Q78,168 68,152 Q58,134 62,112 Q66,94 80,80Z" fill="#1a3a1a"/>
+      <!-- 九州 -->
+      <path d="M108,182 Q122,178 136,195 Q146,210 138,226 Q128,240 110,238 Q92,234 82,220 Q72,206 80,194 Q90,184 108,182Z" fill="#1a3a1a"/>
+      <!-- 四国 -->
+      <path d="M198,178 Q220,175 238,183 Q250,192 244,207 Q234,220 215,220 Q196,220 185,208 Q176,196 185,185Z" fill="#1a3a1a"/>
+      <!-- 太平洋ベルト -->
+      <path d="M124,188 Q118,200 114,216 Q120,228 134,232" fill="none" stroke="#ef476f" stroke-width="11" stroke-linecap="round" opacity=".6"/>
+      <path d="M134,232 Q152,244 175,240 Q196,236 212,228 Q230,220 244,210" fill="none" stroke="#ef476f" stroke-width="11" stroke-linecap="round" opacity=".6"/>
+      <path d="M244,210 Q258,200 270,188 Q282,176 290,166 Q300,154 308,144 Q320,130 332,116" fill="none" stroke="#ef476f" stroke-width="11" stroke-linecap="round" opacity=".6"/>
+      <!-- 製鉄所ポイント -->
+      <circle cx="118" cy="186" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="92" y="182" font-size="10" fill="#ffd166">北九州</text>
+      <circle cx="136" cy="218" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="148" y="222" font-size="10" fill="#ffd166">大分</text>
+      <circle cx="246" cy="178" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="252" y="175" font-size="10" fill="#ffd166">倉敷・福山</text>
+      <circle cx="272" cy="162" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="280" y="158" font-size="10" fill="#ffd166">加古川</text>
+      <circle cx="308" cy="148" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="314" y="144" font-size="10" fill="#ffd166">名古屋・和歌山</text>
+      <circle cx="336" cy="116" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="342" y="112" font-size="10" fill="#ffd166">君津・千葉・京浜</text>
+      <circle cx="356" cy="100" r="6" fill="#ffd166" stroke="#fff" stroke-width="1.5"/>
+      <text x="362" y="97" font-size="10" fill="#ffd166">鹿島</text>
+      <!-- 凡例 -->
+      <circle cx="28" cy="270" r="5" fill="#ffd166"/>
+      <text x="38" y="274" font-size="11" fill="#ffd166">主な製鉄所</text>
+      <line x1="18" y1="285" x2="46" y2="285" stroke="#ef476f" stroke-width="5" opacity=".6"/>
+      <text x="52" y="289" font-size="11" fill="#ef476f">太平洋ベルト</text>
+      <text x="462" y="38" font-size="12" fill="#7aaec8" text-anchor="middle">N</text>
+      <line x1="462" y1="42" x2="462" y2="55" stroke="#7aaec8" stroke-width="1.5"/>
+      <polygon points="462,42 458,52 462,50 466,52" fill="#7aaec8"/>
+    </svg>
+    <div style="font-size:12px;color:var(--muted);margin-top:6px;">太平洋側の臨海部に製鉄所が集中 → 太平洋ベルト</div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">この地図、変じゃね？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">いいんだよ、仕様なの。それより太平洋側に集まってるのが一目でわかるね。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策①「立地の理由を説明する」</div>
+    <strong>Q：製鉄所が太平洋側の臨海部に多い理由を説明しなさい。</strong><br><br>
+    → 鉄鋼業の原料（鉄鉱石・石炭）は<span class="marker">ほぼ輸入に頼っている</span>ため、大型タンカーが入れる<span class="marker">大きな港のある太平洋側の臨海部</span>に製鉄所が集中した。<br><br>
+    【答え方の型】 ①原料は輸入 → ②タンカーが入れる港 → ③太平洋側臨海部
+  </div>
+</div>
+
+<!-- ===== CHAPTER 3 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🚗</span>
+    <div>
+      <div class="chapter-num">CHAPTER 3</div>
+      <div class="chapter-title">重化学工業②　機械工業・化学工業</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">お父さんが続けて機械工業の話に入る。愛知県出身のマミーも加わった。愛知県は自動車産業の一大集積地だ。</p>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">そういえば、マミーの友だちのご主人が自動車工場で働いてるんだけど、車って30000個もの部品を使うって言ってたわ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">えっ、30000個！？それって工場の中だけで作ってるの？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">いや、部品は周辺の<em>関連工場</em>でつくられて、必要なときに必要な量だけ届けられるんだ。<em>ジャストインタイム方式</em>（カンバン方式）というよ。無駄な在庫を減らして合理化しているんだ。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">自動車工場って、海の近くじゃなくて内陸にも多いよね？なんで？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">いい気づきだ。製鉄所が臨海部に多い理由、覚えてる？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">原料を輸入するから！</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">正解。自動車は材料を輸入しなくてもよいから港の近くである必要がない。広い工業用地が確保しやすい<em>内陸部</em>に多いんだよ。自動車などの「輸送機械工業」の出荷額日本一は、マミーが生まれた<em>愛知県</em>なんだ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🚗 機械工業のまとめ</div>
+    自動車・船・ロボット・精密機械・電子部品など、<em>高い技術を使う産業</em>で現在の日本の工業の中心。<br><br>
+    <div style="overflow-x:auto;margin-top:10px;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr style="background:#1a3a6e;">
+          <th style="padding:8px;color:#5bc8f5;text-align:left;">種類</th>
+          <th style="padding:8px;color:#5bc8f5;">特徴・立地</th>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;">
+          <td style="padding:8px;font-weight:700;color:#fd9644;">自動車工業</td>
+          <td style="padding:8px;">内陸部に多い。出荷額日本一は愛知県。ジャストインタイム方式。</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;background:rgba(255,255,255,.02);">
+          <td style="padding:8px;font-weight:700;color:#5bc8f5;">造船</td>
+          <td style="padding:8px;">今治（愛媛県）・長崎（長崎県）でさかん。</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;">
+          <td style="padding:8px;font-weight:700;color:#06d6a0;">精密機械</td>
+          <td style="padding:8px;">時計・カメラ。諏訪・岡谷（長野県）でさかん。</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;background:rgba(255,255,255,.02);">
+          <td style="padding:8px;font-weight:700;color:#a29bfe;">電子部品</td>
+          <td style="padding:8px;">半導体・IC。空港・高速道路周辺に発達。九州→シリコンアイランド、東北→シリコンロード。</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;font-weight:700;color:#ffd166;">ロボット</td>
+          <td style="padding:8px;">産業用ロボットの生産・使用台数ともに日本は世界有数。</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">金属工業のもうひとつの柱、化学工業も金属工業と似た立地だよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">さっきの地図を思い出すと、海沿いってことね。ということは理由は……</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">あの地図、変じゃね？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">地図が変なのはいいんだよ。仕様なの。海沿いってことは、化学工業も原料を輸入するんだね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">正解。ホルムズ海峡を通過して輸入される石油などが原料なんだ。だからいま、イランとアメリカが戦っているせいで、原油を精製してできる<span class="marker">ナフサ</span>が不足していて、とても大変なんだよ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge" style="margin-top:12px;">
+    <div class="knowledge-title">⚗️ 化学工業のまとめ</div>
+    石油などを原料として、プラスチック・ゴム・薬品・化学肥料をつくる工業。<br><br>
+    <strong>石油化学工業：</strong>原油を精製してできる<span class="marker">ナフサ</span>を原料とする。<br>
+    <strong>石油化学コンビナート：</strong><span class="marker">製油所・火力発電所・化学工場を1か所に集めた施設</span>。原油を運ぶタンカーが入れる<em>太平洋側の臨海部</em>に多い（太平洋ベルト）。
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策②「石油化学コンビナートの立地」</div>
+    <strong>Q：石油化学コンビナートが太平洋側の臨海部に多い理由を説明しなさい。</strong><br><br>
+    → 原料となる原油の<span class="marker">ほとんどを外国からの輸入に頼っている</span>ため、原油を運ぶタンカーが入れる<span class="marker">大きな港を中心に</span>製油所・化学工場を1か所に集めたコンビナートが、<span class="marker">輸入に便利な太平洋側の臨海部</span>につくられた。<br><br>
+    ①の製鉄所が多い理由と同じ。まとめて覚えよう。
+  </div>
+</div>
+
+<!-- ===== CHAPTER 4 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🧵</span>
+    <div>
+      <div class="chapter-num">CHAPTER 4</div>
+      <div class="chapter-title">軽工業――せんい・食料品・製紙・よう業</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">さっきのTシャツ、「MADE IN CHINA」だったけど、昔は日本のせんい工業が強かったんだよね？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">そう。戦前の日本はせんい工業が中心で世界有数の生産量を誇っていたよ。ちなみに今でもせんい工業の出荷額日本一はどこの県か知ってる？</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">繊維といえば……京都？西陣織とか？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">惜しい！これもマミーの故郷、<em>愛知県</em>なんだ。自動車も愛知だけど、せんいも愛知が日本一。知多半島の綿織物や一宮の毛織物が有名だよ。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">服の素材って綿だけじゃないよね。羊毛のセーターとか絹の着物とか。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">天然せんいの3大原料は覚えておこう。<em>綿織物は綿花</em>、<em>毛織物は羊毛</em>、<em>絹織物は蚕（カイコガの幼虫）のまゆ</em>から糸（生糸）を取るんだ。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🧵 軽工業のまとめ</div>
+    <div class="industry-row">
+      <div class="ind-card">
+        <div class="ind-name" style="color:var(--sky);">せんい工業</div>
+        衣類・糸をつくる<br>
+        <small>綿花→綿織物<br>羊毛→毛織物<br>蚕のまゆ→絹織物<br>出荷額日本一：愛知県</small>
+      </div>
+      <div class="ind-card">
+        <div class="ind-name" style="color:var(--gold);">食料品工業</div>
+        農水産物を加工<br>
+        <small>かんづめ・飲料など<br>しょう油・酒など→醸造業<br>大都市周辺で牛乳加工</small>
+      </div>
+      <div class="ind-card">
+        <div class="ind-name" style="color:var(--green);">製紙・パルプ工業</div>
+        木・古紙から紙をつくる<br>
+        <small>古紙使用割合60%超<br>再生紙の生産が増加</small>
+      </div>
+    </div>
+    <div class="industry-row" style="margin-top:0;">
+      <div class="ind-card" style="grid-column:1/2;">
+        <div class="ind-name" style="color:var(--orange);">よう業（窯業）</div>
+        土・石灰石・けい砂から<br>
+        <small>ねん土→陶磁器（焼き物）<br>石灰石→セメント<br>けい砂→ガラス</small>
+      </div>
+      <div class="ind-card" style="grid-column:2/4;">
+        <div class="ind-name" style="color:var(--purple);">印刷工業</div>
+        新聞・書籍・広告など<br>
+        <small>大都市（東京・大阪）に多い<br>情報の発信地に集中する傾向</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="memo">
+    <strong style="color:var(--gold);">✏️ 入試ポイント　せんい工業の天然原料</strong><br><br>
+    <span class="marker">綿織物（めんおりもの）＝綿花（めんか）</span>…Tシャツ・ジーンズ<br>
+    <span class="marker">毛織物（けおりもの）＝羊毛</span>…スーツ・セーター<br>
+    <span class="marker">絹織物（きぬおりもの）＝蚕（かいこ）のまゆ</span>…和服・ネクタイ<br>
+    ※蚕を飼い、まゆから糸（生糸）をとることを「<em>養蚕・製糸</em>」という
+  </div>
+</div>
+
+<!-- ===== CHAPTER 5 ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <span class="chapter-icon">🏺</span>
+    <div>
+      <div class="chapter-num">CHAPTER 5</div>
+      <div class="chapter-title">伝統的工芸品――受け継がれる技</div>
+    </div>
+  </div>
+
+  <div class="scene">
+    <p class="narrative">マミーが棚からとっくりとおちょこを持ってきた。</p>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">これ、お父さんとお母さんの結婚式でみんなに配ったとっくりとおちょこ。どこでつくられたものか知ってる？ヒントはお母さんの地元。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">瀬戸か。瀬戸物？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">正解、これが瀬戸焼。国の伝統的工芸品に認められているのよ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">伝統的工芸品は2024年10月時点で全国243品目が認定を受けているよ。条件が3つ。普段使うような手作りの工芸品で、昔からの技術で、一定の場所で広く生産されていること。うちのキッチンには他にも伝統的工芸品があるんだけど、わかるかな？</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">お父さんがビールを飲む木のコップは伝統的工芸品ぽいよね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">正解！これは秋田のときにお仕事でもらった大館曲げわっぱだよ。杉やヒノキの薄い板をまげてつくるんだ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar sakuto"><svg class="av-svg"><use href="#av-sakuto"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name sakuto">サクト</div>
+        <div class="bubble sakuto">この棚のコーヒーカップも伝統的工芸品ぽいね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">正解！これはおばあちゃんが生まれた秋田県大仙市のなら岡焼。深い青が特徴なの。我が家には栃木の益子焼もあるよ。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">益子おぼえてる、チャンカンたちと行ったよね。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar papa"><svg class="av-svg"><use href="#av-papa"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name papa">お父さん</div>
+        <div class="bubble papa">うちでもたくさん使ってる伝統的工芸品だけど、課題もあるんだ。</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">そうなのよ。長い修業が必要で若いあとつぎが少ないし、うるしなどの原料も中国などから輸入しているの。体験教室を開いて興味を持ってもらう努力をしているところも多いのよ。</div>
+      </div>
+    </div>
+    <div class="dialogue reverse">
+      <div class="avatar ousuke"><svg class="av-svg"><use href="#av-ousuke"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name ousuke">オウスケ</div>
+        <div class="bubble ousuke">もしかしてこのフライパンは岩手の南部鉄器？</div>
+      </div>
+    </div>
+    <div class="dialogue">
+      <div class="avatar mummy"><svg class="av-svg"><use href="#av-mummy"/></svg></div>
+      <div class="bubble-wrap">
+        <div class="bubble-name mummy">マミー</div>
+        <div class="bubble mummy">……それはニトリの安物です。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="knowledge">
+    <div class="knowledge-title">🏺 伝統的工芸品の認定3条件</div>
+    ① <span class="marker">日常生活に使用される手づくりの工芸品</span>であること<br>
+    ② <span class="marker">伝統的な技術で生産</span>されていること<br>
+    ③ <span class="marker">一定の地域で広く生産</span>されていること<br><br>
+    <strong>問題点：</strong>長い修業が必要→わかい<em>あとつぎが不足</em>。うるしなどの<em>原料も輸入</em>に頼っている。
+  </div>
+
+  <!-- 伝統工芸品 地域別表 -->
+  <div class="knowledge" style="margin-top:12px;">
+    <div class="knowledge-title">🗾 主な伝統的工芸品（地域別）</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr style="background:#1a3a6e;">
+          <th style="padding:7px;color:#5bc8f5;text-align:left;">地域</th>
+          <th style="padding:7px;color:#5bc8f5;text-align:left;">代表的な伝統工芸品</th>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;">
+          <td style="padding:7px;font-weight:700;color:#fd9644;">北海道・東北</td>
+          <td style="padding:7px;">大館曲げわっぱ（秋田）・南部鉄器（岩手）・会津塗（福島）</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;background:rgba(255,255,255,.02);">
+          <td style="padding:7px;font-weight:700;color:#5bc8f5;">関東・甲信越</td>
+          <td style="padding:7px;">益子焼（栃木）・箱根寄木細工・鎌倉彫（神奈川）</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;">
+          <td style="padding:7px;font-weight:700;color:#06d6a0;">北陸・東海</td>
+          <td style="padding:7px;">九谷焼・加賀友禅（石川）・越前和紙（福井）・瀬戸焼（愛知）・美濃和紙（岐阜）</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;background:rgba(255,255,255,.02);">
+          <td style="padding:7px;font-weight:700;color:#a29bfe;">近畿</td>
+          <td style="padding:7px;">西陣織・京友禅・清水焼（京都）・信楽焼（滋賀）</td>
+        </tr>
+        <tr style="border-bottom:1px solid #1a3050;">
+          <td style="padding:7px;font-weight:700;color:#ffd166;">中国・四国</td>
+          <td style="padding:7px;">備前焼（岡山）・熊野筆（広島）・因州和紙（鳥取）・土佐和紙（高知）</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;font-weight:700;color:#ef476f;">九州・沖縄</td>
+          <td style="padding:7px;">博多人形・博多織（福岡）・伊万里・有田焼（佐賀）・別府竹細工（大分）・琉球びんがた（沖縄）</td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:12px;color:var(--muted);">※陶磁器（焼き物）の製法：土をとる→土こね→ろくろ成形→窯焼き</div>
+  </div>
+
+  <div class="boss-box">
+    <div class="boss-title">✍️ 武蔵・芝の記述対策③「問題点と対策を説明する」</div>
+    <strong>Q：伝統的工芸品の生産が抱える問題点と、それへの取り組みを説明しなさい。</strong><br><br>
+    → <span class="marker">長い修業が必要で若いあとつぎが不足</span>しており、うるしなど<span class="marker">原料を中国から輸入</span>に頼っている。対策として、体験教室を開いて工芸品への<span class="marker">関心を広める取り組み</span>が行われている。<br><br>
+    【答え方の型】 ①問題点（後継者・原料）→ ②取り組み（体験教室・PR）
+  </div>
+
+  <div class="jiji-box">
+    <div class="jiji-title">🗞️ 時事：日本製造業の課題と復活</div>
+    かつて「世界の工場」だった中国は今や自国ブランドの製品を世界に輸出する段階へ。一方日本は<strong>半導体・EV（電気自動車）・ロボット</strong>などの分野で競争力の維持・向上を目指している。TSMCの熊本工場進出（第5回時事）も、日本の半導体産業復活の取り組みの一つ。伝統工芸品では、SNSや体験観光を通じた<strong>海外への発信</strong>が新たな販路になっている。
+  </div>
+</div>
+
+<!-- まとめ -->
+<div class="chapter">
+  <div class="summary-box">
+    <div class="summary-title">📝 第6回　まとめ</div>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <strong>🔩 重化学工業</strong>
+        金属（鉄鋼・アルミ・銅）・機械（自動車・精密・電子）・化学（石油化学コンビナート）。臨海部立地が多い。
+      </div>
+      <div class="summary-card">
+        <strong>🚗 自動車工業</strong>
+        内陸部に多い。ジャストインタイム方式。出荷額日本一は愛知県。約30000個の部品を関連工場から調達。
+      </div>
+      <div class="summary-card">
+        <strong>🧵 軽工業</strong>
+        せんい・食料品・製紙・印刷・よう業。せんい天然原料：綿花・羊毛・蚕のまゆ（養蚕・製糸）。
+      </div>
+      <div class="summary-card">
+        <strong>🏺 伝統的工芸品</strong>
+        経済産業大臣認定・全国243品目。問題：後継者不足・原料輸入依存。対策：体験教室・海外発信。
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    <a class="nav-btn quiz" href="https://yama-sako.github.io/jukenjr/social_quiz_06.html">⚔️ クイズへ！</a>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

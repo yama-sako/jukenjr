@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会クエスト第6回 工業の種類</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0f1e;--panel:#111827;--border:#1f3050;--gold:#ffd700;--blue:#3b82f6;--green:#10b981;--red:#ef4444;--purple:#8b5cf6;--text:#e2e8f0;--muted:#6b8aaa;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,0.4),transparent),radial-gradient(1px 1px at 80% 20%,rgba(255,255,255,0.3),transparent),radial-gradient(2px 2px at 10% 60%,rgba(255,215,0,0.2),transparent);pointer-events:none;z-index:0;}
+  #app{width:100%;max-width:680px;position:relative;z-index:1;}
+  /* TITLE */
+  #title-screen{text-align:center;padding:40px 20px;background:var(--panel);border:2px solid var(--border);border-radius:20px;box-shadow:0 0 40px rgba(59,130,246,0.2);}
+  .pixel-title{font-family:'DotGothic16',sans-serif;font-size:clamp(18px,5vw,26px);color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,0.5),2px 2px 0 rgba(0,0,0,0.8);line-height:1.4;margin-bottom:8px;animation:glow 2s ease-in-out infinite alternate;}
+  @keyframes glow{from{text-shadow:0 0 10px rgba(255,215,0,0.3);}to{text-shadow:0 0 30px rgba(255,215,0,0.8),0 0 60px rgba(255,215,0,0.3);}}
+  .title-sub{font-size:12px;color:var(--muted);margin-bottom:20px;letter-spacing:1px;}
+  .story-badge{display:inline-block;background:linear-gradient(135deg,#1a3a6e,#2a5aaa);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;padding:4px 16px;border-radius:20px;margin-bottom:14px;}
+  .hero-sprite{font-size:80px;margin:16px 0;animation:float 3s ease-in-out infinite;display:block;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .title-info{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:12px;padding:14px;margin:20px 0;font-size:13px;line-height:1.8;color:#c0d8ff;}
+  .btn{display:inline-block;padding:14px 40px;border:none;border-radius:10px;font-family:'DotGothic16',sans-serif;font-size:16px;cursor:pointer;transition:all 0.15s;text-decoration:none;letter-spacing:1px;}
+  .btn:active{transform:scale(0.96);}
+  .btn-primary{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);color:white;box-shadow:0 4px 0 #0e2060,0 8px 20px rgba(42,90,170,0.3);}
+  .btn-primary:hover{transform:translateY(-2px);}
+  /* GAME */
+  .btn-answer{display:block;width:100%;padding:16px 20px;margin-bottom:10px;background:#1a2848;border:2px solid #2a4070;border-radius:12px;color:#e8f0ff;font-family:'Noto Sans JP',sans-serif;font-size:15px;text-align:left;cursor:pointer;transition:all 0.15s;}
+  .btn-answer:hover:not(:disabled){background:#1e3a6e;border-color:#4a80d0;transform:translateX(4px);}
+  .btn-answer.correct{background:#0f3d28;border-color:#10b981;color:#6ee7b7;}
+  .btn-answer.wrong{background:#3d1515;border-color:#ef4444;color:#fca5a5;}
+  .btn-answer:disabled{cursor:default;}
+  #game-screen{display:none;}
+  .hud{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
+  .hud-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-family:'DotGothic16',sans-serif;color:var(--muted);flex-shrink:0;}
+  .hud-item span{color:var(--gold);font-size:15px;}
+  .hp-wrap{flex:1;min-width:120px;}
+  .hp-label{font-size:11px;color:var(--muted);margin-bottom:4px;font-family:'DotGothic16',sans-serif;}
+  .hp-bar-bg{height:12px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden;border:1px solid var(--border);}
+  .hp-bar{height:100%;border-radius:6px;transition:width 0.5s ease,background 0.5s;}
+  .battle-scene{background:var(--panel);border:2px solid rgba(59,130,246,0.4);border-radius:16px;padding:20px;margin-bottom:16px;min-height:120px;position:relative;overflow:hidden;}
+  .battle-scene::before{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,rgba(10,20,60,0.5));}
+  .battle-scene-bg{position:absolute;inset:0;opacity:0.06;font-size:100px;display:flex;align-items:center;justify-content:center;}
+  .battle-flex{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;}
+  .hero-side{text-align:center;}
+  .hero-battle-sprite{font-size:48px;display:block;margin-bottom:4px;}
+  .hero-battle-label{font-size:11px;color:var(--blue);font-family:'DotGothic16',sans-serif;}
+  .enemy-side{text-align:center;}
+  .enemy-sprite{font-size:56px;display:block;margin-bottom:4px;animation:enemy-float 2s ease-in-out infinite;}
+  @keyframes enemy-float{0%,100%{transform:translateY(0) scaleX(-1);}50%{transform:translateY(-6px) scaleX(-1);}}
+  .enemy-name-plate{background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);border-radius:8px;padding:4px 12px;font-size:11px;color:#a0c8ff;font-family:'DotGothic16',sans-serif;}
+  .message-box{background:#1a2540;border:2px solid #2a4070;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.8;min-height:60px;position:relative;color:#ddeeff;}
+  .question-box{background:#162035;border:2px solid #2a4a80;border-radius:12px;padding:16px;margin-bottom:16px;}
+  .question-level{font-size:11px;color:#7ab8ff;font-family:'DotGothic16',sans-serif;margin-bottom:8px;letter-spacing:1px;}
+  .question-text{font-size:16px;font-weight:700;line-height:1.6;color:#ffffff;}
+  .hint-btn{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.35);border-radius:8px;color:#ffd700;font-size:12px;padding:6px 14px;cursor:pointer;margin-bottom:10px;font-family:'Noto Sans JP',sans-serif;}
+  .hint-box{background:#2a2000;border:1px solid rgba(255,215,0,.4);border-radius:8px;padding:10px 12px;font-size:13px;color:#e8d080;margin-bottom:10px;display:none;}
+  .hint-box.show{display:block;}
+  .feedback{border-radius:12px;padding:14px 16px;margin:12px 0;font-size:14px;line-height:1.7;display:none;}
+  .feedback.correct-fb{background:#0d3020;border:2px solid #10b981;color:#d0fff0;}
+  .feedback.wrong-fb{background:#3a0f0f;border:2px solid #ef4444;color:#ffe0e0;}
+  .feedback-title{font-weight:900;margin-bottom:6px;font-size:16px;}
+  .feedback.correct-fb .feedback-title{color:#34d399;}
+  .feedback.wrong-fb .feedback-title{color:#f87171;}
+  .feedback-exp{color:#a0c8e8;font-size:13px;margin-top:6px;}
+  .btn-next{display:none;width:100%;padding:14px;background:linear-gradient(135deg,#1a3a7a,#2a5aaa);color:white;border:none;border-radius:10px;font-family:'DotGothic16',sans-serif;font-size:15px;cursor:pointer;box-shadow:0 4px 0 #0e2060;transition:all 0.15s;letter-spacing:1px;}
+  .btn-next:hover{transform:translateY(-2px);}
+  /* RESULT */
+  #result-screen{display:none;text-align:center;background:var(--panel);border:2px solid rgba(59,130,246,0.4);border-radius:20px;padding:30px 20px;}
+  .result-title{font-family:'DotGothic16',sans-serif;font-size:28px;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,0.5);margin-bottom:20px;}
+  .result-score{font-family:'DotGothic16',sans-serif;font-size:52px;color:white;margin:20px 0;}
+  .result-score span{color:var(--gold);}
+  .result-rank{font-size:16px;padding:10px 30px;border-radius:30px;display:inline-block;margin-bottom:20px;font-weight:900;letter-spacing:2px;}
+  .rank-s{background:rgba(255,215,0,0.2);border:2px solid var(--gold);color:var(--gold);}
+  .rank-a{background:rgba(59,130,246,0.2);border:2px solid var(--blue);color:#93c5fd;}
+  .rank-b{background:rgba(16,185,129,0.2);border:2px solid var(--green);color:#6ee7b7;}
+  .rank-c{background:rgba(239,68,68,0.15);border:2px solid var(--red);color:#fca5a5;}
+  .result-msg{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.8;}
+  .wrong-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;}
+  .wrong-correct{color:#6ee7b7;}
+  .exp-section{margin:16px 0;}
+  .exp-label{font-size:12px;color:var(--muted);margin-bottom:6px;font-family:'DotGothic16',sans-serif;}
+  .exp-bg{height:16px;background:rgba(255,255,255,0.05);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+  .exp-fill{height:100%;background:linear-gradient(90deg,#1a5aaa,var(--gold));border-radius:8px;transition:width 1.5s ease;width:0%;}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+  .shake{animation:shake 0.4s ease;}
+</style>
+</head>
+<body>
+<style>
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:"M PLUS Rounded 1c",sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+</style>
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🏭</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<div id="app">
+
+<!-- TITLE SCREEN -->
+<div id="title-screen">
+  <div class="story-badge">📘 社会 小５上 第６回</div>
+  <div class="pixel-title">🏭 社会クエスト<br>【工業の種類】</div>
+  <div class="title-sub">社会　第６回</div>
+  <span class="hero-sprite">🧙‍♂️</span>
+  <div class="title-info">
+    ✦ 全10問　RPG風クイズ<br>
+    ✦ 正解すれば次のレベルへ進める！<br>
+    ✦ 間違えると HPが減るぞ！<br>
+    ✦ 全問クリアしてSランクを目指せ！
+  </div>
+  <button class="btn btn-primary" onclick="startGame()">▶　ゲームスタート！</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+  <div class="hud">
+    <div class="hud-item">Q <span id="q-num">1</span>/10</div>
+    <div class="hud-item">EXP <span id="exp-text">0</span></div>
+    <div class="hp-wrap">
+      <div class="hp-label">HP</div>
+      <div class="hp-bar-bg"><div class="hp-bar" id="hp-bar" style="width:100%;background:#10b981;"></div></div>
+    </div>
+    <div class="hud-item">❤️ <span id="hp-text">5/5</span></div>
+  </div>
+
+  <div class="battle-scene" id="battle-scene">
+    <div class="battle-scene-bg" id="battle-bg">🏭</div>
+    <div class="battle-flex">
+      <div class="hero-side">
+        <span class="hero-battle-sprite">🧙‍♂️</span>
+        <div class="hero-battle-label">HERO</div>
+      </div>
+      <div class="enemy-side">
+        <span class="enemy-sprite" id="enemy-sprite">🏭</span>
+        <div class="enemy-name-plate" id="enemy-name">もんだい</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-box" id="msg-box"></div>
+
+  <div class="question-box">
+    <div class="question-level" id="q-level">LEVEL 1</div>
+    <div class="question-text" id="q-text"></div>
+  </div>
+
+  <div id="hint-area"></div>
+  <div id="choices-area"></div>
+
+  <div class="feedback" id="feedback">
+    <div class="feedback-title" id="feedback-title"></div>
+    <div id="feedback-body"></div>
+    <div class="feedback-exp" id="feedback-exp"></div>
+  </div>
+
+  <button class="btn-next" id="btn-next" onclick="nextQuestion()">次の問題へ ▶</button>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen">
+  <div class="result-title">⚔️ BATTLE RESULT</div>
+  <div class="result-score"><span id="result-score-num">0</span><span style="font-size:28px;">/10</span></div>
+  <div class="result-rank" id="result-rank"></div>
+  <div class="result-msg" id="result-msg"></div>
+  <div id="wrong-review"></div>
+  <div class="exp-section">
+    <div class="exp-label">EXP GAINED</div>
+    <div class="exp-bg"><div class="exp-fill" id="exp-fill"></div></div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+const questions = [
+  {
+    enemyName:"重化学ゾンビ",bg:"🔩",
+    message:"日本の工業の分類問題じゃ！重化学工業に含まれないものはどれか？",
+    q:"重化学工業に含まれないものはどれか。",
+    choices:["金属工業","機械工業","化学工業","せんい工業"],
+    correct:3,
+    explanation:"重化学工業は金属・機械・化学の3種類です。せんい工業は「軽工業」に分類されます。軽工業には食料品・せんい・製紙・印刷・よう業などがあります。",
+    hint:"「重化学」＝重い・大きな工場での製品。衣類は日用品だから…"
+  },
+  {
+    enemyName:"製鉄モンスター",bg:"🏗️",
+    message:"鉄鋼業の原料を答えよ！どれが正しい？",
+    q:"鉄鋼業（製鉄業）の主な原料の組み合わせとして正しいものはどれか。",
+    choices:["石油・石炭・石灰石","鉄鉱石・石炭・石灰石","鉄鉱石・ボーキサイト・石炭","銅・鉄鉱石・石油"],
+    correct:1,
+    explanation:"鉄鋼業の原料は「鉄鉱石・石炭・石灰石」の3つです。石灰石は国内でとれますが、鉄鉱石と石炭はほぼ輸入に頼っています。ボーキサイトはアルミニウムの原料です。",
+    hint:"「鉄」をつくるには鉄の原料が必要。ボーキサイトはアルミニウムの原料。"
+  },
+  {
+    enemyName:"太平洋ベルト番人",bg:"🌊",
+    message:"製鉄所がなぜ海沿いに多いのか、その理由はどれじゃ？",
+    q:"日本の製鉄所が太平洋側の臨海部に多い理由として正しいものはどれか。",
+    choices:["海水を冷却水として大量に使うから","原料（鉄鉱石・石炭）を輸入するタンカーが入れる港が必要だから","太平洋側は気候が温暖で作業がしやすいから","都市の近くに人材が豊富にいるから"],
+    correct:1,
+    explanation:"鉄鋼業の原料（鉄鉱石・石炭）はほぼ輸入に頼っています。そのため大型タンカーが入れる大きな港のある太平洋側の臨海部に製鉄所が集中しました。この工業地帯の帯を「太平洋ベルト」とよびます。",
+    hint:"石炭・鉄鉱石はどこから来る？輸入＝船＝港が必要！"
+  },
+  {
+    enemyName:"自動車ドラゴン",bg:"🚗",
+    message:"自動車工業はどこに多い？立地の理由を問うぞ！",
+    q:"自動車工場が内陸部に多い理由として正しいものはどれか。",
+    choices:["内陸部は海風がなく塗装がしやすいから","材料を輸入する必要がなく、広い工業用地が得やすいから","内陸部の道路が整備されて輸送が簡単だから","内陸部には技術者が多いから"],
+    correct:1,
+    explanation:"自動車工業は原料を輸入しなくてもよいため、港の近くである必要がありません。広い工業用地が確保しやすい内陸部に多くの工場があります。自動車など輸送機械工業の出荷額日本一は愛知県です。",
+    hint:"製鉄所は輸入原料が必要→臨海部。自動車は？原料を輸入する必要は…"
+  },
+  {
+    enemyName:"ジャストインタイム卿",bg:"⏰",
+    message:"Q5以降はヒントなし！ジャストインタイム方式を問うぞ！",
+    q:"「ジャストインタイム方式（カンバン方式）」の説明として正しいものはどれか。",
+    choices:["自動車を素早く組み立てるためにロボットを使う方法","必要な部品を必要なときに必要な量だけ運ぶしくみで、在庫を減らす方法","部品をまとめて大量に仕入れてコストを下げる方法","輸出する自動車を港に素早く運ぶ方法"],
+    correct:1,
+    explanation:"ジャストインタイム方式（カンバン方式）は、自動車工場で使う部品を必要な分だけ関連工場からすぐに運ぶしくみです。部品の保管場所やむだな時間を大幅に削減できます。",
+    hint:null
+  },
+  {
+    enemyName:"石油化学コンビ",bg:"⚗️",
+    message:"石油化学コンビナートの特徴を問うぞ！",
+    q:"石油化学コンビナートの説明として正しいものはどれか。",
+    choices:["農業・水産業の加工工場を一か所に集めた複合施設","製油所・火力発電所・化学工場を一か所に集めた施設","自動車工場と関連工場を一か所に集めた施設","製鉄所と港を組み合わせた施設"],
+    correct:1,
+    explanation:"石油化学コンビナートは、原油を精製する製油所・電力を供給する火力発電所・プラスチックや化学肥料などをつくる化学工場を一か所に集めた施設です。原油を運ぶタンカーが入れる太平洋側の臨海部に多い。",
+    hint:null
+  },
+  {
+    enemyName:"せんいウォーリア",bg:"🧵",
+    message:"せんい工業の天然原料を問うぞ！",
+    q:"絹織物（絹製品）の原料となるものはどれか。",
+    choices:["綿花","羊毛","蚕（かいこ）のまゆ","麻"],
+    correct:2,
+    explanation:"絹織物の原料は蚕（カイコガの幼虫）のまゆです。まゆから糸（生糸）をとることを「養蚕・製糸」といいます。綿花→綿織物（Tシャツなど）、羊毛→毛織物（セーターなど）と区別して覚えよう。",
+    hint:null
+  },
+  {
+    enemyName:"よう業ガーディアン",bg:"🏺",
+    message:"よう業（窯業）で作られるものを問うぞ！",
+    q:"よう業（窯業）でつくられる製品の組み合わせとして正しいものはどれか。",
+    choices:["自動車・船・飛行機","陶磁器・セメント・ガラス","衣類・紙・プラスチック","食品・薬品・化粧品"],
+    correct:1,
+    explanation:"よう業（窯業）はねん土から陶磁器（焼き物）、石灰石からセメント、けい砂からガラスをつくる工業です。日用品から建設資材まで幅広く使われます。",
+    hint:null
+  },
+  {
+    enemyName:"伝統工芸ボス",bg:"🏺",
+    message:"伝統的工芸品の認定について問うぞ！",
+    q:"伝統的工芸品として認定されるための条件として、誤っているものはどれか。",
+    choices:["日常生活に使用される手づくりの工芸品であること","大量生産（機械製造）で生産されていること","伝統的な技術で生産されていること","一定の地域で広く生産されていること"],
+    correct:1,
+    explanation:"伝統的工芸品は「日常生活に使用される手づくりの工芸品」であることが条件の一つです。大量生産や機械製造は条件に合いません。経済産業大臣が認定し、2022年末時点で全国240品目が認定を受けています。",
+    hint:null
+  },
+  {
+    enemyName:"ラストボス工業王",bg:"🏆",
+    message:"最終問題じゃ！工業と立地をすべて結びつけよ！",
+    q:"次のうち、正しいものはどれか。",
+    choices:["製鉄所は材料を輸入しなくてよいため内陸部に多い","自動車工場は原料輸入のため太平洋側の臨海部に多い","石油化学コンビナートは原油輸入のため太平洋側の臨海部に多い","半導体工場は大型船が必要なため港のそばに多い"],
+    correct:2,
+    explanation:"石油化学コンビナートは原油（ほぼ輸入）を運ぶタンカーが入れる太平洋側の臨海部に多い（○）。製鉄所も同様に原料輸入のため臨海部（○）。自動車工場は材料輸入不要のため内陸部に多い（製鉄所と逆）。半導体は軽くて高価なため航空機・高速道路で運ぶので空港・高速道路周辺に多い。",
+    hint:null
+  }
+];
+
+let currentQ=0,hp=5,maxHp=5,exp=0,wrongList=[];
+
+function startGame(){document.getElementById('title-screen').style.display='none';document.getElementById('game-screen').style.display='block';loadQuestion();}
+function loadQuestion(){
+  const q=questions[currentQ];
+  document.getElementById('q-num').textContent=currentQ+1;
+  document.getElementById('enemy-sprite').textContent=q.bg;
+  document.getElementById('enemy-name').textContent=q.enemyName;
+  document.getElementById('battle-bg').textContent=q.bg;
+  document.getElementById('msg-box').textContent=q.message;
+  document.getElementById('q-level').textContent='難易度 ★'.repeat(Math.min(currentQ<3?2:currentQ<6?3:currentQ<9?4:5,5));
+  document.getElementById('q-text').textContent=q.q;
+
+  // ヒント（Q1〜4のみ）
+  const hintArea=document.getElementById('hint-area');
+  hintArea.innerHTML='';
+  if(currentQ<4&&q.hint){
+    const hid='hint-'+currentQ;
+    hintArea.innerHTML=`<button class="hint-btn" onclick="document.getElementById('${hid}').classList.add('show');this.style.display='none'">💡 ヒントを見る</button><div class="hint-box" id="${hid}">${q.hint}</div>`;
+  }
+
+  const area=document.getElementById('choices-area');
+  area.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');btn.className='btn-answer';
+    btn.textContent=['A','B','C','D'][i]+'．'+c;btn.onclick=()=>answer(i,btn);area.appendChild(btn);
+  });
+  document.getElementById('feedback').style.display='none';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btn-next').style.display='none';
+}
+function answer(idx,btn){
+  const q=questions[currentQ];
+  const allBtns=document.querySelectorAll('.btn-answer');
+  allBtns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');fb.style.display='block';
+  if(idx===q.correct){
+    btn.classList.add('correct');allBtns[q.correct].classList.add('correct');
+    fb.className='feedback correct-fb';
+    document.getElementById('feedback-title').textContent='✅ 正解！';
+    document.getElementById('feedback-body').textContent=q.explanation;
+    document.getElementById('feedback-exp').textContent='+10 EXP 獲得！';
+    exp+=10;document.getElementById('exp-text').textContent=exp;
+  }else{
+    btn.classList.add('wrong');allBtns[q.correct].classList.add('correct');
+    fb.className='feedback wrong-fb';
+    document.getElementById('feedback-title').textContent='❌ 不正解…';
+    document.getElementById('feedback-body').textContent=q.explanation;
+    document.getElementById('feedback-exp').textContent='正解は「'+['A','B','C','D'][q.correct]+'」でした';
+    hp--;wrongList.push({q:q.q,correct:q.choices[q.correct]});updateHP();
+    document.getElementById('battle-scene').classList.add('shake');
+    setTimeout(()=>document.getElementById('battle-scene').classList.remove('shake'),400);
+  }
+  document.getElementById('btn-next').style.display='block';
+}
+function updateHP(){
+  const pct=(hp/maxHp)*100;
+  const bar=document.getElementById('hp-bar');bar.style.width=pct+'%';
+  bar.style.background=pct>60?'#10b981':pct>30?'#f59e0b':'#ef4444';
+  document.getElementById('hp-text').textContent=hp+'/'+maxHp;
+}
+function nextQuestion(){currentQ++;if(currentQ>=questions.length||hp<=0){showResult();}else{loadQuestion();}}
+function showResult(){
+  document.getElementById('game-screen').style.display='none';
+  const rs=document.getElementById('result-screen');rs.style.display='block';
+  const correct=10-wrongList.length;
+  document.getElementById('result-score-num').textContent=correct;
+  let rank,rankClass,msg;
+  if(correct===10){rank='S ランク';rankClass='rank-s';msg='完璧！工業の種類を完全マスター！\n立地の理由まで全部わかったね！';}
+  else if(correct>=8){rank='A ランク';rankClass='rank-a';msg='すばらしい！重化学工業と軽工業の違いがばっちり！';}
+  else if(correct>=6){rank='B ランク';rankClass='rank-b';msg='よくがんばった！ストーリーで立地の理由を復習しよう。';}
+  else{rank='C ランク';rankClass='rank-c';msg='もう一度ストーリーを読んでチャレンジ！';}
+  document.getElementById('result-rank').textContent=rank;
+  document.getElementById('result-rank').className='result-rank '+rankClass;
+  document.getElementById('result-msg').textContent=msg;
+  setTimeout(()=>{document.getElementById('exp-fill').style.width=(exp)+'%';},300);
+  if(wrongList.length>0){
+    let html='<div style="font-weight:700;margin-bottom:8px;color:#ffd700;">📝 まちがえた問題</div>';
+    wrongList.forEach(w=>{html+=`<div class="wrong-item"><div style="color:#6b8aaa;font-size:12px;">${w.q.substring(0,40)}…</div><div class="wrong-correct">✅ 正解：${w.correct.substring(0,30)}</div></div>`;});
+    document.getElementById('wrong-review').innerHTML=html;
+  }
+  const nav=document.createElement('div');
+  nav.style.cssText='display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;';
+  nav.innerHTML=`<a href="https://yama-sako.github.io/jukenjr/social_story_06.html" style="display:inline-block;padding:12px 20px;background:linear-gradient(135deg,#0a4a2a,#0a7a44);border:1.5px solid #0a9a54;border-radius:12px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;">📖 ストーリーを読む</a><a href="https://yama-sako.github.io/jukenjr/stamp_sheet.html" style="display:inline-block;padding:12px 20px;background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;">🏠 スタンプシートへ</a>`;
+  rs.appendChild(nav);
+}
+</script>
+</body>
+</html>

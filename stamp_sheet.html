@@ -310,7 +310,7 @@ body::before{content:'';position:fixed;inset:0;
 
 <!-- ── OUSUKE base face (black hair, flat fringe) ── -->
 <symbol id="face-ousuke" viewBox="0 0 60 60">
-  <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a6bbf"/>
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#3a3a3a"/>
   <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
   <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
   <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
@@ -333,7 +333,7 @@ body::before{content:'';position:fixed;inset:0;
 
 <!-- ── SAKUTO base face (black hair, spiked) ── -->
 <symbol id="face-sakuto" viewBox="0 0 60 60">
-  <rect x="10" y="42" width="40" height="18" rx="8" fill="#1a5a9f"/>
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4a800"/>
   <rect x="24" y="36" width="12" height="10" rx="4" fill="#f0c898"/>
   <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f0c898"/>
   <ellipse cx="30" cy="13" rx="17" ry="9" fill="#1a1008"/>
@@ -352,6 +352,42 @@ body::before{content:'';position:fixed;inset:0;
   <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#ffaaaa" opacity=".4"/>
   <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f0c898"/>
   <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f0c898"/>
+</symbol>
+
+<!-- ── MUMMY base face (mom: soft wavy hair, warm colors) ── -->
+<symbol id="face-mummy" viewBox="0 0 60 60">
+  <!-- ボディ（やさしいサーモンピンク） -->
+  <rect x="10" y="42" width="40" height="18" rx="8" fill="#d4607a"/>
+  <rect x="24" y="36" width="12" height="10" rx="4" fill="#f8d0b0"/>
+  <!-- 顔 -->
+  <ellipse cx="30" cy="25" rx="17" ry="18" fill="#f8d0b0"/>
+  <!-- 髪（ウェーブ・明るい茶色） -->
+  <ellipse cx="30" cy="12" rx="17" ry="9" fill="#7a4010"/>
+  <ellipse cx="13" cy="19" rx="5" ry="9" fill="#7a4010"/>
+  <ellipse cx="47" cy="19" rx="5" ry="9" fill="#7a4010"/>
+  <!-- ゆるふわ前髪 -->
+  <path d="M13,17 Q17,10 22,14 Q26,9 30,13 Q34,9 38,14 Q43,10 47,17 Q40,14 30,15 Q20,14 13,17Z" fill="#7a4010"/>
+  <!-- 両サイドのウェーブ -->
+  <path d="M13,22 Q10,30 13,38" fill="none" stroke="#7a4010" stroke-width="4" stroke-linecap="round"/>
+  <path d="M47,22 Q50,30 47,38" fill="none" stroke="#7a4010" stroke-width="4" stroke-linecap="round"/>
+  <!-- 目（やや大きめ・優しい） -->
+  <ellipse cx="23" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+  <ellipse cx="37" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+  <circle cx="24" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+  <circle cx="38" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+  <!-- まつ毛 -->
+  <path d="M20,22 Q22,20 25,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M35,22 Q37,20 40,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- ほっぺ -->
+  <ellipse cx="19" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+  <ellipse cx="41" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+  <!-- 鼻 -->
+  <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#e0a080" opacity=".6"/>
+  <!-- 口（ほほえみ） -->
+  <path d="M24,35 Q30,41 36,35" fill="none" stroke="#c06040" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- 耳 -->
+  <ellipse cx="12" cy="26" rx="4" ry="5" fill="#f8d0b0"/>
+  <ellipse cx="48" cy="26" rx="4" ry="5" fill="#f8d0b0"/>
 </symbol>
 
 <!-- ════════════════════════════════════
@@ -691,11 +727,10 @@ body::before{content:'';position:fixed;inset:0;
     <div class="pg-title">冒険の記録</div>
     <div class="pg-sub">JUKENJR ADVENTURE PORTAL</div>
     <div class="pg-label">🔑 パスワードを入力してね</div>
-    <div class="pg-row">
-      <input type="password" class="pg-input" id="pg-pw"
-             placeholder="パスワード" maxlength="20" autocomplete="off"/>
-      <button class="pg-btn" id="pg-btn">▶</button>
-    </div>
+    <input type="password" class="pg-input" id="pg-pw"
+           placeholder="パスワード" maxlength="20" autocomplete="off"
+           style="width:100%;margin-bottom:10px;display:block;"/>
+    <button class="pg-btn" id="pg-btn" style="width:100%;margin-bottom:8px;">▶　確認</button>
     <div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
   </div>
 </div>
@@ -717,6 +752,13 @@ body::before{content:'';position:fixed;inset:0;
       </div>
       <div class="player-name">サクト</div>
       <div class="player-rank-preview" id="prev-sakuto">読み込み中…</div>
+    </div>
+    <div class="player-card" onclick="selectPlayer('mummy')">
+      <div class="player-avatar-wrap" style="border-color:#d4607a;background:rgba(212,96,122,.1);">
+        <svg viewBox="0 0 60 60"><use href="#face-mummy"/></svg>
+      </div>
+      <div class="player-name" style="color:#f08090;">マミー</div>
+      <div class="player-rank-preview" id="prev-mummy">読み込み中…</div>
     </div>
   </div>
 </div>
@@ -868,7 +910,7 @@ body::before{content:'';position:fixed;inset:0;
   <div class="modal-box levelup">
     <div class="levelup-tag">RANK UP !</div>
     <div class="modal-avatar-big" id="lu-avatar">
-      <svg viewBox="0 0 90 90"><use id="lu-av-use" href="#rank-social-1"/></svg>
+      <svg viewBox="0 0 90 90"><rect width="90" height="90" rx="45" fill="rgba(255,215,0,.1)"/></svg>
     </div>
     <div class="modal-title" id="lu-title">昇格！</div>
     <div class="modal-sub"   id="lu-sub"></div>
@@ -963,6 +1005,10 @@ const FILES = {
       story:'https://yama-sako.github.io/jukenjr/social_story_05.html',
       quiz: 'https://yama-sako.github.io/jukenjr/social_quiz_05.html'
     },
+    6: {
+      story:'https://yama-sako.github.io/jukenjr/social_story_06.html',
+      quiz: 'https://yama-sako.github.io/jukenjr/social_quiz_06.html'
+    },
   },
   science: {
     1: {
@@ -985,6 +1031,10 @@ const FILES = {
       story:'https://yama-sako.github.io/jukenjr/science_story_05.html',
       quiz: 'https://yama-sako.github.io/jukenjr/science_quiz_05.html'
     },
+    6: {
+      story:'https://yama-sako.github.io/jukenjr/science_story_06.html',
+      quiz: 'https://yama-sako.github.io/jukenjr/science_quiz_06.html'
+    },
   }
 };
 
@@ -1005,6 +1055,216 @@ const RANKS_SCIENCE = [
 ];
 
 // ─────────────────────────────
+// RANK SVG GENERATOR
+// プレイヤー別にシャツ色・髪・顔特徴を差し替えてSVGを返す
+// ─────────────────────────────
+function makeRankSVG(rankId, p){
+  // プレイヤー設定
+  const cfg = {
+    ousuke: {
+      shirt: '#3a3a3a',      // グレーTシャツ
+      hair:  '#1a1008',      // 黒髪
+      hairStyle: 'flat',     // 前髪おろし
+      skin:  '#f0c898',
+      cheek: 'none',
+    },
+    sakuto: {
+      shirt: '#d4a800',      // ゴールドTシャツ
+      hair:  '#1a1008',
+      hairStyle: 'spike',    // トゲ髪
+      skin:  '#f0c898',
+      cheek: 'none',
+    },
+    mummy: {
+      shirt: '#d4607a',      // サーモンピンク
+      hair:  '#7a4010',      // 茶色ウェーブ
+      hairStyle: 'wave',
+      skin:  '#f8d0b0',
+      cheek: '#f09090',
+    },
+  };
+  const c = cfg[p] || cfg.ousuke;
+
+  // ── 顔パーツ：face-* symbolと完全一致のSVGを90x90にスケーリングして埋め込む ──
+  // face-* は viewBox="0 0 60 60"・中心(30,30)。
+  // ランクアバターは viewBox="0 0 90 90"・顔中心は(45,36)なので
+  // translate(45,36) scale(1.4) translate(-30,-30) で貼り付ける。
+  function headSVG(){
+    const sk = c.skin;
+    const hr = c.hair;
+    if(p === 'sakuto'){
+      // トゲ髪・黄色シャツ（face-sakutoと同じパス）
+      return `<g transform="translate(45,36) scale(1.4) translate(-30,-30)">
+        <rect x="24" y="36" width="12" height="10" rx="4" fill="${sk}"/>
+        <ellipse cx="30" cy="25" rx="17" ry="18" fill="${sk}"/>
+        <ellipse cx="30" cy="13" rx="17" ry="9" fill="${hr}"/>
+        <ellipse cx="13" cy="20" rx="5" ry="8" fill="${hr}"/>
+        <ellipse cx="47" cy="20" rx="5" ry="8" fill="${hr}"/>
+        <path d="M15,17 L18,10 L22,16 L26,8 L30,14 L34,8 L38,16 L42,10 L45,17 Q40,13 30,14 Q20,13 15,17Z" fill="${hr}"/>
+        <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="${hr}"/>
+        <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="${hr}"/>
+        <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+        <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+        <path d="M19,21 Q23,18 27,21" fill="none" stroke="${hr}" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M33,21 Q37,18 41,21" fill="none" stroke="${hr}" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+        <path d="M23,34 Q30,40 37,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+        <ellipse cx="12" cy="26" rx="4" ry="5" fill="${sk}"/>
+        <ellipse cx="48" cy="26" rx="4" ry="5" fill="${sk}"/>
+      </g>`;
+    } else if(p === 'mummy'){
+      // ウェーブ茶髪・ほっぺ・まつ毛（face-mummyと同じパス）
+      return `<g transform="translate(45,36) scale(1.4) translate(-30,-30)">
+        <rect x="24" y="36" width="12" height="10" rx="4" fill="${sk}"/>
+        <ellipse cx="30" cy="25" rx="17" ry="18" fill="${sk}"/>
+        <ellipse cx="30" cy="12" rx="17" ry="9" fill="${hr}"/>
+        <ellipse cx="13" cy="19" rx="5" ry="9" fill="${hr}"/>
+        <ellipse cx="47" cy="19" rx="5" ry="9" fill="${hr}"/>
+        <path d="M13,17 Q17,10 22,14 Q26,9 30,13 Q34,9 38,14 Q43,10 47,17 Q40,14 30,15 Q20,14 13,17Z" fill="${hr}"/>
+        <path d="M13,22 Q10,30 13,38" fill="none" stroke="${hr}" stroke-width="4" stroke-linecap="round"/>
+        <path d="M47,22 Q50,30 47,38" fill="none" stroke="${hr}" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="23" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+        <ellipse cx="37" cy="26" rx="3.2" ry="3.5" fill="#3a1008"/>
+        <circle cx="24" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+        <circle cx="38" cy="24.5" r="1" fill="#fff" opacity=".85"/>
+        <path d="M20,22 Q22,20 25,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M35,22 Q37,20 40,22" fill="none" stroke="#3a1008" stroke-width="1.2" stroke-linecap="round"/>
+        <ellipse cx="19" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+        <ellipse cx="41" cy="31" rx="4.5" ry="3" fill="#f09090" opacity=".45"/>
+        <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#e0a080" opacity=".6"/>
+        <path d="M24,35 Q30,41 36,35" fill="none" stroke="#c06040" stroke-width="1.8" stroke-linecap="round"/>
+        <ellipse cx="12" cy="26" rx="4" ry="5" fill="${sk}"/>
+        <ellipse cx="48" cy="26" rx="4" ry="5" fill="${sk}"/>
+      </g>`;
+    } else {
+      // オウスケ：前髪おろし・グレーシャツ（face-ousukeと同じパス）
+      return `<g transform="translate(45,36) scale(1.4) translate(-30,-30)">
+        <rect x="24" y="36" width="12" height="10" rx="4" fill="${sk}"/>
+        <ellipse cx="30" cy="25" rx="17" ry="18" fill="${sk}"/>
+        <ellipse cx="30" cy="13" rx="17" ry="9" fill="${hr}"/>
+        <ellipse cx="13" cy="20" rx="5" ry="8" fill="${hr}"/>
+        <ellipse cx="47" cy="20" rx="5" ry="8" fill="${hr}"/>
+        <path d="M14,18 Q20,10 30,10 Q40,10 46,18 Q40,14 30,15 Q20,14 14,18Z" fill="${hr}"/>
+        <ellipse cx="23" cy="26" rx="3" ry="3.2" fill="${hr}"/>
+        <ellipse cx="37" cy="26" rx="3" ry="3.2" fill="${hr}"/>
+        <circle cx="24" cy="25" r=".9" fill="#fff" opacity=".8"/>
+        <circle cx="38" cy="25" r=".9" fill="#fff" opacity=".8"/>
+        <path d="M19,22 Q23,20 27,22" fill="none" stroke="${hr}" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M33,22 Q37,20 41,22" fill="none" stroke="${hr}" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="30" cy="30" rx="2" ry="1.5" fill="#d4a070" opacity=".6"/>
+        <path d="M24,34 Q30,39 36,34" fill="none" stroke="#c07040" stroke-width="1.8" stroke-linecap="round"/>
+        <ellipse cx="12" cy="26" rx="4" ry="5" fill="${sk}"/>
+        <ellipse cx="48" cy="26" rx="4" ry="5" fill="${sk}"/>
+      </g>`;
+    }
+  }
+
+  // 各ランクのボディ部分（顔以外）をrankIdから取得してシャツ色だけ差し替え
+  // ベースSVGのボディ色を差し替え（各ランクIDからボディ定義を再構成）
+  const bodies = {
+    // 社会ランク
+    'rank-social-0': `<rect x="15" y="62" width="60" height="28" rx="12" fill="${c.shirt}"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <rect x="60" y="68" width="18" height="14" rx="3" fill="#f5e6c0" stroke="#b8a060" stroke-width="1.5"/>
+      <line x1="63" y1="72" x2="75" y2="72" stroke="#8a6030" stroke-width="1"/>
+      <line x1="63" y1="75" x2="72" y2="75" stroke="#8a6030" stroke-width="1"/>
+      <line x1="63" y1="78" x2="74" y2="78" stroke="#8a6030" stroke-width="1"/>`,
+    'rank-social-1': `<rect x="12" y="62" width="66" height="28" rx="12" fill="${c.shirt}"/>
+      <rect x="30" y="62" width="30" height="28" rx="0" fill="${c.shirt}" opacity=".7"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <circle cx="22" cy="72" r="9" fill="#e8d080" stroke="#c0a040" stroke-width="1.5"/>
+      <line x1="22" y1="64" x2="22" y2="80" stroke="#c03020" stroke-width="1.5"/>
+      <line x1="14" y1="72" x2="30" y2="72" stroke="#3060c0" stroke-width="1.5"/>
+      <circle cx="22" cy="72" r="2" fill="#333"/>
+      <rect x="62" y="65" width="20" height="16" rx="3" fill="#f5e6c0" stroke="#b8a060" stroke-width="1.5"/>
+      <path d="M65,69 L69,73 L74,68 L78,74" fill="none" stroke="#4080d0" stroke-width="1.2"/>`,
+    'rank-social-2': `<path d="M15,60 Q10,75 18,88 L45,82 L72,88 Q80,75 75,60 L45,68Z" fill="#1a3a8a" opacity=".9"/>
+      <rect x="20" y="62" width="50" height="22" rx="10" fill="${c.shirt}"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <circle cx="45" cy="72" r="8" fill="#ffd700" opacity=".9"/>
+      <circle cx="45" cy="72" r="4" fill="#1a3a8a"/>
+      <text x="45" y="76" text-anchor="middle" font-size="7" fill="#ffd700">⚙</text>`,
+    'rank-social-3': `<ellipse cx="45" cy="55" rx="38" ry="35" fill="rgba(91,200,245,.08)"/>
+      <path d="M10,62 Q15,85 25,90 L45,84 L65,90 Q75,85 80,62 L45,70Z" fill="#0a2a6e"/>
+      <path d="M25,90 L45,84 L65,90 L60,75 L45,80 L30,75Z" fill="#1a4aae" opacity=".7"/>
+      <rect x="32" y="54" width="26" height="14" rx="7" fill="${c.skin}"/>
+      <line x1="76" y1="30" x2="72" y2="88" stroke="#8060c0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="76" cy="28" r="7" fill="#5bc8f5" opacity=".9"/>
+      <circle cx="76" cy="28" r="4" fill="white" opacity=".6"/>
+      <text x="22" y="80" font-size="14" text-anchor="middle">🌏</text>`,
+    'rank-social-4': `<circle cx="45" cy="45" r="44" fill="rgba(255,215,0,.06)"/>
+      <path d="M8,58 Q12,82 22,90 L45,84 L68,90 Q78,82 82,58 L45,66Z" fill="#1a3060"/>
+      <rect x="22" y="58" width="46" height="22" rx="9" fill="#2a4aaa"/>
+      <ellipse cx="18" cy="64" rx="10" ry="8" fill="#3a6aff" opacity=".8"/>
+      <ellipse cx="72" cy="64" rx="10" ry="8" fill="#3a6aff" opacity=".8"/>
+      <rect x="33" y="53" width="24" height="14" rx="7" fill="${c.skin}"/>
+      <path d="M22,16 L26,4 L34,12 L45,2 L56,12 L64,4 L68,16 Z" fill="#ffd700" stroke="#b8860b" stroke-width="1"/>
+      <circle cx="45" cy="4" r="4" fill="#ef4444"/>
+      <circle cx="26" cy="7" r="2.5" fill="#5bc8f5"/>
+      <circle cx="64" cy="7" r="2.5" fill="#5bc8f5"/>
+      <text x="45" y="77" text-anchor="middle" font-size="14">🗾</text>
+      <text x="8" y="20" font-size="10">✨</text><text x="74" y="18" font-size="10">✨</text>
+      <text x="6" y="50" font-size="8">⭐</text><text x="76" y="52" font-size="8">⭐</text>`,
+    // 理科ランク
+    'rank-science-0': `<rect x="15" y="62" width="60" height="28" rx="12" fill="${c.shirt}"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <path d="M60,65 L56,80 Q55,85 65,85 Q75,85 74,80 L70,65Z" fill="rgba(91,200,245,.3)" stroke="#5bc8f5" stroke-width="1.5"/>
+      <line x1="60" y1="65" x2="70" y2="65" stroke="#5bc8f5" stroke-width="1.5"/>
+      <ellipse cx="65" cy="80" rx="6" ry="3" fill="rgba(91,200,245,.4)"/>`,
+    'rank-science-1': `<rect x="14" y="62" width="62" height="28" rx="12" fill="#e8f0ff"/>
+      <rect x="14" y="62" width="16" height="28" rx="0" fill="#d0daf0"/>
+      <rect x="60" y="62" width="16" height="28" rx="0" fill="#d0daf0"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <circle cx="22" cy="76" r="10" fill="rgba(16,185,129,.25)" stroke="#10b981" stroke-width="1.5"/>
+      <rect x="19" y="64" width="6" height="8" rx="2" fill="none" stroke="#10b981" stroke-width="1.5"/>
+      <ellipse cx="22" cy="76" rx="6" ry="4" fill="rgba(16,185,129,.4)"/>
+      <circle cx="20" cy="74" r="1.5" fill="#10b981" opacity=".7"/>
+      <circle cx="25" cy="72" r="1" fill="#10b981" opacity=".5"/>`,
+    'rank-science-2': `<path d="M12,58 Q16,82 26,90 L45,84 L64,90 Q74,82 78,58 L45,66Z" fill="#1a4a38"/>
+      <rect x="18" y="62" width="54" height="22" rx="10" fill="${c.shirt}"/>
+      <rect x="35" y="54" width="20" height="14" rx="6" fill="${c.skin}"/>
+      <rect x="28" y="30" width="14" height="12" rx="5" fill="#1a1008" stroke="#f97316" stroke-width="1.5"/>
+      <rect x="48" y="30" width="14" height="12" rx="5" fill="#1a1008" stroke="#f97316" stroke-width="1.5"/>
+      <line x1="42" y1="36" x2="48" y2="36" stroke="#f97316" stroke-width="1.5"/>
+      <ellipse cx="35" cy="36" rx="5" ry="5" fill="#f97316" opacity=".3"/>
+      <ellipse cx="55" cy="36" rx="5" ry="5" fill="#f97316" opacity=".3"/>
+      <circle cx="36" cy="35" r="1.8" fill="#fff" opacity=".7"/>
+      <circle cx="56" cy="35" r="1.8" fill="#fff" opacity=".7"/>
+      <rect x="60" y="66" width="20" height="16" rx="4" fill="#1a1008" stroke="#10b981" stroke-width="1.5"/>
+      <rect x="62" y="68" width="16" height="9" rx="2" fill="#0a3a28"/>
+      <text x="70" y="76" text-anchor="middle" font-size="7" fill="#10b981">💡</text>
+      <circle cx="45" cy="72" r="6" fill="rgba(255,215,0,.15)" stroke="#ffd700" stroke-width="1"/>
+      <text x="45" y="76" text-anchor="middle" font-size="7" fill="#ffd700">⚙</text>`,
+    'rank-science-3': `<ellipse cx="45" cy="55" rx="40" ry="36" fill="rgba(16,185,129,.07)"/>
+      <path d="M8,60 Q12,84 22,90 L45,84 L68,90 Q78,84 82,60 L45,68Z" fill="#0a4a2a"/>
+      <path d="M22,90 L45,84 L68,90 L62,74 L45,80 L28,74Z" fill="#1a7a4a" opacity=".7"/>
+      <rect x="32" y="54" width="26" height="14" rx="7" fill="${c.skin}"/>
+      <line x1="76" y1="32" x2="72" y2="88" stroke="#2a8a4a" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="76" cy="28" r="8" fill="#10b981" opacity=".9"/>
+      <text x="76" y="32" text-anchor="middle" font-size="10">🌿</text>
+      <text x="20" y="82" font-size="14" text-anchor="middle">🌿</text>`,
+    'rank-science-4': `<circle cx="45" cy="45" r="44" fill="rgba(16,185,129,.07)"/>
+      <path d="M8,58 Q12,82 22,90 L45,84 L68,90 Q78,82 82,58 L45,66Z" fill="#0a3020"/>
+      <rect x="20" y="58" width="50" height="24" rx="10" fill="#1a6040"/>
+      <ellipse cx="18" cy="64" rx="11" ry="8" fill="#2a9060" opacity=".8"/>
+      <ellipse cx="72" cy="64" rx="11" ry="8" fill="#2a9060" opacity=".8"/>
+      <rect x="33" y="53" width="24" height="14" rx="7" fill="${c.skin}"/>
+      <path d="M22,16 L26,4 L34,12 L45,2 L56,12 L64,4 L68,16 Z" fill="#10b981" stroke="#0a6040" stroke-width="1"/>
+      <circle cx="45" cy="4" r="4" fill="#ffd700"/>
+      <circle cx="26" cy="7" r="2.5" fill="#5bc8f5"/>
+      <circle cx="64" cy="7" r="2.5" fill="#ef4444"/>
+      <circle cx="45" cy="74" r="7" fill="rgba(16,185,129,.2)" stroke="#10b981" stroke-width="1.5"/>
+      <text x="45" y="78" text-anchor="middle" font-size="9">⚗</text>
+      <text x="6" y="20" font-size="10">✨</text><text x="74" y="18" font-size="10">✨</text>
+      <text x="4" y="52" font-size="8">⭐</text><text x="78" y="50" font-size="8">⭐</text>`,
+  };
+
+  const body = bodies[rankId] || bodies['rank-social-0'];
+  const head = headSVG();
+  return `<svg viewBox="0 0 90 90">${body}${head}</svg>`;
+}
+
+// ─────────────────────────────
 // STATE
 // ─────────────────────────────
 let player = null;
@@ -1022,7 +1282,7 @@ function save(){ localStorage.setItem(key(player), JSON.stringify(state)); }
 // PLAYER SELECT
 // ─────────────────────────────
 function updatePreviews(){
-  ['ousuke','sakuto'].forEach(p=>{
+  ['ousuke','sakuto','mummy'].forEach(p=>{
     const s = load(p);
     const tot = clears(s.social)+clears(s.science);
     const el = document.getElementById(`prev-${p}`);
@@ -1034,7 +1294,7 @@ function selectPlayer(p){
   state  = load(p);
   document.getElementById('player-select').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
-  document.getElementById('hdr-name').textContent = p==='ousuke'?'オウスケ':'サクト';
+  document.getElementById('hdr-name').textContent = p==='ousuke'?'オウスケ':p==='mummy'?'マミー':'サクト';
   renderAll();
 }
 function backToSelect(){
@@ -1085,7 +1345,7 @@ function renderSubject(sub, rounds, ranks){
 
   // char panel
   document.getElementById(`char-${sub}-av`).innerHTML =
-    `<svg viewBox="0 0 90 90"><use href="#${rank[2]}"/></svg>`;
+    makeRankSVG(rank[2], player);
   document.getElementById(`char-${sub}-name`).textContent = rank[1];
   document.getElementById(`char-${sub}-next`).textContent =
     next ? `次の昇格まで あと${next[0]-n}回` : '🏆 最高位達成！';
@@ -1142,7 +1402,7 @@ function renderCompletion(){
   const b=document.getElementById('comp-banner');
   if(ss===20&&sc===20){
     b.classList.add('show');
-    const nm=player==='ousuke'?'オウスケ':'サクト';
+    const nm=player==='ousuke'?'オウスケ':player==='mummy'?'マミー':'サクト';
     document.getElementById('comp-msg').textContent=
       `${nm}、社会・理科 小５上を完全制覇！全40スタンプ達成おめでとう！`;
   } else b.classList.remove('show');
@@ -1222,9 +1482,9 @@ function doStamp(val){
 // LEVELUP
 // ─────────────────────────────
 function showLevelUp(rank, sub){
-  document.getElementById('lu-av-use').setAttribute('href','#'+rank[2]);
+  document.getElementById('lu-avatar').innerHTML = makeRankSVG(rank[2], player);
   document.getElementById('lu-title').textContent = `${rank[1]} に昇格！`;
-  const nm = player==='ousuke'?'オウスケ':'サクト';
+  const nm = player==='ousuke'?'オウスケ':player==='mummy'?'マミー':'サクト';
   const subNm = sub==='social'?'社会':'理科';
   document.getElementById('lu-sub').textContent =
     `${nm}の${subNm}キャラが\n「${rank[1]}」に成長した！\nこの調子でどんどん進もう！`;
