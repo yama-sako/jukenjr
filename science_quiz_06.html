@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科クイズ第6回 植物の発芽・成長</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08101e;--panel:#0d1a2e;--border:#1a3050;--sky:#5bc8f5;--gold:#ffd166;--green:#06d6a0;--coral:#ef476f;--text:#e8f4fd;--muted:#7aaec8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:15px;line-height:1.7;padding-bottom:60px;min-height:100vh;}
+#pw-gate{position:fixed;inset:0;z-index:9999;background:#0a1020;display:flex;align-items:center;justify-content:center;padding:16px;}
+#pw-gate.hidden{display:none;}
+.pg-card{width:min(340px,100%);background:rgba(8,14,32,.97);border:2px solid #2a4a80;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 0 60px rgba(59,130,246,.2);}
+.pg-logo{font-size:42px;display:block;margin-bottom:6px;animation:pgfl 4s ease-in-out infinite;}
+@keyframes pgfl{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.pg-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:20px;font-weight:900;color:#ffd700;margin-bottom:4px;}
+.pg-sub{font-size:11px;color:#506080;margin-bottom:18px;letter-spacing:1px;}
+.pg-label{font-size:12px;color:#8090b0;margin-bottom:8px;}
+.pg-row{display:flex;gap:8px;margin-bottom:8px;}
+.pg-input{flex:1;background:rgba(20,35,70,.9);border:1.5px solid #2a4a80;border-radius:10px;color:#e0ecff;font-size:18px;padding:11px 10px;outline:none;letter-spacing:4px;text-align:center;-webkit-appearance:none;}
+.pg-input:focus{border-color:#5bc8f5;}
+.pg-btn{background:linear-gradient(135deg,#1a5aaa,#2a7ae0);color:#fff;border:none;border-radius:10px;font-size:14px;padding:11px 14px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 0 #0e3880;}
+.pg-btn:active{transform:translateY(2px);}
+.pg-err{font-size:11px;color:#ef4444;min-height:14px;opacity:0;transition:opacity .3s;}
+.pg-err.show{opacity:1;}
+@keyframes pgshk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+.pgshk{animation:pgshk .4s ease;}
+
+/* ===== TITLE SCREEN ===== */
+#title-screen{max-width:680px;margin:0 auto;padding:40px 16px;text-align:center;}
+.title-badge{display:inline-block;background:linear-gradient(135deg,#064a2a,#0a7a44);border:1.5px solid var(--green);border-radius:16px;padding:3px 14px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:2px;margin-bottom:12px;}
+.pixel-title{font-family:'M PLUS Rounded 1c',sans-serif;font-size:clamp(20px,5vw,28px);font-weight:900;color:var(--gold);text-shadow:0 0 20px rgba(255,209,102,.4);line-height:1.3;margin-bottom:8px;}
+.title-sub{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:20px;}
+.hero-sprite{font-size:72px;display:block;margin:16px 0;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.title-info{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.3);border-radius:12px;padding:14px;margin:16px 0;font-size:13px;line-height:1.9;color:#c0f0e0;text-align:left;}
+.btn-start{display:inline-block;padding:14px 44px;background:linear-gradient(135deg,#064a2a,#0a9a54);color:#fff;border:none;border-radius:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #03281a;letter-spacing:1px;transition:all .15s;}
+.btn-start:hover{transform:translateY(-2px);}
+.btn-start:active{transform:scale(.97);}
+
+/* ===== GAME SCREEN ===== */
+#game-screen{display:none;max-width:680px;margin:0 auto;}
+.quiz-header{text-align:center;padding:20px 16px 12px;border-bottom:2px solid var(--border);}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.hp-display{display:flex;align-items:center;gap:4px;}
+.hp-heart{font-size:18px;}
+.xp-bar-wrap{flex:1;min-width:120px;}
+.xp-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.xp-bar{height:8px;background:#1a3050;border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,#06d6a0,var(--gold));border-radius:4px;transition:width .5s;}
+.q-counter{font-size:13px;color:var(--sky);font-weight:700;}
+
+/* バトル画面 */
+.battle-scene{background:var(--panel);border:2px solid rgba(91,200,245,.25);border-radius:16px;padding:18px;margin:12px 16px;position:relative;overflow:hidden;}
+.battle-flex{display:flex;justify-content:space-between;align-items:flex-end;}
+.hero-side{text-align:center;}
+.hero-sprite-sm{font-size:44px;display:block;animation:float 3s ease-in-out infinite;}
+.hero-label{font-size:11px;color:var(--sky);margin-top:4px;}
+.enemy-side{text-align:center;}
+.enemy-sprite{font-size:52px;display:block;animation:enemy-float 2.5s ease-in-out infinite;}
+@keyframes enemy-float{0%,100%{transform:translateY(0) scaleX(-1);}50%{transform:translateY(-8px) scaleX(-1);}}
+.enemy-label{font-size:11px;color:var(--coral);margin-top:4px;}
+.message-box{background:#162035;border:2px solid #2a4a80;border-radius:12px;padding:12px 16px;margin:0 16px 12px;font-size:14px;line-height:1.7;color:#ddeeff;}
+
+.quiz-wrap{padding:0 16px 16px;}
+.q-card{background:var(--panel);border:1.5px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px;}
+.q-number{font-size:11px;color:var(--sky);letter-spacing:2px;font-weight:700;margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:14px;}
+.hint-btn{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.35);border-radius:8px;color:var(--gold);font-size:12px;padding:6px 14px;cursor:pointer;margin-bottom:10px;font-family:'Noto Sans JP',sans-serif;}
+.hint-box{background:#2a2000;border:1px solid rgba(255,209,102,.4);border-radius:8px;padding:10px 12px;font-size:13px;color:#e8d080;margin-bottom:10px;display:none;}
+.hint-box.show{display:block;}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.choices{grid-template-columns:1fr;}}
+.choice-btn{background:#1a2640;border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:14px;padding:12px 10px;cursor:pointer;text-align:left;transition:all .2s;line-height:1.5;font-family:'Noto Sans JP',sans-serif;}
+.choice-btn:hover{border-color:var(--green);background:rgba(6,214,160,.08);}
+.choice-btn.correct{background:rgba(6,214,160,.2);border-color:var(--green);color:#fff;}
+.choice-btn.wrong{background:rgba(239,71,111,.15);border-color:var(--coral);color:#ffaaaa;}
+.choice-btn:disabled{cursor:default;}
+.choice-label{font-size:11px;color:var(--muted);font-weight:700;margin-right:6px;}
+.feedback{border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;display:none;}
+.feedback.show{display:block;}
+.feedback.ok{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.35);color:var(--green);}
+.feedback.ng{background:rgba(239,71,111,.12);border:1px solid rgba(239,71,111,.35);color:#ff8080;}
+.btn-next{display:none;width:100%;padding:13px;background:linear-gradient(135deg,#064a2a,#0a9a54);color:#fff;border:none;border-radius:12px;font-family:'M PLUS Rounded 1c',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 0 #03281a;letter-spacing:1px;margin-top:10px;}
+
+/* ===== RESULT ===== */
+.result-screen{display:none;max-width:500px;margin:0 auto;padding:20px 16px;text-align:center;}
+.result-screen.show{display:block;}
+.rank-label{font-family:'M PLUS Rounded 1c',sans-serif;font-size:44px;font-weight:900;margin-bottom:8px;}
+.rank-S{color:#ffd166;text-shadow:0 0 30px rgba(255,209,102,.6);}
+.rank-A{color:#06d6a0;}
+.rank-B{color:#5bc8f5;}
+.rank-C{color:#7aaec8;}
+.result-msg{font-size:15px;line-height:1.8;margin:12px 0;white-space:pre-line;}
+.score-table{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin:14px 0;text-align:left;}
+.score-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.score-row:last-child{border-bottom:none;font-weight:700;}
+.nav-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.nav-btn{background:linear-gradient(135deg,#1a3a7a,#2a5aaa);border:1.5px solid #3a6aaa;border-radius:12px;color:#fff;font-family:'M PLUS Rounded 1c',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 4px 0 #0e2060;}
+.nav-btn.story{background:linear-gradient(135deg,#064a2a,#0a9a54);border-color:var(--green);box-shadow:0 4px 0 #03281a;}
+.exp-section{margin:16px 0;}
+.exp-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.exp-bg{height:14px;background:rgba(255,255,255,.05);border-radius:7px;overflow:hidden;border:1px solid var(--border);}
+.exp-fill{height:100%;background:linear-gradient(90deg,#06d6a0,var(--gold));border-radius:7px;transition:width 1.5s ease;width:0%;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+.shake{animation:shake .4s ease;}
+</style>
+</head>
+<body>
+
+<div id="pw-gate"><div class="pg-card" id="pg-card">
+<span class="pg-logo">🌱</span>
+<div class="pg-title">中学受験への道</div>
+<div class="pg-sub">JUKENJR ADVENTURE</div>
+<div class="pg-label">🔑 パスワードを入力してね</div>
+<div class="pg-row">
+<input type="password" class="pg-input" id="pg-pw" placeholder="パスワード" maxlength="20" autocomplete="off"/>
+<button class="pg-btn" id="pg-btn">▶</button>
+</div>
+<div class="pg-err" id="pg-err">パスワードがちがうよ！</div>
+</div></div>
+<script>
+(function(){
+  var H="a8e637868c5bf190f57db6db972b8fb90ea03454f7db777c0f807db6d20679a5";
+  var SK="jukenjr_v3";
+  function hex(buf){return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");}
+  function tryPw(){
+    var v=document.getElementById("pg-pw").value.trim().toLowerCase();
+    if(!v)return;
+    crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(buf){
+      if(hex(buf)===H){sessionStorage.setItem(SK,"1");document.getElementById("pw-gate").classList.add("hidden");}
+      else{document.getElementById("pg-err").classList.add("show");document.getElementById("pg-card").classList.add("pgshk");setTimeout(function(){document.getElementById("pg-card").classList.remove("pgshk");},400);setTimeout(function(){document.getElementById("pg-err").classList.remove("show");},2500);document.getElementById("pg-pw").value="";}
+    });
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.getElementById("pg-btn").addEventListener("click",tryPw);
+    document.getElementById("pg-pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw();});
+    if(sessionStorage.getItem(SK)==="1")document.getElementById("pw-gate").classList.add("hidden");
+  });
+})();
+</script>
+
+<!-- TITLE SCREEN -->
+<div id="title-screen">
+  <div class="title-badge">⚗️ 理科小５上　第６回</div>
+  <div class="pixel-title">🌱 理科クエスト<br>【植物の発芽・成長】</div>
+  <div class="title-sub">理科　第６回</div>
+  <span class="hero-sprite">🧙‍♂️</span>
+  <div class="title-info">
+    ✦ 全10問　RPG風クイズ<br>
+    ✦ 正解すれば次のレベルへ進める！<br>
+    ✦ 間違えると HPが減るぞ！<br>
+    ✦ 全問クリアしてSランクを目指せ！
+  </div>
+  <button class="btn-start" onclick="startGame()">▶　ゲームスタート！</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen">
+  <div class="quiz-header">
+    <div class="pixel-title" style="font-size:18px;">⚗️ 理科クエスト 第6回</div>
+  </div>
+  <div class="status-bar">
+    <div class="hp-display" id="hp-display"></div>
+    <div class="xp-bar-wrap">
+      <div class="xp-label">経験値 <span id="xp-val">0</span> XP</div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-counter" id="q-counter">Q 1 / 10</div>
+  </div>
+  <div class="battle-scene" id="battle-scene">
+    <div class="battle-flex">
+      <div class="enemy-side">
+        <span class="enemy-sprite" id="enemy-sprite">🌱</span>
+        <div class="enemy-label" id="enemy-label">もんだい</div>
+      </div>
+      <div class="hero-side">
+        <span class="hero-sprite-sm">🧙‍♂️</span>
+      </div>
+    </div>
+  </div>
+  <div class="message-box" id="message-box"></div>
+  <div class="quiz-wrap" id="quiz-area"></div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="result-screen"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    q:"種子の中にある「はい（胚）」について正しいものはどれか。",
+    choices:["A. 発芽に必要な養分をたくわえる部分","B. 発芽して植物の体になる部分","C. 種子の一番外側にある皮","D. 水分を吸収するための部分"],
+    ans:1,
+    enemy:"🌰",enemyName:"たねザコ",
+    msg:"種の中身を思い出せ！「はい」の役割は何だ？",
+    hint:"「はいにゅう」と「はい」の違いを区別しよう。",
+    explain:"「はい（胚）」は発芽して植物の体になる部分で、子葉・よう芽・はいじく・よう根が含まれます。発芽に使う養分をたくわえるのは「はいにゅう（胚乳）」または無はいにゅう種子では「子葉」です。"
+  },
+  {
+    q:"有はいにゅう種子として正しいものはどれか。",
+    choices:["A. インゲンマメ","B. ヒマワリ","C. イネ","D. アサガオ"],
+    ans:2,
+    enemy:"🌾",enemyName:"イネのせい",
+    msg:"有はいにゅうはイネのなかまに多い！",
+    hint:"有はいにゅう種子はイネのなかま・マツ・カキが代表。",
+    explain:"有はいにゅう種子はイネ・トウモロコシ・ムギ・マツ・カキなどです。インゲンマメ・ヒマワリ・アサガオは無はいにゅう種子で、子葉に養分をたくわえています。"
+  },
+  {
+    q:"無はいにゅう種子では、発芽に必要な養分はどこにたくわえられているか。",
+    choices:["A. 種皮","B. はいにゅう","C. よう根","D. 子葉"],
+    ans:3,
+    enemy:"🫘",enemyName:"マメのモンスター",
+    msg:"インゲンマメを思い出せ！あの大きな部分は何だ？",
+    hint:"無はいにゅう種子はインゲンマメが代表。子葉が大きい理由は？",
+    explain:"無はいにゅう種子ははいにゅうがなく、発芽に必要な養分を子葉にたくわえています。そのため子葉が大きく、インゲンマメやダイズは種子の大部分が子葉です。"
+  },
+  {
+    q:"ほとんどの植物の発芽の順序として正しいものはどれか。",
+    choices:["A. 子葉→よう根→本葉","B. よう根→子葉→本葉","C. 本葉→よう根→子葉","D. よう根→本葉→子葉"],
+    ans:1,
+    enemy:"🪴",enemyName:"めばえドラゴン",
+    msg:"根が出るのは子葉より前か後か？",
+    hint:"根が最初に出るのは水を吸ったり体を支えるため。",
+    explain:"ほとんどの植物の発芽の順序は「①よう根（根）→②子葉→③本葉・くき」です。まず根が出るのは、水を吸収したり体を支えるためです。"
+  },
+  {
+    q:"ヨウ素液を使ってでんぷんを調べた。正しい結果はどれか。",
+    choices:["A. でんぷんがあると赤色になる","B. でんぷんがあると青むらさき色になる","C. でんぷんがあると黄色になる","D. でんぷんがあっても色は変わらない"],
+    ans:1,
+    enemy:"🔬",enemyName:"けんびきょう番人",
+    msg:"Q5以降はヒントなし！ヨウ素液の色の変化を覚えているか？",
+    hint:null,
+    explain:"ヨウ素液はうすい茶色の液体で、でんぷんに触れると青むらさき色に変わります。これをヨウ素でんぷん反応といいます。砂糖や食塩にはでんぷんがないため、色は変わりません。"
+  },
+  {
+    q:"インゲンマメの発芽条件を調べる実験で、発芽しなかったものはどれか。",
+    choices:["A. 水あり・空気あり・温度20℃・暗箱（光なし）","B. 水あり・空気あり・温度20℃・日当たりあり","C. 水あり・空気あり・温度20℃・肥料あり","D. 水あり・空気なし（水中）・温度20℃・日当たりあり"],
+    ans:3,
+    enemy:"💧",enemyName:"みずモンスター",
+    msg:"発芽に必要な条件を覚えているか？",
+    hint:null,
+    explain:"発芽に必要な条件は「水・空気（酸素）・適当な温度」の3つです。光や肥料は発芽に必要ありません。水中に沈めると空気（酸素）がなくなるため発芽できません（実験F）。"
+  },
+  {
+    q:"発芽の条件について正しいものはどれか。",
+    choices:["A. 光があれば水がなくても発芽する","B. 肥料がないと発芽できない","C. 発芽に光は必要ない","D. 温度は何度でも発芽できる"],
+    ans:2,
+    enemy:"❄️",enemyName:"おんどのまじん",
+    msg:"光・肥料は発芽に必要か？実験結果を思い出せ！",
+    hint:null,
+    explain:"発芽に光は必要ありません（暗箱の中でも発芽）。発芽に肥料も必要ありません。発芽に必要なのは「水・空気・適当な温度」だけです。"
+  },
+  {
+    q:"植物の成長に必要な条件として、発芽の条件に加えて必要なものはどれか。",
+    choices:["A. 光だけ","B. 肥料だけ","C. 日光と肥料の両方","D. 水と空気の両方（発芽と同じ）"],
+    ans:2,
+    enemy:"☀️",enemyName:"たいようりゅう",
+    msg:"発芽の条件と成長の条件の違いに注目！",
+    hint:null,
+    explain:"植物の成長には、発芽の条件（水・空気・適当な温度）に加えて「日光」と「肥料」の両方が必要です。日光を当てないと葉が黄色くなりやがて枯れ、肥料がないと大きく育ちません。"
+  },
+  {
+    q:"「肥料の3要素」のうちリン酸肥料の働きとして正しいものはどれか。",
+    choices:["A. 根の成長に役立つ","B. 葉の成長に役立つ","C. 花・実の成長に役立つ","D. くきの成長に役立つ"],
+    ans:2,
+    enemy:"🌸",enemyName:"はなのまもり神",
+    msg:"ちっ素・リン酸・カリそれぞれの役割を思い出せ！",
+    hint:null,
+    explain:"肥料の3要素の役割は、ちっ素→葉の成長、リン酸→花・実の成長、カリ→根の成長（および植物全体の調節）です。「ちっ素は葉、リン酸は花・実、カリは根」と覚えよう。"
+  },
+  {
+    q:"【最終問題】植物のくきが光の来る方向へ曲がる性質を何というか。",
+    choices:["A. 正の重力くっ性","B. 正の光くっ性","C. 光けい性","D. 負の光くっ性"],
+    ans:1,
+    enemy:"🏆",enemyName:"魔植物王",
+    msg:"最終問題！植物の反応、光に向かうくきの性質は？",
+    hint:null,
+    explain:"植物のくきが光の来る方向へ曲がる性質を「正の光くっ性」といいます。一方、根は光と反対の方向へ曲がる「負の光くっ性」をもちます。くっ性は刺激の方向に対して曲がる性質です（けい性は刺激の向きと関係なく決まった向きに動く）。"
+  }
+];
+
+let currentQ=0, hp=5, xp=0, wrongQs=[], answered=false;
+
+function startGame(){
+  document.getElementById('title-screen').style.display='none';
+  document.getElementById('game-screen').style.display='block';
+  renderHP();renderXP();renderQuestion();
+}
+function renderHP(){
+  const d=document.getElementById('hp-display');d.innerHTML='';
+  for(let i=0;i<5;i++){const s=document.createElement('span');s.className='hp-heart';s.textContent=i<hp?'❤️':'🖤';d.appendChild(s);}
+}
+function renderXP(){document.getElementById('xp-val').textContent=xp;document.getElementById('xp-fill').style.width=(xp)+'%';}
+function renderQuestion(){
+  if(currentQ>=QUESTIONS.length){showResult();return;}
+  answered=false;
+  const q=QUESTIONS[currentQ];
+  document.getElementById('q-counter').textContent='Q '+(currentQ+1)+' / '+QUESTIONS.length;
+  document.getElementById('enemy-sprite').textContent=q.enemy;
+  document.getElementById('enemy-label').textContent=q.enemyName;
+  document.getElementById('message-box').textContent=q.msg;
+
+  const labels=['A','B','C','D'];
+  const showHint = currentQ < 4 && q.hint; // Q1〜4のみヒント
+  let hintHTML = showHint
+    ? `<button class="hint-btn" onclick="document.getElementById('hint-${currentQ}').classList.add('show');this.style.display='none'">💡 ヒントを見る</button>
+       <div class="hint-box" id="hint-${currentQ}">${q.hint}</div>`
+    : '';
+
+  let choicesHTML=q.choices.map((c,i)=>`<button class="choice-btn" onclick="answer(${i})" id="choice-${i}"><span class="choice-label">${labels[i]}.</span>${c.replace(/^[A-D]\. /,'')}</button>`).join('');
+
+  const area=document.getElementById('quiz-area');
+  area.innerHTML=`
+    <div class="q-card">
+      <div class="q-number">QUESTION ${currentQ+1}</div>
+      <div class="q-text">${q.q}</div>
+      ${hintHTML}
+      <div class="choices">${choicesHTML}</div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div style="padding:0 0 8px;text-align:center;">
+      <button id="btn-next" class="btn-next" onclick="nextQ()">次の問題へ ▶</button>
+    </div>`;
+}
+function answer(idx){
+  if(answered)return;answered=true;
+  const q=QUESTIONS[currentQ];
+  const btns=document.querySelectorAll('.choice-btn');btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');fb.classList.add('show');
+  if(idx===q.ans){
+    btns[idx].classList.add('correct');fb.classList.add('ok');
+    fb.innerHTML='✅ 正解！<br><small>'+q.explain+'</small>';
+    xp+=10;renderXP();
+  }else{
+    btns[idx].classList.add('wrong');btns[q.ans].classList.add('correct');fb.classList.add('ng');
+    fb.innerHTML='❌ 不正解…<br><small>'+q.explain+'</small>';
+    hp--;wrongQs.push(currentQ+1);renderHP();
+    const bs=document.getElementById('battle-scene');bs.classList.add('shake');
+    setTimeout(()=>bs.classList.remove('shake'),400);
+  }
+  document.getElementById('btn-next').style.display='block';
+}
+function nextQ(){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+function showResult(){
+  document.getElementById('game-screen').style.display='none';
+  const rs=document.getElementById('result-screen');rs.classList.add('show');
+  const correct=10-wrongQs.length;
+  let rank,rankClass,emoji,msg;
+  if(correct===10){rank='S';rankClass='rank-S';emoji='👑';msg='完璧！植物の発芽・成長を完全マスター！\nSランク達成おめでとう！';}
+  else if(correct>=8){rank='A';rankClass='rank-A';emoji='⭐';msg='すばらしい！発芽の条件と成長の条件の違いもばっちり！';}
+  else if(correct>=6){rank='B';rankClass='rank-B';emoji='👍';msg='よくがんばった！ストーリーで発芽条件を復習しよう。';}
+  else{rank='C';rankClass='rank-C';emoji='💪';msg='もう一度ストーリーを読んでチャレンジ！';}
+  const wrongStr=wrongQs.length>0?wrongQs.join('・')+'番':'なし';
+  rs.innerHTML=`
+    <div style="font-size:52px;margin:10px 0">${emoji}</div>
+    <div class="rank-label ${rankClass}">RANK ${rank}</div>
+    <div class="result-msg">${msg}</div>
+    <div class="score-table">
+      <div class="score-row"><span>正解数</span><span>${correct} / 10</span></div>
+      <div class="score-row"><span>獲得XP</span><span>${xp} XP</span></div>
+      <div class="score-row"><span>まちがえた問題</span><span>${wrongStr}</span></div>
+      <div class="score-row"><span>HP残り</span><span>${hp>0?'❤️'.repeat(hp):'力尽きた…'}</span></div>
+    </div>
+    <div class="exp-section">
+      <div class="exp-label">EXP バー</div>
+      <div class="exp-bg"><div class="exp-fill" id="exp-fill-result" style="width:0%"></div></div>
+    </div>
+    <div class="nav-btns">
+      <a class="nav-btn story" href="https://yama-sako.github.io/jukenjr/science_story_06.html">📖 ストーリーを読む</a>
+      <a class="nav-btn" href="https://yama-sako.github.io/jukenjr/stamp_sheet.html">🏠 スタンプシートへ</a>
+    </div>`;
+  setTimeout(()=>{const f=document.getElementById('exp-fill-result');if(f)f.style.width=xp+'%';},300);
+}
+</script>
+</body>
+</html>
